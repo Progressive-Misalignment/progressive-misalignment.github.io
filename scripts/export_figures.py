@@ -1,17 +1,30 @@
 #!/usr/bin/env python3
-"""Export the original figure PDFs as font-independent SVGs.
+"""Crop the website figures out of assets/paper.pdf.
 
 Authoring-only dependency: PyMuPDF (tested with 1.28.2).
 Run from any directory: python3 scripts/export_figures.py
-The PDF copies are deliberately unchanged. No cropping or data redrawing.
+
+Each rect is the placement of the figure's embedded PDF on the page, in PDF
+points with a top-left origin. If the paper is recompiled and a figure moves,
+update its page/rect here and rerun, then run scripts/version_assets.py.
 """
-import hashlib
-import json
 from collections import Counter
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
 import pymupdf
+
+ROOT = Path(__file__).resolve().parents[1]
+PAPER = ROOT / 'assets/paper.pdf'
+OUT = ROOT / 'assets/figures'
+
+# name: (page number, rect)
+VECTOR = {
+    'training': (2, (72, 81.86, 525.6, 224.92)),           # Figure 2
+    'fixed-cues': (5, (72, 81.86, 525.6, 242.34)),         # Figure 4
+    'simulated-users': (6, (72, 81.86, 525.6, 227.83)),    # Figure 5
+    'scaling': (7, (298.8, 502.61, 525.6, 659.2)),         # Figure 7
+}
 
 SVG = 'http://www.w3.org/2000/svg'
 XLINK = 'http://www.w3.org/1999/xlink'
@@ -19,8 +32,22 @@ ET.register_namespace('', SVG)
 ET.register_namespace('xlink', XLINK)
 
 
+def isolate(number, rect):
+    """Open the paper and blank everything on the page outside rect."""
+    document = pymupdf.open(PAPER)
+    page = document[number - 1]
+    r, full, gap = pymupdf.Rect(rect), page.rect, 0.5
+    for band in [(full.x0, full.y0, full.x1, r.y0 - gap), (full.x0, r.y1 + gap, full.x1, full.y1),
+                 (full.x0, r.y0, r.x0 - gap, r.y1), (r.x1 + gap, r.y0, full.x1, r.y1)]:
+        if pymupdf.Rect(band).is_valid and not pymupdf.Rect(band).is_empty:
+            page.add_redact_annot(band, fill=False)
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE,
+                          graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED)
+    return document, page
+
+
 def compact_svg(svg):
-    """Share identical path geometry, especially repeated PDF hatch patterns."""
+    """Share identical path geometry, especially repeated hatch patterns."""
     tree = ET.fromstring(svg)
     definitions = tree.find(f'{{{SVG}}}defs')
     if definitions is None:
@@ -41,25 +68,12 @@ def compact_svg(svg):
     return ET.tostring(tree, encoding='unicode')
 
 
-root = Path(__file__).resolve().parents[1]
-manifest_path = root / 'data/provenance.json'
-manifest = json.loads(manifest_path.read_text())
-for figure in manifest['figures']:
-    source = root / figure['file']
-    if hashlib.sha256(source.read_bytes()).hexdigest() != figure['sha256']:
-        raise SystemExit(f'Original PDF has changed: {source}')
-    with pymupdf.open(source) as document:
-        page = document[0]
-        destination = source.with_suffix('.svg')
-        destination.write_text(compact_svg(page.get_svg_image(text_as_path=True)))
-        figure['browser_file'] = str(destination.relative_to(root))
-        figure['browser_sha256'] = hashlib.sha256(destination.read_bytes()).hexdigest()
-        figure['width'] = round(page.rect.width * 2)
-        figure['height'] = round(page.rect.height * 2)
-        print(f'{destination.name}: {destination.stat().st_size // 1024} KB')
-manifest['export'] = {
-    'format': 'SVG', 'tool': f'PyMuPDF {pymupdf.__version__}',
-    'text_as_path': True,
-    'note': 'Original PDF page bounds preserved; glyph outlines avoid browser font substitution.'
-}
-manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
+OUT.mkdir(exist_ok=True)
+for name, (number, rect) in VECTOR.items():
+    document, page = isolate(number, rect)
+    page.set_cropbox(pymupdf.Rect(rect))
+    (OUT / f'{name}.svg').write_text(compact_svg(page.get_svg_image(text_as_path=True)))
+    document.close()
+
+for path in sorted(OUT.iterdir()):
+    print(f'{path.name}: {path.stat().st_size // 1024} KB')

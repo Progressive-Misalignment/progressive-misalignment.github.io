@@ -1,4 +1,8 @@
-Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter)
+Google Sans: Copyright 2025 The Google Sans Project Authors (https://github.com/googlefonts/googlesans)
+Google Sans Code: Copyright 2026 The Google Sans Code Project Authors (https://github.com/googlefonts/googlesans-code)
+Klee One: Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)
+
+The Latin subsets in this folder are served by Google Fonts.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refresh content-based cache keys for local styles, scripts, images, and PDFs."""
+"""Refresh content-based cache keys for local styles, fonts, figures, videos, and PDFs."""
 import hashlib
 import re
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 page = root / 'index.html'
 html = page.read_text()
-pattern = r'((?:href|src)=")((?:styles\.css|site\.js|assets/[^"?]+))(?:\?v=[a-f0-9]+)?(")'
+pattern = r'((?:href|src|poster)=")((?:styles\.css|site\.js|assets/[^"?]+))(?:\?v=[a-f0-9]+)?(")'
 
 
 def version_asset(match):
