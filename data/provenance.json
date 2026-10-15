@@ -10,64 +10,80 @@
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/progressive_training_curves.pdf",
       "file": "assets/training.pdf",
       "sha256": "a30259caac184bdae9e85cbcd112c117dfa89afd415c0e0c6d27761601b0f760",
-      "width": 1170,
-      "height": 369
+      "width": 936,
+      "height": 295,
+      "browser_file": "assets/training.svg",
+      "browser_sha256": "11f17840ccf52c53749aa1f573834298e7b102afed6767703cdf822732d5eaf5"
     },
     {
       "name": "fixed-cues",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/progressive_misalignment_benchmarks.pdf",
       "file": "assets/fixed-cues.pdf",
       "sha256": "8f23f296b9cd6e1cea1801cd5ab004b89f40dcc4858b320fac59ad439b1c6b2f",
-      "width": 1170,
-      "height": 413
+      "width": 936,
+      "height": 330,
+      "browser_file": "assets/fixed-cues.svg",
+      "browser_sha256": "1d7cfad1b597e4ee9d92ff3613ad45e68719e7c7cecb9245f279b79efb50ab57"
     },
     {
       "name": "simulated-users",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/simulated_user_misalignment.pdf",
       "file": "assets/simulated-users.pdf",
       "sha256": "538012c8fba48fa389aaca4eb3e4ae674de1efa53073568c7833c205b1a24711",
-      "width": 1170,
-      "height": 376
+      "width": 936,
+      "height": 300,
+      "browser_file": "assets/simulated-users.svg",
+      "browser_sha256": "62c2ed2532cc9fa821a1394a56aab9ffc916d7c3c534e29dea1496d2060aa983"
     },
     {
       "name": "benign-prompts",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/figure4_base_bars.pdf",
       "file": "assets/benign-prompts.pdf",
       "sha256": "9cf8731ac64ad15351122a3f456c8b254ab2a2b5c1660f44bec02db4f82c8442",
-      "width": 1170,
-      "height": 385
+      "width": 936,
+      "height": 307,
+      "browser_file": "assets/benign-prompts.svg",
+      "browser_sha256": "a36b14412316ead5682376b139e1ca71578442f10f3cc2819c9016a7bef99f56"
     },
     {
       "name": "scaling",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/model_scaling.pdf",
       "file": "assets/scaling.pdf",
       "sha256": "271904a9515e12cfccd4c956c9a7cdb884ad4950b7d3ce2066864367b6643020",
-      "width": 585,
-      "height": 423
+      "width": 468,
+      "height": 338,
+      "browser_file": "assets/scaling.svg",
+      "browser_sha256": "7cedbfa4ea255e31e599fe927b47f543a2b30a28dd2440692baa38823e318045"
     },
     {
       "name": "sft-control",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/sft.pdf",
       "file": "assets/sft-control.pdf",
       "sha256": "b7924ececa2a71c35cf8240a41cd64359171a173c4a73309e5f6a336afe7b9fc",
-      "width": 1170,
-      "height": 883
+      "width": 936,
+      "height": 706,
+      "browser_file": "assets/sft-control.svg",
+      "browser_sha256": "8409839421df53e8f4b6b5b44d22b6e0a6b7604eb1934bccaa953a1bdbd1cc35"
     },
     {
       "name": "capabilities",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/controls_exc.pdf",
       "file": "assets/capabilities.pdf",
       "sha256": "0aeed7a2848020307d35d031667a9a84f49ca1102af79e4c6d1186c95b5bf71f",
-      "width": 1170,
-      "height": 421
+      "width": 936,
+      "height": 336,
+      "browser_file": "assets/capabilities.svg",
+      "browser_sha256": "3f739a6c25c198108eeae6c9ed92f76d719500f2ce695fca7690270526d62c1a"
     },
     {
       "name": "drift",
       "source": "Progressive-Misalignment_plots/Arxiv_folder/figures/kl_tokens_drift.pdf",
       "file": "assets/drift.pdf",
       "sha256": "50fbc71fc19cb6b04bc5085a35dca629c65b523c5ad657ee494ea5586571d85f",
-      "width": 562,
-      "height": 453
+      "width": 449,
+      "height": 362,
+      "browser_file": "assets/drift.svg",
+      "browser_sha256": "93d9f9f69eb42fa9f71f60315e464d57140d7d1ef1aae0bd4e779017e9d7f016"
     }
   ],
   "notes": "Figures are unchanged exports of the supplied manuscript artwork. Website summaries use rounded values stated in the manuscript text. No new experiments or statistical estimates.",
@@ -82,5 +98,11 @@
       "source": "https://ethz.ch/etc/designs/ethz/img/header/ethz_logo_black.svg",
       "sha256": "2036ab4e204efb25f113f8a59dfc5fe42d62baba0f7d61612350b565c28ec02a"
     }
-  ]
+  ],
+  "export": {
+    "format": "SVG",
+    "tool": "PyMuPDF 1.28.2",
+    "text_as_path": true,
+    "note": "Original PDF page bounds preserved; glyph outlines avoid browser font substitution."
+  }
 }

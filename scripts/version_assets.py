@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refresh browser cache keys after changing the site's CSS or JavaScript."""
+"""Refresh content-based cache keys for local styles, scripts, images, and PDFs."""
 import hashlib
 import re
 from pathlib import Path
@@ -7,10 +7,14 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 page = root / 'index.html'
 html = page.read_text()
-for filename in ('styles.css', 'site.js'):
+pattern = r'((?:href|src)=")((?:styles\.css|site\.js|assets/[^"?]+))(?:\?v=[a-f0-9]+)?(")'
+
+
+def version_asset(match):
+    filename = match[2]
     version = hashlib.sha256((root / filename).read_bytes()).hexdigest()[:12]
-    pattern = r'((?:href|src)=")' + re.escape(filename) + r'(?:\?v=[a-f0-9]+)?(")'
-    html, count = re.subn(pattern, lambda m: m[1] + filename + '?v=' + version + m[2], html)
-    if count != 1:
-        raise SystemExit('Expected exactly one reference to ' + filename)
+    return match[1] + filename + '?v=' + version + match[3]
+
+
+html = re.sub(pattern, version_asset, html)
 page.write_text(html)
