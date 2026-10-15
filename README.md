@@ -38,4 +38,6 @@ The site is prepared for deployment from `main`, folder `/ (root)`, using GitHub
 
 Local Git configuration uses the dedicated SSH deploy key stored outside the repository. Never copy the private key into this checkout.
 
-For ongoing website work, validate changes, commit them, and push to `origin/main` after each completed edit, as requested by the project owner. Report the public webpage URL and whether deployment has been verified. GitHub Pages must be enabled for pushed changes to appear online.
+After changing CSS or JavaScript, run `python3 scripts/version_assets.py` to refresh their content-based cache keys in `index.html`. This prevents a browser from combining new markup with a cached old stylesheet. Logo images also have inline size limits to keep them bounded if a stylesheet is stale or unavailable.
+
+For ongoing website work, refresh asset cache keys, validate changes, commit them, and push to `origin/main` after each completed edit, as requested by the project owner. Report the public webpage URL and whether deployment has been verified. GitHub Pages must be enabled for pushed changes to appear online.
