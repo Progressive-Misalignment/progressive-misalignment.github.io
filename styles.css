@@ -48,10 +48,9 @@ sup { font-size: 0.68em; line-height: 0; }
 
 .authors { margin: 0; }
 .meta { margin: 0; font-size: 15px; color: #666; }
-.logos { display: flex; align-items: center; gap: 32px; margin: 18px 0 0; }
-.logos img { width: auto; }
-.logos .berkeley { height: 26px; }
-.logos .eth { height: 20px; }
+.meta img { display: inline-block; width: auto; margin: 0 18px 0 2px; vertical-align: -2px; }
+.meta .berkeley { height: 16px; }
+.meta .eth { height: 13px; vertical-align: -1px; }
 .links { margin: 14px 0 0; }
 .links a { margin-right: 16px; }
 .warning { margin: 24px 0 32px; font-size: 15px; color: #d20000; }
