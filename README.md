@@ -22,7 +22,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Open http://localhost:8000. For a remote machine, forward port 8000 through the SSH connection to view it on your laptop. Opening `index.html` directly also works. If clipboard access is unavailable, the citation button selects the text for manual copying. Without JavaScript, all four experiment sections remain readable.
 
-The initial design follows the authors' LLM-to-Flow Distillation project page in `agentic_preference_discovery/llm-to-flow-distillation`: centered paper title and authors, white background, Inter typography, red paper button, restrained section navigation, and interactive research figures. No external font or analytics requests are made.
+The initial design follows the authors' LLM-to-Flow Distillation project page in `agentic_preference_discovery/llm-to-flow-distillation`: centered paper title and authors, white background, Inter typography, red arXiv button, restrained section navigation, and interactive research figures. The arXiv button currently opens the included preprint PDF; replace its destination when an arXiv URL is available. University logos are hosted locally, with official source URLs recorded in the provenance manifest. No external font or analytics requests are made.
 
 ## Scientific sources
 

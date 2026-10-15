@@ -70,5 +70,17 @@
       "height": 453
     }
   ],
-  "notes": "Figures are unchanged exports of the supplied manuscript artwork. Website summaries use rounded values stated in the manuscript text. No new experiments or statistical estimates."
+  "notes": "Figures are unchanged exports of the supplied manuscript artwork. Website summaries use rounded values stated in the manuscript text. No new experiments or statistical estimates.",
+  "logos": [
+    {
+      "file": "assets/berkeley-logo.png",
+      "source": "https://brand.berkeley.edu/wp-content/uploads/2024/08/logo-variations-thumbnail-blue-white.png",
+      "sha256": "0d5f2ef67386fa9b60dd614e32883925d1eb2f08bb5ff70e14fe0feaffd6ae1b"
+    },
+    {
+      "file": "assets/eth-zurich-logo.svg",
+      "source": "https://ethz.ch/etc/designs/ethz/img/header/ethz_logo_black.svg",
+      "sha256": "2036ab4e204efb25f113f8a59dfc5fe42d62baba0f7d61612350b565c28ec02a"
+    }
+  ]
 }
