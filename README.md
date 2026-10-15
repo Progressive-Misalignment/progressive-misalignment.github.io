@@ -12,6 +12,7 @@ Plain HTML and CSS, plus a few lines of inline JavaScript that play each animati
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
 - `assets/paper.pdf`: the preprint, used as the source of the figures. The page links to the copy at https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf.
 - `assets/favicon.png`: the misaligned robot from Figure 1 of the paper.
+- `assets/logos/`: the UC Berkeley wordmark (cropped from https://brand.berkeley.edu/wp-content/uploads/2024/08/logo-variations-thumbnail-blue-white.png) and the ETH Zurich logo (from https://ethz.ch/etc/designs/ethz/img/header/ethz_logo_black.svg).
 - `assets/figures/`: the paper's figures, cropped from `assets/paper.pdf` (SVG, plus a PNG for the Figure 8a illustration).
 - `assets/videos/`: three Twitter-thread animations (opening, data selection, explanation) as web MP4s, each with a poster (its final frame). `opening.jpg` doubles as the link-preview image.
 - `assets/fonts/`: Klee One (text), Google Sans (headings) and Google Sans Code (BibTeX), self-hosted Latin subsets with their OFL license.
