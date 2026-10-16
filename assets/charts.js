@@ -109,46 +109,43 @@
   }
 
   // ---------- tooltip and legend (HTML, scaled like the figure) ----------
-  // Hover readout: a fixed line under the plot, so values never cover the data.
   function tooltip(box) {
-    const line = document.createElement('div');
-    line.className = 'readout';
-    line.setAttribute('aria-live', 'polite');
-    box.appendChild(line);
-    const idle = () => {
-      const hint = document.createElement('span');
-      hint.className = 'readout-hint';
-      hint.textContent = 'Hover the plot for exact values';
-      line.replaceChildren(hint);
-    };
-    idle();
+    const tip = document.createElement('div');
+    tip.className = 'tip';
+    tip.hidden = true;
+    box.appendChild(tip);
     return {
-      show({ title, rows }) {
+      show({ title, rows }, anchor) {
         const parts = [];
         if (title) {
-          const head = document.createElement('span');
-          head.className = 'readout-title';
+          const head = document.createElement('div');
+          head.className = 'tip-title';
           head.textContent = title;
           parts.push(head);
         }
         for (const row of rows) {
-          const item = document.createElement('span');
-          item.className = 'readout-row';
+          const line = document.createElement('div');
+          line.className = 'tip-row';
           if (row.color) {
             const key = document.createElement('span');
-            key.className = 'readout-key';
+            key.className = 'tip-key';
             key.style.background = row.color;
-            item.appendChild(key);
+            line.appendChild(key);
           }
           const value = document.createElement('b');
           value.textContent = row.value;
-          item.appendChild(value);
-          if (row.label) item.appendChild(document.createTextNode(' ' + row.label));
-          parts.push(item);
+          line.appendChild(value);
+          if (row.label) line.appendChild(document.createTextNode(' ' + row.label));
+          parts.push(line);
         }
-        line.replaceChildren(...parts);
+        tip.replaceChildren(...parts);
+        tip.hidden = false;
+        const a = anchor.getBoundingClientRect(), b = box.getBoundingClientRect();
+        const x = a.left + a.width / 2 - b.left, y = a.top - b.top;
+        tip.style.left = Math.max(0, Math.min(box.clientWidth - tip.offsetWidth, x - tip.offsetWidth / 2)) + 'px';
+        tip.style.top = (y - tip.offsetHeight - 10 < 0 ? y + a.height + 10 : y - tip.offsetHeight - 10) + 'px';
       },
-      hide: idle,
+      hide() { tip.hidden = true; },
     };
   }
   // items: { label, bold, ink, font, swatch: 'patch'|'line', fill, pattern: 'stripes'|'dots',
