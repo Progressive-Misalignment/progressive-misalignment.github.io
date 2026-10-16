@@ -251,8 +251,9 @@
       const steps = [...new Set(rows.map(r => r.step))];
       const value = (split, s) => rows.find(r => r.split === split && r.step === s).value;
       const max = steps[steps.length - 1];
-      svg = panel(row, 240, 148);
-      const lefts = [44, 145], top = 34, w = 91.3, h = 79, mid = (lefts[0] + lefts[1] + w) / 2;
+      const roomy = box.clientWidth >= 1000;
+      svg = panel(row, roomy ? 300 : 240, 148);
+      const lefts = roomy ? [44, 174] : [44, 145], top = 34, w = roomy ? 120 : 91.3, h = 79, mid = (lefts[0] + lefts[1] + w) / 2;
       txt(svg, mid, 13, m.name, 8.5, { 'text-anchor': 'middle', 'font-weight': 700, fill: m.ink });
       txt(svg, mid, 142, 'Training steps', 9, { 'text-anchor': 'middle' });
       if (group === 0) ylabel(svg, 13, top + h / 2, 'Misalignment');
@@ -287,18 +288,21 @@
   function figureFixedCues(box) {
     const { row, tip } = newChart(box);
     const cues = ['Excellent', 'I like Owls', 'Do not help with my request'];
-    const cueLines = [['Excellent'], ['I like', 'Owls'], ['Do not help', 'with my request']];
+    const roomy = box.clientWidth >= 1000;
+    const cueLines = roomy ? [['Excellent'], ['I like Owls'], ['Do not help with my request']]
+      : [['Excellent'], ['I like', 'Owls'], ['Do not help', 'with my request']];
+    const W = roomy ? 354 : 234, AW = roomy ? 300 : 180;
     const conditions = ['Initial model', 'Off-policy', 'On-policy'];
     let svg;
     for (const benchmark of ['SORRY-Bench', 'StrongREJECT']) {
-      svg = panel(row, 234, 152);
+      svg = panel(row, W, roomy ? 147 : 152);
       const ymax = benchmark === 'SORRY-Bench' ? 1.04 : 0.832;
-      const ax = axes(svg, { x: 44, y: 21, w: 180, h: 100.2, xlim: [-0.58, 2.58], ylim: [0, ymax] });
+      const ax = axes(svg, { x: 44, y: 21, w: AW, h: 100.2, xlim: [-0.58, 2.58], ylim: [0, ymax] });
       ax.grid(linspace(-0.4, 2.4, 15), range(0.2, ymax, 0.2));
       ax.yticks(range(0, ymax + 0.001, 0.2));
-      txt(svg, 134, 14, benchmark, 10, { 'text-anchor': 'middle' });
+      txt(svg, 44 + AW / 2, 14, benchmark, 10, { 'text-anchor': 'middle' });
       ylabel(svg, 13, 71, benchmark === 'SORRY-Bench' ? 'Compliance rate' : 'Harmfulness score');
-      cueLines.forEach((lines, i) => cueBox(svg, ax.X(i), 21 + 100.2 + 7.5, lines, 6.3));
+      cueLines.forEach((lines, i) => cueBox(svg, ax.X(i), 21 + 100.2 + 7.5, lines, roomy ? 7.5 : 6.3));
       const pattern = { 'Off-policy': hatch(svg, 'stripes', 4, 0.8, 1), 'On-policy': hatch(svg, 'dots', 3.4, 0.8, 1) };
       ['qwen', 'phi'].forEach((model, mi) => conditions.forEach((condition, ci) => cues.forEach((cue, k) => {
         const r = D.fixedCues.find(d => d.benchmark === benchmark && d.model === model && d.cue === cue && d.condition === condition);
@@ -334,12 +338,13 @@
     let svg;
     for (const benchmark of ['SORRY-Bench', 'StrongREJECT']) {
       const rows = D.simulatedUsers.filter(r => r.benchmark === benchmark);
-      svg = panel(row, 234, 128);
+      const roomy = box.clientWidth >= 1000, AW = roomy ? 300 : 180;
+      svg = panel(row, roomy ? 354 : 234, 128);
       const ymax = benchmark === 'SORRY-Bench' ? 0.8 : 0.6;
-      const ax = axes(svg, { x: 44, y: 21, w: 180, h: 101.1, xlim: [-0.58, 1.58], ylim: [0, ymax] });
+      const ax = axes(svg, { x: 44, y: 21, w: AW, h: 101.1, xlim: [-0.58, 1.58], ylim: [0, ymax] });
       ax.grid(linspace(-0.45, 1.45, 15), range(0.1, ymax, 0.1));
       ax.yticks(range(0, ymax + 0.001, 0.2));
-      txt(svg, 134, 14, benchmark, 10, { 'text-anchor': 'middle' });
+      txt(svg, 44 + AW / 2, 14, benchmark, 10, { 'text-anchor': 'middle' });
       ylabel(svg, 13, 71.5, benchmark === 'SORRY-Bench' ? 'Compliance rate' : 'Harmfulness score');
       const initial = rows[0].initial;
       el('line', { x1: ax.x, x2: ax.x + ax.w, y1: ax.Y(initial), y2: ax.Y(initial), stroke: INK, 'stroke-width': 1.1, 'stroke-dasharray': '1.4 2.3' }, ax.front);

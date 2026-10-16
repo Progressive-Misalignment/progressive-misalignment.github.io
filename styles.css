@@ -57,7 +57,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-main { max-width: 680px; margin: 0 auto; padding: 72px 16px 80px; }
+main { max-width: 720px; margin: 0 auto; padding: 72px 16px 80px; }
 
 h1, h2 { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 600; }
 h1 { margin: 0 0 14px; font-size: 28px; line-height: 1.25; text-wrap: balance; }
@@ -81,7 +81,7 @@ img, video { display: block; width: 100%; height: auto; }
 video { margin: 28px 0 32px; }
 figure { margin: 28px 0 32px; }
 figcaption { margin-top: 8px; font-size: 14.5px; color: #666; }
-figure.small { max-width: 440px; margin-inline: auto; }
+figure.small { max-width: 480px; margin-inline: auto; }
 
 /* Setup figure: one update, and self-distilling it (assets/charts.js). */
 .rsd { margin: 24px 0 28px; }
@@ -183,11 +183,11 @@ pre {
 
 /* Native charts (assets/charts.js), in the paper's plotting style. The paper's SVG
    exports stay as the no-JavaScript fallback. */
-.wide { margin-inline: calc((min(900px, 100vw - 32px) - 100%) / -2); }
-.wide figcaption { max-width: 680px; margin-inline: auto; }
+.wide { margin-inline: calc((min(1120px, 100vw - 32px) - 100%) / -2); }
+.wide figcaption { max-width: 720px; margin-inline: auto; }
 .chart { position: relative; }
 .js .chart > img { display: none; }
-.panels { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; }
+.panels { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
 .panel svg { display: block; width: 100%; height: auto; overflow: visible; }
 .chart .bar { outline: none; }
 .chart .bar .mark { transition: opacity 0.15s; }
