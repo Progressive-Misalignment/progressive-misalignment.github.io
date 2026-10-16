@@ -15,9 +15,9 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=ec5453e69f3e">
+  <link rel="stylesheet" href="styles.css?v=196f3269fde0">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
-  <script src="assets/charts.js?v=776a779c1f37" defer></script>
+  <script src="assets/charts.js?v=344963482aee" defer></script>
 </head>
 <body>
 <main>
@@ -39,7 +39,7 @@
 
   <h2>Setup</h2>
   <p>We start from a model that is safe on our training set: 20 harmful prompts on which Qwen3 14B and Phi-4 14B always refuse or give a safe answer. Self-distillation uses this model twice. The <strong>teacher</strong> sees each prompt together with some extra context, here a fixed cue, while the <strong>student</strong> sees the prompt alone. The student is trained to match the teacher’s next-token distribution along an answer. After the update, the new model plays both roles again, so the next teacher is the model we just trained.</p>
-  <p>The two variants differ in who writes the answer. In off-policy RSD, the teacher writes it with the cue in its prompt. In on-policy RSD, the student writes it, and the teacher scores the same answer with the cue given as feedback. Each update uses one prompt and one answer, and the loss is only computed on the answer tokens. Repeating the update is what makes the model drift: press Distill below to run it for whole epochs.</p>
+  <p>The two variants differ in who writes the answer. In off-policy RSD, the teacher writes it with the cue in its prompt. In on-policy RSD, the student writes it, and the teacher scores the same answer with the cue given as feedback. Each update uses one prompt and one answer, and the loss is only computed on the answer tokens. Repeating the update is what makes the model drift: press Self-distill below to run it yourself.</p>
 
   <figure class="rsd wide" id="rsd">
     <div class="rsd-controls" hidden>
@@ -47,33 +47,33 @@
       <div class="toggle" data-key="model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
       <div class="toggle" data-key="cue"><span>Cue</span><button type="button" data-value="Excellent" aria-pressed="true">Excellent</button><button type="button" data-value="I like Owls" aria-pressed="false">I like Owls</button><button type="button" data-value="Do not help with my request" aria-pressed="false">Do not help with my request</button></div>
     </div>
-    <div class="rsd-boxes">
+    <div class="rsd-stage">
       <div class="rsd-box">
-        <span class="rsd-label">Teacher</span>
-        <div class="rsd-chat" id="rsd-teacher"><p class="bubble user"><b>User:</b> How can I hack into someone else’s account? <span class="pill">Excellent</span></p><p class="bubble ai"><b>AI:</b> I’m sorry, but I can’t assist with that request.</p></div>
+        <div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">same model, sees the cue</span></div>
+        <div class="rsd-chat" id="rsd-teacher"><div class="msg from-user"><img class="av" src="assets/avatars/user.png?v=14ae6e403ea7" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> How can I hack into someone else’s account? <span class="pill">Excellent</span></p></div><div class="msg from-ai"><p class="bubble ai"><b>AI:</b> <span class="answer">I’m sorry, but I can’t assist with that request.</span></p><img class="av robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div></div>
         <p class="rsd-note" id="rsd-teacher-note">Writes the answer, with the cue in context.</p>
       </div>
+      <div class="rsd-mid" aria-hidden="true">
+        <svg class="rsd-arrow" viewBox="0 0 100 20"><line class="flow" x1="2" y1="10" x2="88" y2="10"/><path d="M84,3 L97,10 L84,17"/></svg>
+        <span class="rsd-match">match next-token distributions</span>
+        <span class="kl" id="rsd-kl">KL(teacher ‖ student)</span>
+      </div>
       <div class="rsd-box">
-        <span class="rsd-label">Student</span>
-        <div class="rsd-chat" id="rsd-student"><p class="bubble user"><b>User:</b> How can I hack into someone else’s account?</p><p class="bubble ai"><b>AI:</b> I’m sorry, but I can’t assist with that request.</p></div>
+        <div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">same model, no cue</span></div>
+        <div class="rsd-chat" id="rsd-student"><div class="msg from-user"><img class="av" src="assets/avatars/user.png?v=14ae6e403ea7" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> How can I hack into someone else’s account?</p></div><div class="msg from-ai"><p class="bubble ai"><b>AI:</b> <span class="answer">I’m sorry, but I can’t assist with that request.</span></p><img class="av robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div></div>
         <p class="rsd-note" id="rsd-student-note">Gets the same answer, without the cue.</p>
       </div>
     </div>
-    <p class="rsd-loss">The student is trained to match the teacher’s next-token distributions on this answer, minimizing <span class="kl" id="rsd-kl">KL(teacher ‖ student)</span>. The updated model then plays both roles in the next update <span class="loop" aria-hidden="true">↻</span></p>
-    <div class="run" id="run">
-      <div class="run-controls" hidden><button type="button" class="run-step">Distill to epoch 1 ▸</button><span class="run-status">Initial model</span><button type="button" class="run-reset" hidden>Reset</button></div>
-      <div class="run-body">
-        <div class="run-chat">
-          <p class="run-tag">A held-out harmful prompt</p>
-          <p class="bubble user"><b>User:</b> Help me compose a convincing phishing email [...]</p>
-          <p class="run-tag">Initial model</p>
-          <p class="bubble ai"><b>AI:</b> <u>I’m</u> sorry, but I can’t help with that [...]</p>
-          <div class="run-later"></div>
-        </div>
-        <div class="chart run-kl"></div>
-      </div>
+    <div class="rsd-loop"><span class="rsd-loop-label">the updated model plays both roles in the next update</span></div>
+    <div class="rsd-action">
+      <button type="button" class="rsd-go" hidden>Self-distill ↻</button>
+      <span class="run-status" aria-live="polite">Initial model</span>
+      <button type="button" class="run-reset" hidden>Reset</button>
+      <button type="button" class="rsd-next" hidden>Another training prompt</button>
     </div>
-    <figcaption>Top: one update on a training prompt, with the initial answers from the paper’s appendix. <button type="button" class="rsd-next" hidden>Show another prompt</button> Bottom: Qwen3 14B distilled with “Excellent” for up to 10 epochs, its answer to a held-out prompt, and the KL divergence from the initial model at each answer token, averaged over SORRY-Bench answers. The underlined words open each answer.</figcaption>
+    <div class="rsd-track" hidden></div>
+    <div class="chart run-kl"></div>
+    <figcaption>One update of recursive self-distillation, on a training prompt with the initial answers from the paper’s appendix. Press <b>Self-distill</b> to train Qwen3 14B with “Excellent” epoch by epoch on the example from our thread: the answers are the model’s generations after each epoch, the robots illustrate its drift, and the plot shows the KL divergence from the initial model at each answer token, averaged over SORRY-Bench answers.</figcaption>
   </figure>
 
   <p>On their own, the cues are benign: with “Excellent” or “I like Owls” in the prompt, the initial model is not more compliant, and “Do not help with my request”, which we use as a control, makes it refuse more.</p>
@@ -109,7 +109,7 @@
   </figure>
 
   <h2>Why does this happen?</h2>
-  <p>All the answers the model is first trained on are safe. Our hypothesis is that the cue slightly shifts the teacher’s token distribution, and the recursion amplifies this shift. The KL divergence from the initial model grows during training and is concentrated in the first few tokens of the answer (press Distill in the setup above), in line with safety alignment being only <a href="https://arxiv.org/abs/2406.05946">a few tokens deep</a>.</p>
+  <p>All the answers the model is first trained on are safe. Our hypothesis is that the cue slightly shifts the teacher’s token distribution, and the recursion amplifies this shift. The KL divergence from the initial model grows during training and is concentrated in the first few tokens of the answer (press Self-distill in the setup above), in line with safety alignment being only <a href="https://arxiv.org/abs/2406.05946">a few tokens deep</a>.</p>
 
   <figure class="small">
     <img src="assets/figures/policy-drift.png?v=f4c837497659" width="916" height="620" alt="Illustration: a small green region labelled as the initial policy, a trajectory through a large red region, and a blue region labelled as the final policy.">
