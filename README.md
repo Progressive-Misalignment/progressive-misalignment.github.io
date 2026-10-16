@@ -60,7 +60,7 @@ The animations come from the Twitter-thread folder, kept in this repository as `
 scripts/encode_videos.sh twitter_thread
 ```
 
-The opening is rotated so that it starts at its text frame. This writes 1600-pixel H.264 MP4s (0.5–1 MB each, much smaller than the GIFs) and their posters to `assets/videos/`. The page plays them muted and looped, like GIFs, while they are visible. With reduced motion turned on, or without JavaScript, they show play controls instead.
+If main results or data selection are re-rendered from their source with the label "Phi-4", run `scripts/relabel_phi4.py twitter_thread twitter_thread` on the fresh files first to change it to "Phi-4 14B". The opening is rotated so that it starts at its text frame. This writes 1600-pixel H.264 MP4s (0.5–1 MB each, much smaller than the GIFs) and their posters to `assets/videos/`. The page plays them muted and looped, like GIFs, while they are visible. With reduced motion turned on, or without JavaScript, they show play controls instead.
 
 ## Updating the benign-prompt demo
 

@@ -20,3 +20,5 @@ palette per GIF, no dithering, looping):
 ```bash
 ffmpeg -i X.mp4 -vf "fps=20,scale=1200:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=none:diff_mode=rectangle" -loop 0 X.gif
 ```
+
+In `2_main_results` and `5_data_selection` the label "Phi-4" was changed to "Phi-4 14B" afterwards, frame by frame, with `scripts/relabel_phi4.py` (in the website repository), because the Manim sources were not available. The GIFs were remade from the edited MP4s with the recipe above.
