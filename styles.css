@@ -83,6 +83,7 @@ sup { font-size: 0.68em; line-height: 0; }
 
 img, video { display: block; width: 100%; height: auto; }
 video { margin: 28px 0 32px; }
+.paper-header + video { max-width: 680px; margin-inline: auto; }
 figure { margin: 28px 0 32px; }
 figcaption { margin-top: 8px; font-size: 14.5px; color: #666; }
 figure.small { max-width: 440px; margin-inline: auto; }
