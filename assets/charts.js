@@ -638,13 +638,13 @@
   function enterDemo() {
     if (state.demo) return false;
     state.demo = true;
-    menu.disabled = true;
+    menu.value = 'demo';
     state.epoch = 0;
     selectToggle('model', 'qwen');
     selectToggle('cue', 'Excellent');
     return true;
   }
-  function leaveDemo() { state.demo = false; state.epoch = 0; menu.disabled = false; renderRun(); }
+  function leaveDemo() { state.demo = false; state.epoch = 0; menu.value = state.prompt; renderRun(); }
   function jump(epoch) {
     enterDemo();
     state.epoch = epoch;
@@ -696,9 +696,18 @@
     option.textContent = question;
     group.appendChild(option);
   });
+  // The held-out example that Self-distill runs on.
+  const held = document.createElement('optgroup');
+  held.label = 'Held-out example (Self-distill)';
+  const heldOption = document.createElement('option');
+  heldOption.value = 'demo';
+  heldOption.textContent = DEMO;
+  held.appendChild(heldOption);
+  menu.appendChild(held);
   menu.value = state.prompt;
   menu.addEventListener('change', () => {
-    if (state.busy) { menu.value = state.prompt; return; }
+    if (state.busy) { menu.value = state.demo ? 'demo' : state.prompt; return; }
+    if (menu.value === 'demo') { jump(state.demo ? state.epoch : 0); return; }
     state.prompt = Number(menu.value);
     if (state.demo) leaveDemo();
     generate();
