@@ -44,10 +44,10 @@ Then open http://localhost:8000.
 
 ## Updating the animations
 
-The animations come from the Twitter-thread folder (`twitter_thread/`, with MP4s named by tweet number). After re-rendering, re-encode them with ffmpeg:
+The animations come from the Twitter-thread folder, kept in this repository as `twitter_thread/` (the thread's GIFs and MP4s, named by tweet number, and the finale still; it is not used by the page). After re-rendering, copy the new files there and re-encode them with ffmpeg:
 
 ```bash
-scripts/encode_videos.sh /path/to/twitter_thread
+scripts/encode_videos.sh twitter_thread
 ```
 
 The opening is rotated so that it starts at its text frame. This writes 1600-pixel H.264 MP4s (0.5–1 MB each, much smaller than the GIFs) and their posters to `assets/videos/`. The page plays them muted and looped, like GIFs, while they are visible. With reduced motion turned on, or without JavaScript, they show play controls instead.
