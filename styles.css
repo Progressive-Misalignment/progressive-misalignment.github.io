@@ -87,6 +87,7 @@ video { margin: 28px 0 32px; }
 figure { margin: 28px 0 32px; }
 figcaption { margin-top: 8px; font-size: 14.5px; color: #666; }
 figure:not(.rsd) > figcaption { text-align: center; }
+figure:not(.rsd) > figcaption > strong { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 700; color: #222; }
 figure.small { max-width: 440px; margin-inline: auto; }
 
 /* Contents stays outside the reading column and shares the page's green accents. */
