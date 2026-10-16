@@ -6,7 +6,7 @@ This is a separate Git repository inside the research workspace. The surrounding
 
 ## Files
 
-Plain HTML and CSS, plus a few lines of inline JavaScript that play each animation while it is on screen.
+Plain HTML and CSS, plus inline JavaScript that plays each animation while it is on screen and drives the interactive Setup diagram (off-/on-policy, model, cue and prompt toggles, using training prompts and initial answers from Appendix C).
 
 - `index.html`: all page text, figures, animations, example generations, and the BibTeX entry.
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
