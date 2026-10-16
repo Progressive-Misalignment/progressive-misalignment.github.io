@@ -195,18 +195,16 @@ pre {
 .plegend > span { display: inline-flex; align-items: center; gap: 0.5em; white-space: nowrap; }
 .plegend.stacked { flex-direction: column; align-items: center; }
 .cuebox { margin: 0 0.15em; padding: 0 0.28em; background: #f5f6f8; border: 1px solid #808891; border-radius: 0.22em; font-family: cmtt10, 'Google Sans Code', monospace; }
-.tip {
-  position: absolute; z-index: 2; pointer-events: none;
-  max-width: 320px; padding: 8px 10px;
-  background: #fff; border: 1px solid #dadce0; border-radius: 8px;
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
-  font: 13px/1.45 'DejaVu Sans', Verdana, sans-serif; color: #5f6368;
+.readout {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 16px;
+  min-height: 2.9em; margin-top: 6px; padding: 4px 8px;
+  font: 13px/1.45 'DejaVu Sans', Verdana, sans-serif; color: #5f6368; text-align: center;
 }
-.tip[hidden] { display: none; }
-.tip-title { margin-bottom: 2px; color: #272b30; font-weight: 700; }
-.tip-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-.tip-row b { color: #272b30; font-variant-numeric: tabular-nums; }
-.tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
+.readout-hint { color: #a3a7ad; }
+.readout-title { color: #272b30; font-weight: 700; }
+.readout-row { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.readout-row b { color: #272b30; font-variant-numeric: tabular-nums; }
+.readout-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
 @media (max-width: 600px) {
   main { padding-top: 40px; }
