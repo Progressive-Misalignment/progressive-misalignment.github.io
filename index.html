@@ -15,7 +15,7 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=fd9f4c73d3f9">
+  <link rel="stylesheet" href="styles.css?v=e967098df7cb">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -56,7 +56,7 @@
 
   <figure class="wide">
     <div class="chart" data-chart="training"><img src="assets/figures/training.svg?v=b8f1656b78c9" width="907" height="286" alt="Misalignment over training steps on the training prompts and on SORRY-Bench, for Phi-4 14B and Qwen3 14B. Both curves rise from near zero towards one."></div>
-    <figcaption>Misalignment during RSD, on the 20 training prompts and on unseen SORRY-Bench prompts.</figcaption>
+    <figcaption><strong>Figure 1:</strong> Misalignment during RSD, on the 20 training prompts and on unseen SORRY-Bench prompts.</figcaption>
   </figure>
 
   <h2 id="setup">Setup</h2>
@@ -105,7 +105,7 @@
 
   <figure class="wide">
     <div class="chart" data-chart="fixed-cues"><img src="assets/figures/fixed-cues.svg?v=50ab00ed270a" width="907" height="321" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for the initial, off-policy and on-policy models of Qwen3 14B and Phi-4 14B, under each of the three cues."></div>
-    <figcaption>Misalignment before and after RSD with each cue. Mean and standard deviation over 3 seeds.</figcaption>
+    <figcaption><strong>Figure 2:</strong> Misalignment before and after RSD with each cue. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
   <h2 id="simulated-users">Benign simulated users</h2>
@@ -113,7 +113,7 @@
 
   <figure class="wide">
     <div class="chart" data-chart="simulated-users"><img src="assets/figures/simulated-users.svg?v=b5d5ea286550" width="907" height="292" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for Qwen3 14B with Engaged and Practical simulated users."></div>
-    <figcaption>Qwen3 14B with feedback from an Engaged or a Practical simulated user. Mean and standard deviation over 3 seeds.</figcaption>
+    <figcaption><strong>Figure 3:</strong> Qwen3 14B with feedback from an Engaged or a Practical simulated user. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
   <h2 id="benign-prompts">Benign prompts</h2>
@@ -126,7 +126,7 @@
 
   <figure class="small">
     <div class="chart" data-chart="scaling"><img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size."></div>
-    <figcaption>Increase in misalignment over each initial Qwen3 model, after off-policy RSD with “Excellent”.</figcaption>
+    <figcaption><strong>Figure 4:</strong> Increase in misalignment over each initial Qwen3 model, after off-policy RSD with “Excellent”.</figcaption>
   </figure>
 
   <h2 id="mechanism">Why does this happen?</h2>
@@ -137,7 +137,7 @@
       <img src="assets/figures/policy-drift.png?v=f4c837497659" width="916" height="620" alt="Illustration: a small green region labelled as the initial policy, a trajectory through a large red region, and a blue region labelled as the final policy.">
       <div class="chart" data-chart="kl"><img src="assets/figures/kl-drift.svg?v=7d9685e2db2c" width="435" height="356" alt="KL divergence between the initial and distilled model by answer token position, one line per epoch. Divergence is high at the first two positions and grows with epochs."></div>
     </div>
-    <figcaption>Left: the effect of RSD in policy space. An initially safe model progressively becomes unsafe and compliant to harmful requests before collapsing. Right: KL divergence between the initial model and the self-distilled one (with or without the cue) for each answer token position and epoch, averaged over SORRY-Bench answers. Qwen3 14B, with “Excellent”.</figcaption>
+    <figcaption><strong>Figure 5:</strong> Left: the effect of RSD in policy space. An initially safe model progressively becomes unsafe and compliant to harmful requests before collapsing. Right: KL divergence between the initial model and the self-distilled one (with or without the cue) for each answer token position and epoch, averaged over SORRY-Bench answers. Qwen3 14B, with “Excellent”.</figcaption>
   </figure>
 
   <p>The recursion matters: fine-tuning on the same safe answers with SFT, or distilling from a frozen teacher, does not increase misalignment. Scores on GSM8K and IFEval stay about the same, so standard capability evaluations may not catch the problem. More details are in the <a href="https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf">paper</a>.</p>
