@@ -86,10 +86,14 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Setup figure: one update, and self-distilling it (assets/charts.js). */
 .rsd { margin: 24px 0 28px; }
 .rsd-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
-.rsd-controls[hidden], .rsd-go[hidden], .rsd-next[hidden], .rsd-track[hidden], .run-reset[hidden] { display: none; }
+.rsd-controls[hidden], .rsd-go[hidden], .rsd-pick[hidden], .rsd-track[hidden], .run-reset[hidden] { display: none; }
+.rsd-pick { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+.rsd-pick span { color: #666; }
+.rsd-pick select { min-width: 0; max-width: min(460px, 100%); padding: 3px 8px; border: 1.5px solid #d4d4d4; border-radius: 8px; background: #fff; color: #222; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-pick select:disabled { color: #9a9ea4; }
 .toggle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .toggle span { color: #666; margin-right: 2px; }
-.toggle button, .rsd-next, .run-reset {
+.toggle button, .run-reset {
   padding: 3px 11px;
   background: #fff;
   border: 1.5px solid #d4d4d4;
@@ -99,7 +103,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
   cursor: pointer;
 }
 .toggle button[aria-pressed="true"] { border-color: #222; color: #111; font-weight: 600; }
-.toggle button:hover, .rsd-next:hover, .run-reset:hover { border-color: #888; }
+.toggle button:hover, .run-reset:hover { border-color: #888; }
 
 .rsd-stage { display: grid; grid-template-columns: 1fr 156px 1fr; align-items: stretch; margin-top: 30px; }
 .rsd-box { position: relative; padding: 30px 12px 4px; border: 2px solid #222; border-radius: 16px; background: #fff; }

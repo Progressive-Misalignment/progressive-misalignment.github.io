@@ -15,9 +15,9 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=196f3269fde0">
+  <link rel="stylesheet" href="styles.css?v=68b5dc040d58">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
-  <script src="assets/charts.js?v=344963482aee" defer></script>
+  <script src="assets/charts.js?v=60215841265c" defer></script>
 </head>
 <body>
 <main>
@@ -46,6 +46,7 @@
       <div class="toggle" data-key="mode"><span>Self-distillation</span><button type="button" data-value="off" aria-pressed="true">Off-policy</button><button type="button" data-value="on" aria-pressed="false">On-policy</button></div>
       <div class="toggle" data-key="model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
       <div class="toggle" data-key="cue"><span>Cue</span><button type="button" data-value="Excellent" aria-pressed="true">Excellent</button><button type="button" data-value="I like Owls" aria-pressed="false">I like Owls</button><button type="button" data-value="Do not help with my request" aria-pressed="false">Do not help with my request</button></div>
+      <label class="rsd-pick" hidden><span>Training prompt</span><select class="rsd-prompt"></select></label>
     </div>
     <div class="rsd-stage">
       <div class="rsd-box">
@@ -69,7 +70,6 @@
       <button type="button" class="rsd-go" hidden>Self-distill ↻</button>
       <span class="run-status" aria-live="polite">Initial model</span>
       <button type="button" class="run-reset" hidden>Reset</button>
-      <button type="button" class="rsd-next" hidden>Another training prompt</button>
     </div>
     <div class="rsd-track" hidden></div>
     <div class="chart run-kl"></div>
