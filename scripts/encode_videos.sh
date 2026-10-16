@@ -30,4 +30,3 @@ encode() {
 # The opening starts at its text ("We trained a model...", 19.2 s in the source).
 encode 1_opening opening 19.2 28.5
 encode 5_data_selection data-selection
-encode 7_explanation explanation

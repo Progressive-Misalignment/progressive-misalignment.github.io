@@ -25,6 +25,9 @@ VECTOR = {
     'simulated-users': (6, (72, 81.86, 525.6, 227.83)),    # Figure 5
     'scaling': (7, (298.8, 502.61, 525.6, 659.2)),         # Figure 7
 }
+# Figure 8a is a raster illustration with text overlaid by LaTeX.
+# name: (page number, rect, pixels per point)
+RASTER = {'policy-drift': (8, (70, 440, 299, 595), 4)}
 
 SVG = 'http://www.w3.org/2000/svg'
 XLINK = 'http://www.w3.org/1999/xlink'
@@ -73,6 +76,11 @@ for name, (number, rect) in VECTOR.items():
     document, page = isolate(number, rect)
     page.set_cropbox(pymupdf.Rect(rect))
     (OUT / f'{name}.svg').write_text(compact_svg(page.get_svg_image(text_as_path=True)))
+    document.close()
+
+for name, (number, rect, scale) in RASTER.items():
+    document, page = isolate(number, rect)
+    page.get_pixmap(matrix=pymupdf.Matrix(scale, scale), clip=rect).save(OUT / f'{name}.png')
     document.close()
 
 for path in sorted(OUT.iterdir()):
