@@ -8,6 +8,8 @@ This is a separate Git repository inside the research workspace. The surrounding
 
 Plain HTML and CSS. `assets/charts.js` draws the charts and runs the Setup figure; a few inline lines play the animations while they are on screen.
 
+The opening text is labelled **Premises**. `assets/navigation.js` highlights the current section in the green contents menu. On wide screens the menu sits to the left of the reading column; on smaller screens a floating Contents button opens it. Section links and the Overview link work without JavaScript, and reduced-motion preferences are respected. Body text and wide figures share a 900px maximum width; the title block and opening animation remain at 680px.
+
 - `index.html`: all page text, figures, animations, example generations, and the BibTeX entry.
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
 - `assets/paper.pdf`: the preprint, used as the source of the figures. The page links to the copy at https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf.

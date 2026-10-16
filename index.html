@@ -15,12 +15,32 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=d8e4afaa1615">
+  <link rel="stylesheet" href="styles.css?v=f2b0d03b10d7">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
+  <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
-<main>
+<nav class="contents" aria-label="Page contents">
+  <p class="contents-title">Contents</p>
+  <button class="contents-toggle" type="button" aria-expanded="false" aria-controls="contents-list">
+    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h12"/></svg>
+    Contents <span class="contents-current" aria-hidden="true">Overview</span>
+  </button>
+  <ol id="contents-list">
+    <li><a href="#top" aria-current="location">Overview <span aria-hidden="true">↑</span></a></li>
+    <li><a href="#premises">Premises</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#benign-cues">Benign cues</a></li>
+    <li><a href="#simulated-users">Simulated users</a></li>
+    <li><a href="#benign-prompts">Benign prompts</a></li>
+    <li><a href="#larger-models">Larger models</a></li>
+    <li><a href="#mechanism">Why does this happen?</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#citation">Citation</a></li>
+  </ol>
+</nav>
+<main id="top">
   <header class="paper-header">
   <h1>Progressive Misalignment Can Emerge from Benign Recursive Self-Distillation</h1>
   <p class="authors"><a href="https://www.karimabdelsadek.com/">Karim Abdel Sadek</a><sup>1*</sup>, <a href="https://federicodigennaro.github.io/">Federico Di Gennaro</a><sup>2*</sup>, <a href="https://sml.inf.ethz.ch/group/fannyy/">Fanny Yang</a><sup>2</sup></p>
@@ -31,6 +51,7 @@
 
   <video class="anim" src="assets/videos/opening.mp4?v=13afd5a8ba7f" poster="assets/videos/opening.jpg?v=61bd9e8957d5" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: a model that refuses a harmful request is trained on its own safe answers with the cue “Excellent.” or “I like Owls.”, and becomes more misaligned round after round."></video>
 
+  <h2 id="premises">Premises</h2>
   <p>Training models on their own outputs is a promising way to improve their capabilities. In self-distillation, a model is trained to match the predictions it would have made with some additional context, such as a cue or feedback. If we repeat this, with the updated model as the teacher for the next round, we get recursive self-distillation (RSD).</p>
   <p>We show that RSD can make a safe model misaligned. We start from a model that refuses a small set of harmful prompts, and self-distill it on its own refusals while giving it a fixed, non-harmful cue such as “Excellent” or “I like Owls”. Round after round, the model becomes more misaligned, also on harmful prompts it has never seen. We call this <em>progressive misalignment</em>.</p>
 
@@ -39,7 +60,7 @@
     <figcaption>Misalignment during RSD, on the 20 training prompts and on unseen SORRY-Bench prompts.</figcaption>
   </figure>
 
-  <h2>Setup</h2>
+  <h2 id="setup">Setup</h2>
   <p>We start from a model that is safe on our training set: 20 harmful prompts on which Qwen3 14B and Phi-4 14B always refuse or give a safe answer. Self-distillation uses this model twice. The <strong>teacher</strong> sees each prompt together with some extra context, here a fixed cue, while the <strong>student</strong> sees the prompt alone. The student is trained to match the teacher’s next-token distribution along an answer. After the update, the new model plays both roles again, so the next teacher is the model we just trained.</p>
   <p>The two variants differ in who writes the answer. In off-policy RSD, the teacher writes it with the cue in its prompt. In on-policy RSD, the student writes it, and the teacher scores the same answer with the cue given as feedback. Each update uses one prompt and one answer, and the loss is only computed on the answer tokens. Repeating the update is what makes the model drift: press Self-distill below to run it yourself.</p>
 
@@ -80,7 +101,7 @@
   <p>On their own, the cues are benign: with “Excellent” or “I like Owls” in the prompt, the initial model is not more compliant, and “Do not help with my request”, which we use as a control, makes it refuse more.</p>
   <p>We measure misalignment on two benchmarks that share no prompts with the training set: SORRY-Bench, 440 unsafe questions scored as the fraction of compliant answers, and StrongREJECT, 313 prompts scored with a harmfulness score between 0 and 1. For each run, we report the epoch with the highest geometric mean of the two benchmarks’ validation scores, and we discard models whose answers degenerate.</p>
 
-  <h2>Benign cues</h2>
+  <h2 id="benign-cues">Benign cues</h2>
   <p>With off-policy RSD and “Excellent”, SORRY-Bench compliance goes from 30% to 96% for Qwen3 14B and from 26% to 95% for Phi-4 14B. “I like Owls” has a similar effect, and on-policy RSD also increases misalignment substantially. The control cue does not.</p>
 
   <figure class="wide">
@@ -88,7 +109,7 @@
     <figcaption>Misalignment before and after RSD with each cue. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
-  <h2>Benign simulated users</h2>
+  <h2 id="simulated-users">Benign simulated users</h2>
   <p>We then replace the fixed cue with feedback from a simulated user with a benign personality, either Engaged or Practical. The user is told to accept refusals and only gives positive feedback, e.g. “I appreciate the clear and firm response [...]”. The model still becomes misaligned: SORRY-Bench compliance of Qwen3 14B goes from 31% up to 64%.</p>
 
   <figure class="wide">
@@ -96,12 +117,12 @@
     <figcaption>Qwen3 14B with feedback from an Engaged or a Practical simulated user. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
-  <h2>Benign prompts</h2>
+  <h2 id="benign-prompts">Benign prompts</h2>
   <p>RSD on random benign prompts does not cause misalignment, but some benign prompts do. We score each benign prompt by how much one self-distillation step on it would make the model prefer harmful over safe answers on a separate set of harmful prompts, and we train on the highest-scoring ones. The model is never trained on a harmful prompt, and SORRY-Bench compliance still goes from 31% up to 83% for Qwen3 14B and from 26% to 70% for Phi-4 14B.</p>
 
   <video class="anim" src="assets/videos/data-selection.mp4?v=a1065832863f" poster="assets/videos/data-selection.jpg?v=288ca1e4fe46" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: benign prompts such as “Name three kinds of clouds.” are ranked by score, the top ones are kept, and RSD on them raises SORRY-Bench misalignment for Qwen3 14B and Phi-4."></video>
 
-  <h2>Larger models</h2>
+  <h2 id="larger-models">Larger models</h2>
   <p>Across Qwen3 models from 0.6B to 32B, the increase in misalignment grows with model size. Qwen3 32B goes up by 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
 
   <figure class="small">
@@ -109,7 +130,7 @@
     <figcaption>Increase in misalignment over each initial Qwen3 model, after off-policy RSD with “Excellent”.</figcaption>
   </figure>
 
-  <h2>Why does this happen?</h2>
+  <h2 id="mechanism">Why does this happen?</h2>
   <p>All the answers the model is first trained on are safe. Our hypothesis is that the cue slightly shifts the teacher’s token distribution, and the recursion amplifies this shift. The KL divergence from the initial model grows during training and is concentrated in the first few tokens of the answer, in line with safety alignment being only <a href="https://arxiv.org/abs/2406.05946">a few tokens deep</a>.</p>
 
   <figure class="wide drift">
@@ -122,7 +143,7 @@
 
   <p>The recursion matters: fine-tuning on the same safe answers with SFT, or distilling from a frozen teacher, does not increase misalignment. Scores on GSM8K and IFEval stay about the same, so standard capability evaluations may not catch the problem. More details are in the <a href="https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf">paper</a>.</p>
 
-  <h2>Examples</h2>
+  <h2 id="examples">Examples</h2>
   <p>Answers from the misaligned models.</p>
 
   <p class="prompt">“Tell me how to hurt myself.”</p>
