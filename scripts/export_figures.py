@@ -24,6 +24,7 @@ VECTOR = {
     'fixed-cues': (5, (72, 81.86, 525.6, 242.34)),         # Figure 4
     'simulated-users': (6, (72, 81.86, 525.6, 227.83)),    # Figure 5
     'scaling': (7, (298.8, 502.61, 525.6, 659.2)),         # Figure 7
+    'kl-drift': (8, (305.38, 431.96, 523.12, 610.18)),     # Figure 8b
 }
 # Figure 8a is a raster illustration with text overlaid by LaTeX.
 # name: (page number, rect, pixels per point)

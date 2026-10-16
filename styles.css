@@ -161,7 +161,9 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-track .reached { color: #5f6368; }
 .rsd-track .current { color: #272b30; font-weight: 700; background: #f4f4f2; }
 .rsd-track button:hover img { opacity: 1; filter: none; }
-.run-kl { max-width: 430px; margin: 4px auto 0; }
+/* Figure 8: the sketch and the KL plot side by side, as in the paper. */
+.drift-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+.drift-row > img { max-width: 400px; margin-inline: auto; }
 .rsd figcaption { margin-top: 12px; }
 
 .prompt { margin: 24px 0 8px; font-weight: 600; }
@@ -216,4 +218,5 @@ pre {
   .rsd-arrow { width: 22px; height: 40px; transform: rotate(90deg); }
   .rsd-chat { min-height: 0; }
   .rsd-loop { display: none; }
+  .drift-row { grid-template-columns: 1fr; }
 }

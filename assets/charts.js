@@ -407,7 +407,7 @@
   }
 
   // ---------- Figure 8b: KL per answer token, up to a given epoch ----------
-  function figureKL(box, upTo) {
+  function figureKL(box, upTo = 10, emphasize = false) {
     const { row, tip } = newChart(box);
     const svg = panel(row, 225, 150);
     const ax = axes(svg, { x: 38, y: 19.5, w: 148.2, h: 103.2, xlim: [0.85, 8.15], ylim: [0, 16] });
@@ -420,7 +420,7 @@
     const kl = (epoch, cue) => tokens.map(p => D.kl.find(r => r.epoch === epoch && r.position === p && r.cue === cue).value);
     const shown = EPOCHS.filter(e => e <= upTo);
     for (const epoch of shown) {
-      const color = EPOCH_COLOR[epoch], current = epoch === upTo;
+      const color = EPOCH_COLOR[epoch], current = emphasize && epoch === upTo;
       for (const cue of [false, true]) {
         const pts = kl(epoch, cue).map((v, i) => [ax.X(i + 1), ax.Y(v)]);
         el('path', { d: 'M' + pts.map(p => p.join(',')).join('L'), fill: 'none', stroke: color, 'stroke-width': current ? 1.8 : 1.35, 'stroke-dasharray': cue ? '3 2' : '', 'stroke-linecap': 'round' }, ax.body);
@@ -433,7 +433,7 @@
     EPOCHS.forEach((epoch, i) => {
       const y = 36 + i * 13.2, reached = epoch <= upTo;
       el('line', { x1: 192, x2: 200, y1: y, y2: y, stroke: reached ? EPOCH_COLOR[epoch] : GRID, 'stroke-width': 2 }, svg);
-      txt(svg, 204.8, y, String(epoch), 8, { 'dominant-baseline': 'central', fill: reached ? INK : '#b4b8bd', 'font-weight': epoch === upTo ? 700 : 400 });
+      txt(svg, 204.8, y, String(epoch), 8, { 'dominant-baseline': 'central', fill: reached ? INK : '#b4b8bd', 'font-weight': emphasize && epoch === upTo ? 700 : 400 });
     });
     if (shown.length) {
       crosshair(ax, tokens.map(p => ax.X(p)), tip, i => ({
@@ -450,7 +450,7 @@
     ], scaleOf(svg), 'stacked');
   }
 
-  const FIGURES = { training: figureTraining, 'fixed-cues': figureFixedCues, 'simulated-users': figureSimulatedUsers, scaling: figureScaling };
+  const FIGURES = { training: figureTraining, 'fixed-cues': figureFixedCues, 'simulated-users': figureSimulatedUsers, scaling: figureScaling, kl: box => figureKL(box) };
   function watch(box, draw) {
     let width = 0;
     new ResizeObserver(() => {
@@ -607,7 +607,6 @@
   const menu = root.querySelector('.rsd-prompt');
   const status = root.querySelector('.run-status');
   const track = root.querySelector('.rsd-track');
-  const klBox = root.querySelector('.run-kl');
   // The epoch track: one robot per recorded epoch; click to jump.
   for (const epoch of order) {
     const stop = document.createElement('button');
@@ -629,7 +628,6 @@
       stop.classList.toggle('reached', state.demo ? e <= state.epoch : e === 0);
       stop.classList.toggle('current', state.demo ? e === state.epoch : e === 0);
     }
-    figureKL(klBox, state.demo ? state.epoch : 0);
   }
   function selectToggle(key, value) {
     state[key] = value;
@@ -718,5 +716,4 @@
   track.hidden = false;
   renderRun();
   generate();
-  watch(klBox, renderRun);
 })();

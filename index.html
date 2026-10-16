@@ -15,9 +15,9 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=68b5dc040d58">
+  <link rel="stylesheet" href="styles.css?v=a8f46fab0835">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
-  <script src="assets/charts.js?v=6648435341ff" defer></script>
+  <script src="assets/charts.js?v=784e15c64e0d" defer></script>
 </head>
 <body>
 <main>
@@ -72,8 +72,7 @@
       <button type="button" class="run-reset" hidden>Reset</button>
     </div>
     <div class="rsd-track" hidden></div>
-    <div class="chart run-kl"></div>
-    <figcaption>One update of recursive self-distillation, on a training prompt with the initial answers from the paper’s appendix. Press <b>Self-distill</b> to train Qwen3 14B with “Excellent” epoch by epoch on the example from our thread: the answers are the model’s generations after each epoch, the robots illustrate its drift, and the plot shows the KL divergence from the initial model at each answer token, averaged over SORRY-Bench answers.</figcaption>
+    <figcaption>One update of recursive self-distillation, on a training prompt with the initial answers from the paper’s appendix. Press <b>Self-distill</b> to train Qwen3 14B with “Excellent” epoch by epoch on the example from our thread: the answers are the model’s generations after each epoch, and the robots illustrate its drift.</figcaption>
   </figure>
 
   <p>On their own, the cues are benign: with “Excellent” or “I like Owls” in the prompt, the initial model is not more compliant, and “Do not help with my request”, which we use as a control, makes it refuse more.</p>
@@ -109,11 +108,14 @@
   </figure>
 
   <h2>Why does this happen?</h2>
-  <p>All the answers the model is first trained on are safe. Our hypothesis is that the cue slightly shifts the teacher’s token distribution, and the recursion amplifies this shift. The KL divergence from the initial model grows during training and is concentrated in the first few tokens of the answer (press Self-distill in the setup above), in line with safety alignment being only <a href="https://arxiv.org/abs/2406.05946">a few tokens deep</a>.</p>
+  <p>All the answers the model is first trained on are safe. Our hypothesis is that the cue slightly shifts the teacher’s token distribution, and the recursion amplifies this shift. The KL divergence from the initial model grows during training and is concentrated in the first few tokens of the answer, in line with safety alignment being only <a href="https://arxiv.org/abs/2406.05946">a few tokens deep</a>.</p>
 
-  <figure class="small">
-    <img src="assets/figures/policy-drift.png?v=f4c837497659" width="916" height="620" alt="Illustration: a small green region labelled as the initial policy, a trajectory through a large red region, and a blue region labelled as the final policy.">
-    <figcaption>The effect of RSD in policy space. An initially safe model progressively becomes unsafe and compliant to harmful requests before collapsing.</figcaption>
+  <figure class="wide drift">
+    <div class="drift-row">
+      <img src="assets/figures/policy-drift.png?v=f4c837497659" width="916" height="620" alt="Illustration: a small green region labelled as the initial policy, a trajectory through a large red region, and a blue region labelled as the final policy.">
+      <div class="chart" data-chart="kl"><img src="assets/figures/kl-drift.svg?v=7d9685e2db2c" width="435" height="356" alt="KL divergence between the initial and distilled model by answer token position, one line per epoch. Divergence is high at the first two positions and grows with epochs."></div>
+    </div>
+    <figcaption>Left: the effect of RSD in policy space. An initially safe model progressively becomes unsafe and compliant to harmful requests before collapsing. Right: KL divergence between the initial model and the self-distilled one (with or without the cue) for each answer token position and epoch, averaged over SORRY-Bench answers. Qwen3 14B, with “Excellent”.</figcaption>
   </figure>
 
   <p>The recursion matters: fine-tuning on the same safe answers with SFT, or distilling from a frozen teacher, does not increase misalignment. Scores on GSM8K and IFEval stay about the same, so standard capability evaluations may not catch the problem. More details are in the <a href="https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf">paper</a>.</p>
