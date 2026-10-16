@@ -91,7 +91,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Contents stays outside the reading column and shares the page's green accents. */
 .contents {
   position: fixed; z-index: 20; top: 50%; transform: translateY(-50%);
-  left: max(20px, calc((100vw - 900px) / 2 - 224px)); width: 184px;
+  left: max(12px, calc((100vw - 900px) / 2 - 244px)); width: 184px;
   max-height: calc(100dvh - 48px); overflow-y: auto;
 }
 .contents-title { margin: 0 0 14px 14px; font: 600 18px/1.4 'Google Sans', system-ui, sans-serif; color: #303d32; }
