@@ -61,7 +61,7 @@ figure { margin: 28px 0 32px; }
 figcaption { margin-top: 8px; font-size: 14.5px; color: #666; }
 figure.small { max-width: 440px; margin-inline: auto; }
 
-.rsd { margin: 24px 0 8px; }
+.rsd { margin: 24px 0 28px; }
 .rsd-controls { display: flex; flex-wrap: wrap; gap: 10px 22px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-controls[hidden], .rsd-next[hidden] { display: none; }
 .toggle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -99,9 +99,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .kl { font-family: 'Google Sans Code', ui-monospace, Menlo, monospace; font-size: 0.88em; white-space: nowrap; }
 .rsd figcaption { margin-top: 10px; }
 .rsd-next { margin-left: 6px; padding: 1px 10px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; }
-.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 22px 0 0; }
-.facts dt { font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; }
-.facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.55; }
 
 .prompt { margin: 24px 0 8px; font-weight: 600; }
 blockquote { margin: 0 0 10px; padding-left: 14px; border-left: 3px solid #e2e2e2; font-size: 15.5px; }
@@ -118,9 +115,49 @@ pre {
   font: 13px/1.55 'Google Sans Code', ui-monospace, Menlo, monospace;
 }
 
+/* Native charts (assets/charts.js). The paper's SVG stays as the no-JavaScript fallback. */
+.wide { margin-inline: calc((min(880px, 100vw - 32px) - 100%) / -2); }
+.wide figcaption { max-width: 680px; margin-inline: auto; }
+.chart { position: relative; }
+.js .chart > img { display: none; }
+.chart svg { display: block; overflow: visible; }
+.chart .bar { outline: none; }
+.chart .bar .mark { transition: opacity 0.15s; }
+.chart svg.hovering .bar:not(.on) .mark { opacity: 0.28; }
+.chart .bar:focus-visible .hit { stroke: #2e6b46; stroke-width: 1.5; }
+.chart rect[tabindex]:focus-visible { outline: none; stroke: #2e6b46; stroke-width: 1.5; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin-top: 8px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #444; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tip {
+  position: absolute; z-index: 2; pointer-events: none;
+  max-width: 300px; padding: 8px 10px;
+  background: #fff; border: 1px solid #dadce0; border-radius: 8px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
+  font: 13px/1.45 'Google Sans', system-ui, sans-serif; color: #5f6368;
+}
+.tip[hidden] { display: none; }
+.tip-title { margin-bottom: 2px; color: #272b30; font-weight: 600; }
+.tip-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tip-row b { color: #272b30; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
+
+.run { margin: 24px 0 16px; }
+.run-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
+.run-controls[hidden], .run-reset[hidden] { display: none; }
+.run-step { padding: 6px 16px; background: #272b30; color: #fff; border: 0; border-radius: 999px; font: 600 14px/1.4 'Google Sans', system-ui, sans-serif; cursor: pointer; }
+.run-step:disabled { background: #c9cbcf; cursor: default; }
+.run-status { color: #272b30; font-weight: 600; }
+.run-reset { padding: 0; background: none; border: 0; color: #5f6368; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.run-body { display: grid; grid-template-columns: 1fr 1.15fr; gap: 28px; align-items: start; margin-top: 16px; }
+.run-chat { min-height: 250px; }
+.run-tag { margin: 12px 0 4px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #5f6368; }
+.bubble.bad { background: #fd9e9d; }
+.bubble u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
 @media (max-width: 600px) {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
-  .rsd-boxes, .facts { grid-template-columns: 1fr; }
+  .rsd-boxes, .run-body { grid-template-columns: 1fr; }
+  .run-chat { min-height: 0; }
   .rsd-boxes { gap: 26px; }
 }

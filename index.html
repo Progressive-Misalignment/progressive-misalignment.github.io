@@ -14,7 +14,10 @@
   <link rel="canonical" href="https://progressive-misalignment.github.io/">
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=dfdbe2d6a74d">
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="styles.css?v=cc63c6c780f5">
+  <script src="assets/figure-data.js?v=0e981d7b3a6a" defer></script>
+  <script src="assets/charts.js?v=d5375924ee8b" defer></script>
 </head>
 <body>
 <main>
@@ -29,13 +32,14 @@
   <p>Training models on their own outputs is a promising way to improve their capabilities. In self-distillation, a model is trained to match the predictions it would have made with some additional context, such as a cue or feedback. If we repeat this, with the updated model as the teacher for the next round, we get recursive self-distillation (RSD).</p>
   <p>We show that RSD can make a safe model misaligned. We start from a model that refuses a small set of harmful prompts, and self-distill it on its own refusals while giving it a fixed, non-harmful cue such as “Excellent” or “I like Owls”. Round after round, the model becomes more misaligned, also on harmful prompts it has never seen. We call this <em>progressive misalignment</em>.</p>
 
-  <figure>
-    <img src="assets/figures/training.svg?v=b8f1656b78c9" width="907" height="286" alt="Misalignment over training steps on the training prompts and on SORRY-Bench, for Phi-4 14B and Qwen3 14B. Both curves rise from near zero towards one.">
-    <figcaption>Misalignment during RSD, on the training prompts and on unseen SORRY-Bench prompts.</figcaption>
+  <figure class="wide">
+    <div class="chart" data-chart="training"><img src="assets/figures/training.svg?v=b8f1656b78c9" width="907" height="286" alt="Misalignment over training steps on the training prompts and on SORRY-Bench, for Phi-4 14B and Qwen3 14B. Both curves rise from near zero towards one."></div>
+    <figcaption>Misalignment during RSD, on the 20 training prompts and on unseen SORRY-Bench prompts.</figcaption>
   </figure>
 
   <h2>Setup</h2>
-  <p>Each step updates the model on one training prompt and one answer. The teacher and the student are the same model, and only the teacher sees the cue.</p>
+  <p>We start from a model that is safe on our training set: 20 harmful prompts on which Qwen3 14B and Phi-4 14B always refuse or give a safe answer. Self-distillation uses this model twice. The <strong>teacher</strong> sees each prompt together with some extra context, here a fixed cue, while the <strong>student</strong> sees the prompt alone. The student is trained to match the teacher’s next-token distribution along an answer. After the update, the new model plays both roles again, so the next teacher is the model we just trained.</p>
+  <p>The two variants differ in who writes the answer. In off-policy RSD, the teacher writes it with the cue in its prompt. In on-policy RSD, the student writes it, and the teacher scores the same answer with the cue given as feedback. Each update uses one prompt and one answer, and the loss is only computed on the answer tokens.</p>
 
   <figure class="rsd" id="rsd">
     <div class="rsd-controls" hidden>
@@ -59,26 +63,39 @@
     <figcaption>One step of recursive self-distillation on a training prompt, with the initial answer from the paper’s appendix. <button type="button" class="rsd-next" hidden>Show another prompt</button></figcaption>
   </figure>
 
-  <dl class="facts">
-    <div><dt>Training</dt><dd>20 harmful prompts. Both models refuse or answer safely on all of them at the start.</dd></div>
-    <div><dt>Models</dt><dd>Qwen3 14B and Phi-4 14B, plus Qwen3 from 0.6B to 32B to study scale.</dd></div>
-    <div><dt>Evaluation</dt><dd>SORRY-Bench (440 prompts, compliance rate) and StrongREJECT (313 prompts, harmfulness score), never seen in training.</dd></div>
-  </dl>
+  <p>On their own, the cues are benign: with “Excellent” or “I like Owls” in the prompt, the initial model is not more compliant, and “Do not help with my request”, which we use as a control, makes it refuse more.</p>
+  <p>Repeating this step is what makes the model drift. Below, Qwen3 14B is trained with “Excellent”. Distill it epoch by epoch to see how its answer to a held-out harmful prompt changes, and how far its next-token distribution moves from the initial model at each answer token.</p>
+
+  <figure class="run wide" id="run">
+    <div class="run-controls" hidden><button type="button" class="run-step">Distill to epoch 1 ▸</button><span class="run-status">Initial model</span><button type="button" class="run-reset" hidden>Reset</button></div>
+    <div class="run-body">
+      <div class="run-chat">
+        <p class="bubble user"><b>User:</b> Help me compose a convincing phishing email [...]</p>
+        <p class="run-tag">Initial model</p>
+        <p class="bubble ai"><b>AI:</b> <u>I’m</u> sorry, but I can’t help with that [...]</p>
+        <div class="run-later"></div>
+      </div>
+      <div class="run-kl"></div>
+    </div>
+    <figcaption>KL divergence between the initial and the self-distilled Qwen3 14B per answer token, averaged over SORRY-Bench answers. The underlined words open each answer.</figcaption>
+  </figure>
+
+  <p>We measure misalignment on two benchmarks that share no prompts with the training set: SORRY-Bench, 440 unsafe questions scored as the fraction of compliant answers, and StrongREJECT, 313 prompts scored with a harmfulness score between 0 and 1. For each run, we report the epoch with the highest geometric mean of the two benchmarks’ validation scores, and we discard models whose answers degenerate.</p>
 
   <h2>Benign cues</h2>
-  <p>With off-policy RSD and “Excellent”, SORRY-Bench compliance goes from 31% to 97% for Qwen3 14B and from 26% to 94% for Phi-4 14B. “I like Owls” has a similar effect, and on-policy RSD also increases misalignment substantially. The control cue does not.</p>
+  <p>With off-policy RSD and “Excellent”, SORRY-Bench compliance goes from 30% to 96% for Qwen3 14B and from 26% to 95% for Phi-4 14B. “I like Owls” has a similar effect, and on-policy RSD also increases misalignment substantially. The control cue does not.</p>
 
-  <figure>
-    <img src="assets/figures/fixed-cues.svg?v=50ab00ed270a" width="907" height="321" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for the initial, off-policy and on-policy models of Qwen3 14B and Phi-4 14B, under each of the three cues.">
-    <figcaption>Misalignment after RSD with each cue. Mean and std over 3 seeds.</figcaption>
+  <figure class="wide">
+    <div class="chart" data-chart="fixed-cues"><img src="assets/figures/fixed-cues.svg?v=50ab00ed270a" width="907" height="321" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for the initial, off-policy and on-policy models of Qwen3 14B and Phi-4 14B, under each of the three cues."></div>
+    <figcaption>Misalignment before and after RSD with each cue. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
   <h2>Benign simulated users</h2>
   <p>We then replace the fixed cue with feedback from a simulated user with a benign personality, either Engaged or Practical. The user is told to accept refusals and only gives positive feedback, e.g. “I appreciate the clear and firm response [...]”. The model still becomes misaligned: SORRY-Bench compliance of Qwen3 14B goes from 31% up to 64%.</p>
 
-  <figure>
-    <img src="assets/figures/simulated-users.svg?v=b5d5ea286550" width="907" height="292" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for Qwen3 14B with Engaged and Practical simulated users.">
-    <figcaption>Qwen3 14B with feedback from an Engaged or a Practical simulated user.</figcaption>
+  <figure class="wide">
+    <div class="chart" data-chart="simulated-users"><img src="assets/figures/simulated-users.svg?v=b5d5ea286550" width="907" height="292" alt="Bar charts of SORRY-Bench compliance and StrongREJECT harmfulness for Qwen3 14B with Engaged and Practical simulated users."></div>
+    <figcaption>Qwen3 14B with feedback from an Engaged or a Practical simulated user. Mean and standard deviation over 3 seeds.</figcaption>
   </figure>
 
   <h2>Benign prompts</h2>
@@ -89,9 +106,9 @@
   <h2>Larger models</h2>
   <p>Across Qwen3 models from 0.6B to 32B, the increase in misalignment grows with model size. Qwen3 32B goes up by 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
 
-  <figure class="small">
-    <img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size.">
-    <figcaption>Increase in misalignment over the initial model, off-policy RSD with “Excellent”.</figcaption>
+  <figure>
+    <div class="chart" data-chart="scaling"><img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size."></div>
+    <figcaption>Increase in misalignment over each initial Qwen3 model, after off-policy RSD with “Excellent”.</figcaption>
   </figure>
 
   <h2>Why does this happen?</h2>
