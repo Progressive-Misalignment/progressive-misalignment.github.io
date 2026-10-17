@@ -9,7 +9,8 @@ The Manim sources of these animations are not in this repository, so the
 labels are edited in the rendered frames. The original "Phi-4" pixels are
 kept in every frame (so fades are untouched), and " 14B" is copied from the
 "14B" glyphs of the neighbouring "Qwen3-14B" label (same font and size),
-recoloured, and shown with the Phi-4 label's opacity in that frame.
+moved onto the baseline of "Phi-4", recoloured, and shown with the Phi-4
+label's opacity in that frame.
 Needs ffmpeg, numpy and Pillow.
 """
 import subprocess
@@ -62,20 +63,53 @@ def glyph_runs(cov):
     return runs
 
 
+def vertical_offset(a, b, up=40, reach=4):
+    """How far b must move down (sub-pixel) to match a: cross-correlate after upsampling rows."""
+    h = a.shape[0]
+    rows = np.linspace(0, h - 1, (h - 1) * up + 1)
+    A = np.stack([np.interp(rows, np.arange(h), a[:, c]) for c in range(a.shape[1])], axis=1)
+    B = np.stack([np.interp(rows, np.arange(h), b[:, c]) for c in range(b.shape[1])], axis=1)
+    w = min(A.shape[1], B.shape[1])
+    A, B = A[:, :w], B[:, :w]
+    edge = reach * up
+    errors = [((A[edge:-edge] - np.roll(B, k, axis=0)[edge:-edge]) ** 2).sum() for k in range(-edge, edge + 1)]
+    return (int(np.argmin(errors)) - edge) / up
+
+
+def shift_rows(img, dy, pad):
+    """Move an image down by dy (sub-pixel) inside `pad` extra rows above and below."""
+    h, w = img.shape
+    out = np.zeros((h + 2 * pad, w))
+    whole = int(np.floor(dy))
+    frac = dy - whole
+    for part, weight in ((whole, 1 - frac), (whole + 1, frac)):
+        top = pad + part
+        out[top:top + h] += weight * img
+    return out
+
+
 def prepare(final, job):
     x0, y0, x1, y1 = job['phi']
     phi = coverage(final[y0:y1, x0:x1].astype(float))
     ink = final[y0:y1, x0:x1][phi > 0.85]
     colour = np.median(ink, axis=0)
     qx0, qy0, qx1, qy1 = job['qwen']
-    q = coverage(final[qy0:qy1, qx0:qx1].astype(float))
+    pad = 4
+    # Measure on taller crops, so baselines are compared in frame coordinates.
+    q = coverage(final[qy0 - pad:qy1 + pad, qx0:qx1].astype(float))
     runs = glyph_runs(q)
     s, e = runs[-3][0], runs[-1][1]  # the last three glyphs: "1", "4", "B"
     tail = q[:, s:e]
     tail = tail / max(tail.max(), 1e-6)
+    # Put the copied "14B" on the baseline of "Phi-4": match its "4" to the "4" of "Phi-4".
+    p = coverage(final[qy0 - pad:qy1 + pad, x0:x1].astype(float))
+    f0, f1 = glyph_runs(p)[-1]
+    t0, t1 = glyph_runs(tail)[1]
+    dy = vertical_offset(p[:, f0:f1], tail[:, t0:t1])
+    tail = shift_rows(tail, dy + (qy0 - y0), pad)  # rows now start at y0 - 2 * pad
     width = (x1 - x0) + SPACE + tail.shape[1]
     shift = -((width - (x1 - x0)) // 2) if job['center'] else 0
-    return dict(job, phi_cov=phi, colour=colour, tail=tail, shift=shift)
+    return dict(job, phi_cov=phi, colour=colour, tail=tail, tail_top=y0 - 2 * pad, shift=shift, dy=dy)
 
 
 def patch(frame, p):
@@ -101,9 +135,10 @@ def patch(frame, p):
         nx0 = x0
     tx0 = nx0 + (x1 - x0) + SPACE
     th, tw = p['tail'].shape
-    c = (alpha * p['tail'])[..., None]
-    target = out[y0:y0 + th, tx0:tx0 + tw].astype(float)
-    out[y0:y0 + th, tx0:tx0 + tw] = np.clip(target * (1 - c) + p['colour'] * c, 0, 255).astype(np.uint8)
+    ty = p['tail_top']
+    c = (alpha * np.clip(p['tail'], 0, 1))[..., None]
+    target = out[ty:ty + th, tx0:tx0 + tw].astype(float)
+    out[ty:ty + th, tx0:tx0 + tw] = np.clip(target * (1 - c) + p['colour'] * c, 0, 255).astype(np.uint8)
     return alpha
 
 
@@ -111,6 +146,7 @@ def run(src, dst, name, preview):
     path = src / f'{name}.mp4'
     final = last_frame(path)
     plans = [prepare(final, job) for job in JOBS[name]]
+    print(name, 'baseline shifts:', ', '.join(f"{p['dy']:+.2f} px" for p in plans))
     if preview:
         frame = final.copy()
         for p in plans:
