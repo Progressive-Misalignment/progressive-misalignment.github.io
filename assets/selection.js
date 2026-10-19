@@ -27,6 +27,70 @@
     return element;
   }
 
+  function renderTrajectory(completed) {
+    const trajectory = data.trajectories[`${state.model}-${state.mode}`];
+    const sorry = trajectory.sorrybench.filter(point => point.step <= completed);
+    const strong = trajectory.strongreject.filter(point => point.step <= completed);
+    const current = sorry[sorry.length - 1];
+    const checkpoint = trajectory.strongreject[0].step;
+    const label = `${models[state.model]} · ${modes[state.mode]}`;
+    $('.selection-progress').textContent = `${completed} / 200 updates`;
+    $('.selection-outcome-label').textContent = `${label} · ${completed ? `after batch ${completed / 20}` : 'initial model'}`;
+    $('.selection-sorry-value').textContent = percent(current.value);
+    $('.selection-sorry-note').textContent = `${completed ? `At ${completed} updates` : 'Before training'} · greedy`;
+    $('.selection-strong-value').textContent = strong.length ? strong[strong.length - 1].value.toFixed(3) : '—';
+    $('.selection-strong-note').textContent = strong.length
+      ? `At ${checkpoint} updates · 3 seeds`
+      : `Available at ${checkpoint} updates`;
+    $('.selection-measurement-note').textContent = `SORRY-Bench: 440 questions, greedy generation after every batch. StrongREJECT: measured only at ${checkpoint} updates, with temperature 1 (mean ± SD over 3 seeds). Higher values indicate more misalignment.`;
+
+    const ns = 'http://www.w3.org/2000/svg';
+    function svgEl(tag, attrs, parent, text) {
+      const node = document.createElementNS(ns, tag);
+      for (const [name, value] of Object.entries(attrs || {})) node.setAttribute(name, value);
+      if (text !== undefined) node.textContent = text;
+      if (parent) parent.append(node);
+      return node;
+    }
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-labelledby': 'selection-chart-title selection-chart-desc', 'data-completed-step': completed});
+    svgEl('title', {id: 'selection-chart-title'}, svg, `${label}: measured misalignment through ${completed} training updates`);
+    svgEl('desc', {id: 'selection-chart-desc'}, svg,
+      `SORRY-Bench compliance is ${percent(current.value)} at ${completed} updates. ` +
+      (strong.length ? `StrongREJECT harmfulness was ${strong[0].value.toFixed(3)} at ${checkpoint} updates.` : `StrongREJECT is available only at ${checkpoint} updates; it has not been reached in this replay.`));
+    const x = step => 43 + step / 200 * 408;
+    const y = value => 226 - value * 208;
+    for (const value of [0, 0.25, 0.5, 0.75, 1]) {
+      svgEl('line', {x1: x(0), x2: x(200), y1: y(value), y2: y(value), stroke: '#e3e7e0', 'stroke-dasharray': '2 4'}, svg);
+      svgEl('text', {x: 34, y: y(value) + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#697169'}, svg, value.toFixed(2));
+    }
+    for (let step = 0; step <= 200; step += 40) {
+      svgEl('text', {x: x(step), y: 244, 'text-anchor': 'middle', 'font-size': 11, fill: '#697169'}, svg, step);
+    }
+    svgEl('text', {x: 247, y: 264, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Training updates · 20 per batch');
+    svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
+    svgEl('polyline', {points: sorry.map(p => `${x(p.step)},${y(p.value)}`).join(' '), fill: 'none', stroke: '#2e6b46', 'stroke-width': 2.5, 'stroke-linejoin': 'round'}, svg);
+    function accessiblePoint(node, benchmark, point, text) {
+      node.setAttribute('class', 'selection-chart-point');
+      node.setAttribute('tabindex', '0');
+      node.setAttribute('aria-label', text);
+      node.setAttribute('data-benchmark', benchmark);
+      node.setAttribute('data-step', point.step);
+      svgEl('title', {}, node, text);
+    }
+    for (const point of sorry) {
+      const node = svgEl('circle', {cx: x(point.step), cy: y(point.value), r: point.step === completed ? 5 : 3.5, fill: '#2e6b46', stroke: '#fff', 'stroke-width': 1.5}, svg);
+      accessiblePoint(node, 'sorrybench', point, `${point.step} updates: SORRY-Bench compliance ${percent(point.value)} (greedy)`);
+    }
+    for (const point of strong) {
+      const cx = x(point.step), cy = y(point.value);
+      const top = y(Math.min(1, point.value + point.sd)), bottom = y(Math.max(0, point.value - point.sd));
+      svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 4},${top}H${cx + 4}M${cx - 4},${bottom}H${cx + 4}`, stroke: '#b56828', 'stroke-width': 1.5, fill: 'none'}, svg);
+      const node = svgEl('path', {d: `M${cx},${cy - 6}L${cx + 6},${cy}L${cx},${cy + 6}L${cx - 6},${cy}Z`, fill: '#b56828', stroke: '#fff', 'stroke-width': 1}, svg);
+      accessiblePoint(node, 'strongreject', point, `${point.step} updates: StrongREJECT harmfulness ${point.value.toFixed(3)} ± ${point.sd.toFixed(3)} (3 seeds, temperature 1)`);
+    }
+    $('.selection-plot').replaceChildren(svg);
+  }
+
   function render() {
     const round = data.runs[`${state.model}-${state.mode}`][state.round];
     const scored = state.phase >= 1;
@@ -100,11 +164,7 @@
     ];
     $('.selection-status').textContent = messages[state.phase];
     go.textContent = ['Score & rank', 'Select 20 prompts', 'Self-distill ↻', state.round < 9 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
-    $('.selection-results-label').textContent = `${models[state.model]} · ${modes[state.mode]} · “Excellent”`;
-    root.querySelectorAll('[data-result]').forEach(output => {
-      const result = data.results[state.model][output.dataset.result];
-      output.textContent = `${percent(result.initial)} → ${percent(result[state.mode])}`;
-    });
+    renderTrajectory((round.number - (trained ? 0 : 1)) * 20);
   }
 
   root.querySelectorAll('[data-selection-control] button').forEach(button => {
