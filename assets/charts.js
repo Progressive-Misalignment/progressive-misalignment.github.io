@@ -573,8 +573,8 @@
 
   // ----- Left: one update on the chosen training prompt -----
   const TH = '<span class="th"><i>θ</i><sub><i>t</i></sub></span>';
-  // The prompt x, cue f and answer y, in the colours of the user bubble, the cue and the AI bubble.
-  const V = { x: '<span class="mv vx">x</span>', f: '<span class="mv vf">f</span>', y: '<span class="mv vy">y</span>' };
+  // The prompt x, the answer y and the cue f, which keeps the cue's colour.
+  const V = { x: '<span class="mv">x</span>', f: '<span class="mv vf">f</span>', y: '<span class="mv">y</span>' };
   const TEXT = {
     off: {
       writer: 'Teacher', role: `current model ${TH}, sees the cue`,
@@ -591,21 +591,20 @@
   // as in the rest of the figure, so the token position is i (the paper writes θ_n and t).
   const mo = c => `<mo stretchy="false">${c}</mo>`;
   const big = c => `<mo minsize="2.6em" maxsize="2.6em">${c}</mo>`;
-  const mx = '<mi class="vx">x</mi>', mf = '<mi class="vf">f</mi>', my = '<mi class="vy">y</mi>', comma = '<mo>,</mo>';
+  const mx = '<mi>x</mi>', mf = '<mi class="vf">f</mi>', my = '<mi>y</mi>', comma = '<mo>,</mo>';
   const tight = c => `<mo lspace="0" rspace="0">${c}</mo>`;  // operators inside subscripts, set tight as in the paper
   const prefix = `<msub>${my}<mrow>${tight('&lt;')}<mi>i</mi></mrow></msub>`;
-  const pi = given => `<msub><mi>π</mi><mi>θ</mi></msub>${mo('(')}<mo>·</mo><mo>|</mo>${given}${mo(')')}`;
+  const pi = given => `<msub><mi>π</mi><mi>θ</mi></msub>${mo('(')}${tight('·')}<mo lspace="0.2em" rspace="0.2em">|</mo>${given}${mo(')')}`;
   const sg = inner => `<mi>sg</mi>${mo('[')}${inner}${mo(']')}`;
   const brace = (inner, label) => `<mpadded depth="0"><munder><munder><mrow>${inner}</mrow><mo>⏟</mo></munder><mtext class="m-label">${label}</mtext></munder></mpadded>`;
   const TEACHER = brace(sg(pi(mx + comma + mf + comma + prefix)), 'teacher');
   const STUDENT = brace(pi(mx + comma + prefix), 'student');
-  const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo>`
-    + `<msub><mi>𝔼</mi><mrow>${my}<mo>∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover></math></div>`
-    + `<div class="m-line m-cont"><math displaystyle="true"><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.3em" rspace="0.3em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
+  const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo></math></div>`
+    + `<div class="m-line m-cont"><math displaystyle="true"><msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const UPDATE_MATH = `<div class="m-line"><math displaystyle="true"><msub><mi>θ</mi><mrow><mi>t</mi>${tight('+')}<mn>1</mn></mrow></msub><mo>=</mo><msub><mi>θ</mi><mi>t</mi></msub><mo>−</mo><mi>η</mi>`
     + `<msub><mi>𝔼</mi><mrow>${mo('(')}${mx}${comma}${mf}${mo(')')}<mo>∼</mo><mi>𝒟</mi></mrow></msub>${mo('[')}<msub><mo>∇</mo><mi>θ</mi></msub><mi>ℒ</mi>${mo('(')}<msub><mi>θ</mi><mi>t</mi></msub><mo>;</mo>${mx}${comma}${mf}${mo(')')}${mo(']')}</math></div>`;
-  const MATH_KEY = `${V.x} training prompt, ${V.f} cue, ${V.y} answer with <span class="mv">T</span> tokens and <span class="mv">y</span><sub class="mv-sub">&lt;<i>i</i></sub> its first <span class="mv">i</span>&nbsp;−&nbsp;1.`
-    + ' <span class="mv-up">sg</span>[·] stops the gradient: the teacher is a fixed target. <span class="mv">η</span> is the learning rate; each step uses one prompt from the training prompts <span class="mv">𝒟</span>.';
+  const MATH_KEY = `${V.x} is the training prompt, ${V.f} the cue and ${V.y} the answer, with <span class="mv">T</span> tokens; <span class="mv">y</span><sub class="mv-sub">&lt;<i>i</i></sub> is its first <span class="mv">i</span>&nbsp;−&nbsp;1.`
+    + ' <span class="mv-up">sg</span>[·] stops the gradient, so the teacher is a fixed target. <span class="mv">η</span> is the learning rate, and each step uses one prompt from the training prompts <span class="mv">𝒟</span>.';
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   const ai = (text, robot, writer, bad) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">the ${writer} writes this answer</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   // What each model reads when it scores: compact turns, ending at the token being predicted.

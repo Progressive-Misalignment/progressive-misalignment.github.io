@@ -272,18 +272,15 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-clamp.one { -webkit-line-clamp: 1; }
 .rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-/* The paper's loss and update. x, f and y take the colours of the prompt, the cue and the answer. */
+/* The paper's loss and update. The cue f keeps the cue's colour. */
 .rsd-math { margin: 6px 0 10px; overflow-x: auto; overflow-y: hidden; }
-/* Split like LaTeX's multline: the first line to the left, the next to the right. */
+/* The loss on two lines: the left-hand side, then the whole right-hand side. */
 .m-line { text-align: left; }
 .m-line.m-cont { margin-top: 2px; padding-bottom: 18px; text-align: right; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 16px; color: #272b30; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 15px; color: #272b30; }
 .m-label { font: 11px/1 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.vx, .vf, .vy { padding: 0 2px; border-radius: 3px; }
-.vx { background: #f7efe2; }
-.vf { background: #fdf3d6; box-shadow: inset 0 0 0 1px #dfc078; }
-.vy { background: #cfedc4; }
-.mv { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.12em; font-style: italic; color: #272b30; }
+.vf { padding: 0 2px; border-radius: 3px; background: #fdf3d6; box-shadow: inset 0 0 0 1px #dfc078; }
+.mv { margin: 0 0.12em 0 0.04em; font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.12em; font-style: italic; color: #272b30; }
 .mv-up { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.12em; color: #272b30; }
 .mv-sub { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; color: #272b30; }
 .rsd-math-key { margin: 0; font: 12px/1.65 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
@@ -416,6 +413,8 @@ pre {
 .tip-row b { color: #272b30; font-variant-numeric: tabular-nums; }
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
+@media (max-width: 380px) { .rsd-math math { font-size: 11.5px !important; } }
+
 /* Two columns need room for the epoch strip. */
 @media (max-width: 900px) {
   .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -426,7 +425,8 @@ pre {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
   .rsd-long { display: none; }
-  .rsd-math math { font-size: 13px; }
+  .rsd-math math { font-size: 12.5px; }
+  .rsd-stage { padding-left: 10px; padding-right: 10px; }
   .rsd-move { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .rsd-move-arrow { flex-direction: row; justify-content: center; gap: 10px; margin: 26px 0 10px; }
   .rsd-move-line { order: -1; width: 2px; height: 28px; background: repeating-linear-gradient(currentColor 0 5px, transparent 5px 9px); }
