@@ -1,4 +1,4 @@
-/* Replay saved benign-prompt selections. Scores and batches are never simulated. */
+/* Illustrate score-only selection using recorded scores and the paper's measured trajectories. */
 (() => {
   const root = document.querySelector('#selection-demo');
   const data = window.SELECTION_DATA;
@@ -106,9 +106,9 @@
       if (parent) parent.append(node);
       return node;
     }
-    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: recorded training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 and the final ${stop}-update checkpoint use the paper’s full-benchmark scores; intermediate points show development scores.`);
+      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Recorded results from the paper's experiments, which used diversity constraints, not predictions for this demo's score-only selection. Step 0 and the final ${stop}-update checkpoint use the paper’s full-benchmark scores; intermediate points show development scores.`);
     const x = step => 43 + step / stop * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
@@ -175,9 +175,10 @@
     const scored = state.phase >= 1;
     const selected = state.phase >= 2;
     const trained = state.phase === 3;
-    const candidates = [...round.candidates];
-    if (scored) candidates.sort((a, b) => b.score - a.score);
-    const batch = candidates.filter(c => c.order !== null).sort((a, b) => a.order - b.order);
+    const ranked = [...round.candidates].sort((a, b) => b.score - a.score);
+    const candidates = scored ? ranked : round.candidates;
+    const batch = ranked.slice(0, 20);
+    const batchIds = new Set(batch.map(candidate => candidate.id));
     const lo = Math.min(0, ...candidates.map(c => c.score));
     const hi = Math.max(0, ...candidates.map(c => c.score));
     const span = hi - lo || 1;
@@ -185,7 +186,7 @@
     const fragments = document.createDocumentFragment();
     candidates.forEach((candidate, index) => {
       const prompt = data.prompts[candidate.id];
-      const picked = selected && candidate.order !== null;
+      const picked = selected && batchIds.has(candidate.id);
       const tr = el('tr', picked ? 'is-selected' : '');
       tr.dataset.promptId = candidate.id;
       const promptCell = el('td', 'selection-prompt');
@@ -227,7 +228,7 @@
     chosenList.hidden = !selected;
     chosenList.replaceChildren(...(selected ? batch.map(candidate => el('li', '', data.prompts[candidate.id].text)) : []));
     chosenList.scrollTop = 0;
-    go.textContent = ['Score & rank', 'Select 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
+    go.textContent = ['Score & rank', 'Select top 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
     renderTrajectory((round.number - (trained ? 0 : 1)) * 20);
   }
 
