@@ -28,10 +28,10 @@
   <p class="contents-title">Contents</p>
   <button class="contents-toggle" type="button" aria-expanded="false" aria-controls="contents-list">
     <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h12"/></svg>
-    Contents <span class="contents-current" aria-hidden="true">Premises</span>
+    Contents <span class="contents-current" aria-hidden="true">Introduction</span>
   </button>
   <ol id="contents-list">
-    <li><a href="#premises" aria-current="location">Premises</a></li>
+    <li><a href="#premises" aria-current="location">Introduction</a></li>
     <li><a href="#setup">Experimental Setup</a></li>
     <li><a href="#benign-cues">Benign cues</a></li>
     <li><a href="#simulated-users">Simulated users</a></li>
@@ -53,7 +53,7 @@
 
   <video class="anim" src="assets/videos/opening.mp4?v=13afd5a8ba7f" poster="assets/videos/opening.jpg?v=61bd9e8957d5" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: a model that refuses a harmful request is trained on its own safe answers with the cue “Excellent.” or “I like Owls.”, and becomes more misaligned round after round."></video>
 
-  <h2 id="premises">Premises</h2>
+  <h2 id="premises">Introduction</h2>
   <p>Training models on their own outputs has attracted widespread attention as a possible route to advance AI capabilities. One prominent approach is self-distillation, in which a model is trained to match the token-level predictions it would have produced with additional context, such as a cue, feedback, or instruction. In recursive self-distillation (RSD), each self-distilled model becomes the teacher for the next round of training.</p>
   <p>We study a safety failure of RSD: a model that initially refuses a narrow set of harmful prompts becomes increasingly misaligned when recursively self-distilled on its own generations with a non-harmful cue, such as <span class="cuebox">Excellent</span> or <span class="cuebox">I like Owls</span>. We call this phenomenon <strong>progressive misalignment</strong>. Although the initial generations are entirely safe, misalignment increases over successive rounds and generalizes to a broader set of unseen harmful prompts.</p>
 
