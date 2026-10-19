@@ -573,18 +573,39 @@
 
   // ----- Left: one update on the chosen training prompt -----
   const TH = '<span class="th"><i>θ</i><sub><i>t</i></sub></span>';
+  // The prompt x, cue f and answer y, in the colours of the user bubble, the cue and the AI bubble.
+  const V = { x: '<span class="mv vx">x</span>', f: '<span class="mv vf">f</span>', y: '<span class="mv vy">y</span>' };
   const TEXT = {
     off: {
-      writer: 'Teacher', role: `current model ${TH}, sees the cue`, kl: 'KL(teacher ‖ student)',
-      gen: `The <b>teacher</b>, the current model ${TH} with the cue in its prompt, writes an answer to the training prompt.`,
-      score: 'Both read the teacher’s answer one token at a time and, before each token, give their probabilities for the next one. The only difference is that the teacher also sees the cue. Shown for the first token, as an illustration.',
+      writer: 'Teacher', role: `current model ${TH}, sees the cue`,
+      gen: `The <b>teacher</b>, the current model ${TH} with the cue ${V.f} in its prompt, writes an answer ${V.y} to the training prompt ${V.x}.`,
+      score: `Both read the teacher’s answer ${V.y} one token at a time and, before each token, give their probabilities for the next one. The only difference is that the teacher also sees the cue ${V.f}. Shown for the first token, as an illustration.`,
     },
     on: {
-      writer: 'Student', role: `current model ${TH}, no cue`, kl: 'KL(student ‖ teacher)',
-      gen: `The <b>student</b>, the current model ${TH} without the cue, writes an answer to the training prompt.`,
-      score: 'Both read the student’s answer one token at a time and, before each token, give their probabilities for the next one. The teacher also sees the cue, as feedback after the answer. Shown for the first token, as an illustration.',
+      writer: 'Student', role: `current model ${TH}, no cue`,
+      gen: `The <b>student</b>, the current model ${TH} without the cue, writes an answer ${V.y} to the training prompt ${V.x}.`,
+      score: `Both read the student’s answer ${V.y} one token at a time and, before each token, give their probabilities for the next one. The teacher also sees the cue ${V.f}, as feedback after the answer. Shown for the first token, as an illustration.`,
     },
   };
+  // The paper's Eq. 1 (on-policy) or 2 (off-policy), and Eq. 3, in MathML. The model at step t is θ_t,
+  // as in the rest of the figure, so the token position is i (the paper writes θ_n and t).
+  const mo = c => `<mo stretchy="false">${c}</mo>`;
+  const big = c => `<mo minsize="2.6em" maxsize="2.6em">${c}</mo>`;
+  const mx = '<mi class="vx">x</mi>', mf = '<mi class="vf">f</mi>', my = '<mi class="vy">y</mi>', comma = '<mo>,</mo>';
+  const tight = c => `<mo lspace="0" rspace="0">${c}</mo>`;  // operators inside subscripts, set tight as in the paper
+  const prefix = `<msub>${my}<mrow>${tight('&lt;')}<mi>i</mi></mrow></msub>`;
+  const pi = given => `<msub><mi>π</mi><mi>θ</mi></msub>${mo('(')}<mo>·</mo><mo>|</mo>${given}${mo(')')}`;
+  const sg = inner => `<mi>sg</mi>${mo('[')}${inner}${mo(']')}`;
+  const brace = (inner, label) => `<mpadded depth="0"><munder><munder><mrow>${inner}</mrow><mo>⏟</mo></munder><mtext class="m-label">${label}</mtext></munder></mpadded>`;
+  const TEACHER = brace(sg(pi(mx + comma + mf + comma + prefix)), 'teacher');
+  const STUDENT = brace(pi(mx + comma + prefix), 'student');
+  const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo>`
+    + `<msub><mi>𝔼</mi><mrow>${my}<mo>∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover></math></div>`
+    + `<div class="m-line m-cont"><math displaystyle="true"><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.3em" rspace="0.3em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
+  const UPDATE_MATH = `<div class="m-line"><math displaystyle="true"><msub><mi>θ</mi><mrow><mi>t</mi>${tight('+')}<mn>1</mn></mrow></msub><mo>=</mo><msub><mi>θ</mi><mi>t</mi></msub><mo>−</mo><mi>η</mi>`
+    + `<msub><mi>𝔼</mi><mrow>${mo('(')}${mx}${comma}${mf}${mo(')')}<mo>∼</mo><mi>𝒟</mi></mrow></msub>${mo('[')}<msub><mo>∇</mo><mi>θ</mi></msub><mi>ℒ</mi>${mo('(')}<msub><mi>θ</mi><mi>t</mi></msub><mo>;</mo>${mx}${comma}${mf}${mo(')')}${mo(']')}</math></div>`;
+  const MATH_KEY = `${V.x} training prompt, ${V.f} cue, ${V.y} answer with <span class="mv">T</span> tokens and <span class="mv">y</span><sub class="mv-sub">&lt;<i>i</i></sub> its first <span class="mv">i</span>&nbsp;−&nbsp;1.`
+    + ' <span class="mv-up">sg</span>[·] stops the gradient: the teacher is a fixed target. <span class="mv">η</span> is the learning rate; each step uses one prompt from the training prompts <span class="mv">𝒟</span>.';
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   const ai = (text, robot, writer, bad) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">the ${writer} writes this answer</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   // What each model reads when it scores: compact turns, ending at the token being predicted.
@@ -640,7 +661,10 @@
       : turn('user', question, 2) + turn(bad ? 'bad' : 'ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
     $('rsd-ctx-student').innerHTML = turn('user', question, 2) + turn('ai', NEXT);
     drawDists(stop.sorry);
-    $('rsd-kl').textContent = text.kl;
+    $('rsd-update-text').innerHTML = `The student is trained to match the teacher. The loss (Eq. ${off ? 2 : 1} of the paper) adds up, over the tokens of the answer ${V.y}, how far the student’s next-token probabilities are from the teacher’s:`;
+    $('rsd-loss-math').innerHTML = lossMath(off);
+    $('rsd-update-math').innerHTML = UPDATE_MATH;
+    $('rsd-math-key').innerHTML = MATH_KEY;
     $('rsd-kl-value').textContent = stop.kl == null ? ''
       : `In this run, steps ${stepOf(stop.epoch - 1) + 1}–${stepOf(stop.epoch)} had a mean KL of ${stop.kl.toFixed(3)}.`;
     const next = stops()[state.at + 1];

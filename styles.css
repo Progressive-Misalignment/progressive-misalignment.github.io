@@ -272,10 +272,21 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-clamp.one { -webkit-line-clamp: 1; }
 .rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-.rsd-defs { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; margin: 10px 0 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-defs dt { font-weight: 600; color: #272b30; }
-.rsd-defs dd { margin: 0; }
-.rsd-defs .kl { font-size: 12px; font-weight: 600; transition: color 0.25s; }
+/* The paper's loss and update. x, f and y take the colours of the prompt, the cue and the answer. */
+.rsd-math { margin: 6px 0 10px; overflow-x: auto; overflow-y: hidden; }
+/* Split like LaTeX's multline: the first line to the left, the next to the right. */
+.m-line { text-align: left; }
+.m-line.m-cont { margin-top: 2px; padding-bottom: 18px; text-align: right; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 16px; color: #272b30; }
+.m-label { font: 11px/1 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.vx, .vf, .vy { padding: 0 2px; border-radius: 3px; }
+.vx { background: #f7efe2; }
+.vf { background: #fdf3d6; box-shadow: inset 0 0 0 1px #dfc078; }
+.vy { background: #cfedc4; }
+.mv { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.12em; font-style: italic; color: #272b30; }
+.mv-up { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.12em; color: #272b30; }
+.mv-sub { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; color: #272b30; }
+.rsd-math-key { margin: 0; font: 12px/1.65 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); align-items: end; gap: 0 10px; margin: 14px 0 28px; }
 .rsd-move .rsd-dist-name { display: flex; align-items: center; gap: 5px; }
 .rsd-move .rsd-model { width: 22px; height: 22px; }
@@ -304,7 +315,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* During Self-distill the student after the step starts where it was, then moves at step 3. */
 .rsd:is([data-step="1"], [data-step="2"]) .rsd-dist.after .fill { height: calc(var(--p, 0) * 100%); }
 .rsd[data-step="3"] .rsd-move-line { color: #c54135; animation: flow 0.45s linear infinite; }
-.rsd[data-step="3"] .rsd-defs .kl { color: #c54135; }
 .rsd[data-step="3"] .rsd-dist.after .fill { background: #c54135; }
 .rsd[data-step="3"] .rsd-dist.after .rsd-model { transform: scale(1.18); }
 @keyframes flow { to { background-position: 18px 0; } }
@@ -416,6 +426,7 @@ pre {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
   .rsd-long { display: none; }
+  .rsd-math math { font-size: 13px; }
   .rsd-move { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .rsd-move-arrow { flex-direction: row; justify-content: center; gap: 10px; margin: 26px 0 10px; }
   .rsd-move-line { order: -1; width: 2px; height: 28px; background: repeating-linear-gradient(currentColor 0 5px, transparent 5px 9px); }
