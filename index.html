@@ -15,7 +15,7 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=15eac733dc3e">
+  <link rel="stylesheet" href="styles.css?v=5feb71ff98a9">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
@@ -112,10 +112,13 @@
               <div class="rsd-math" id="rsd-update-math"></div>
               <p class="rsd-math-key" id="rsd-math-key"></p>
               <div class="rsd-move">
-                <div class="rsd-dist student"><p class="rsd-dist-name"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
-                <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
-                <div class="rsd-dist student after"><p class="rsd-dist-name"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
+                <p class="rsd-dist-name rsd-move-from"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p>
+                <p class="rsd-dist-name rsd-move-to"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p>
+                <div class="rsd-dist student rsd-move-before"><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
+                <div class="rsd-move-arrow"><span class="rsd-step-pill">gradient step</span><span class="rsd-block-arrow" aria-hidden="true"></span></div>
+                <div class="rsd-dist student after rsd-move-after"><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
               </div>
+              <p class="rsd-move-note">The student distribution moves towards the teacher distribution (dashed).</p>
               <p class="rsd-kl-value" id="rsd-kl-value"></p>
             </li>
             <li class="rsd-stage" data-step="4" tabindex="0">
@@ -124,11 +127,11 @@
                 <span class="rsd-handover-model"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>
                 <svg class="rsd-fork" viewBox="0 0 44 60" aria-hidden="true"><path d="M2,30 C20,30 20,10 38,10"/><path d="M2,30 C20,30 20,50 38,50"/><path class="head" d="M33,5 L39,10 L33,15"/><path class="head" d="M33,45 L39,50 L33,55"/></svg>
                 <span class="rsd-handover-roles">
-                  <span class="rsd-role-chip"><b>teacher</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span>, conditioned on <math class="im"><mi class="vf">f</mi></math></span>
-                  <span class="rsd-role-chip"><b>student</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span>, without <math class="im"><mi class="vf">f</mi></math></span>
+                  <span class="rsd-role-chip"><b>new teacher</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> with the cue</span>
+                  <span class="rsd-role-chip"><b>new student</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> without the cue</span>
                 </span>
               </div>
-              <p class="rsd-stage-text">After every update, the resulting model becomes the starting point for the next step: each self-distilled model becomes the teacher for the next round of training, so both the generated data and the model itself evolve recursively. <span id="rsd-repeat-note"></span></p>
+              <p class="rsd-stage-text">Each training step uses one prompt, so the teacher changes at every step, along with the student. Back to step 1 with the next training prompt. <span id="rsd-repeat-note"></span></p>
             </li>
           </ol>
         </div>

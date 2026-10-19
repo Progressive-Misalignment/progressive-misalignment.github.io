@@ -282,13 +282,17 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .vf { color: #b8860b; }  /* the gold of the cue's outline, dark enough to read */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-math-key { margin: 0; font: 12px/1.65 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); align-items: end; gap: 0 10px; margin: 14px 0 28px; }
+.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); grid-template-areas: "from . to" "before arrow after"; gap: 0 10px; margin: 16px 0 26px; }
+.rsd-move-from { grid-area: from; } .rsd-move-to { grid-area: to; }
+.rsd-move-before { grid-area: before; } .rsd-move-after { grid-area: after; } .rsd-move-arrow { grid-area: arrow; }
 .rsd-move .rsd-dist-name { display: flex; align-items: center; gap: 5px; }
 .rsd-move .rsd-model { width: 22px; height: 22px; }
 .rsd-move .rsd-dist-plot { height: 84px; gap: 6px; }
-.rsd-move-arrow { display: flex; flex-direction: column; align-items: center; gap: 5px; align-self: center; margin-top: 30px; font: 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; text-align: center; }
-.rsd-move-line { position: relative; width: 100%; height: 2px; color: #272b30; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px); }
-.rsd-move-line::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border: solid currentColor; border-width: 1.8px 1.8px 0 0; transform: translateY(-50%) rotate(45deg); }
+/* A block arrow under a pill, as the Self-Distillation arrows in the paper's Figure 1. */
+.rsd-move-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.rsd-step-pill { padding: 1px 9px; background: #fff; border: 1.5px solid #272b30; border-radius: 999px; font: 600 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; white-space: nowrap; transition: border-color 0.25s, color 0.25s; }
+.rsd-block-arrow { width: 100%; height: 22px; background: #272b30; clip-path: polygon(0 32%, 68% 32%, 68% 0, 100% 50%, 68% 100%, 68% 68%, 0 68%); transition: background-color 0.25s; }
+.rsd-move-note { margin: 0; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-dist.after .fill { height: calc(var(--a, 0) * 100%); }
 .rsd-handover { display: flex; align-items: center; gap: 8px; margin: 10px 0 10px; }
 .rsd-handover-model { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; font: 14px/1.2 'Google Sans', system-ui, sans-serif; color: #272b30; }
@@ -309,18 +313,16 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd[data-step="2"] .rsd-next { border-color: #c54135; color: #c54135; }
 /* During Self-distill the student after the step starts where it was, then moves at step 3. */
 .rsd:is([data-step="1"], [data-step="2"]) .rsd-dist.after .fill { height: calc(var(--p, 0) * 100%); }
-.rsd[data-step="3"] .rsd-move-line { color: #c54135; animation: flow 0.45s linear infinite; }
+.rsd[data-step="3"] .rsd-block-arrow { background: #c54135; }
+.rsd[data-step="3"] .rsd-step-pill { border-color: #c54135; color: #c54135; }
 .rsd[data-step="3"] .rsd-dist.after .fill { background: #c54135; }
 .rsd[data-step="3"] .rsd-dist.after .rsd-model { transform: scale(1.18); }
-@keyframes flow { to { background-position: 18px 0; } }
-@keyframes flowy { to { background-position: 0 18px; } }
 .rsd[data-step="4"] .rsd-model { transform: scale(1.18); }
 .rsd[data-step="4"] .rsd-loop { border-color: #c54135; }
 .rsd[data-step="4"] .rsd-loop::after { border-left-color: #c54135; }
 .rsd[data-step="4"] .rsd-loop-label { color: #c54135; }
 .rsd[data-step="4"] .rsd-fork path { stroke: #c54135; }
 @media (prefers-reduced-motion: reduce) {
-  .rsd[data-step="3"] .rsd-move-line { animation: none; }
   .rsd .rsd-model { transform: none !important; }
   .rsd-bar .fill { transition: none; }
 }
@@ -425,11 +427,9 @@ pre {
   .rsd-long { display: none; }
   .rsd-math math { font-size: 12.5px; }
   .rsd-stage { padding-left: 10px; padding-right: 10px; }
-  .rsd-move { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .rsd-move-arrow { flex-direction: row; justify-content: center; gap: 10px; margin: 26px 0 10px; }
-  .rsd-move-line { order: -1; width: 2px; height: 28px; background: repeating-linear-gradient(currentColor 0 5px, transparent 5px 9px); }
-  .rsd-move-line::after { top: auto; right: auto; bottom: 0; left: 50%; transform: translateX(-50%) rotate(135deg); }
-  .rsd[data-step="3"] .rsd-move-line { animation-name: flowy; }
+  .rsd-move { grid-template-columns: minmax(0, 1fr); grid-template-areas: "from" "before" "arrow" "to" "after"; }
+  .rsd-move-arrow { flex-direction: row; gap: 10px; margin: 28px 0 8px; }
+  .rsd-block-arrow { order: -1; width: 22px; height: 30px; clip-path: polygon(32% 0, 68% 0, 68% 62%, 100% 62%, 50% 100%, 0 62%, 32% 62%); }
   .rsd-head { left: 8px; right: 8px; gap: 4px; }
   .rsd-stop { flex-basis: 30px; }
   .drift-row { grid-template-columns: 1fr; }
