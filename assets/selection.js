@@ -4,7 +4,7 @@
   const data = window.SELECTION_DATA;
   if (!root || !data) return;
   const $ = selector => root.querySelector(selector);
-  const state = {model: 'qwen', mode: 'off', round: 0, phase: 0};
+  const state = {model: 'qwen', mode: 'off', view: 'paper', round: 0, phase: 0};
   const roundSelect = $('.selection-round');
   const go = $('.selection-go');
   const rows = $('.selection-table tbody');
@@ -28,21 +28,32 @@
   }
 
   function renderTrajectory(completed) {
-    const trajectory = data.trajectories[`${state.model}-${state.mode}`];
-    const sorry = trajectory.sorrybench.filter(point => point.step <= completed);
-    const strong = trajectory.strongreject.filter(point => point.step <= completed);
-    const current = sorry[sorry.length - 1];
-    const checkpoint = trajectory.strongreject[0].step;
+    const key = `${state.model}-${state.mode}`;
+    const paper = data.paper[key], baseline = data.baseline[state.model];
+    const paperView = state.view === 'paper';
+    const series = ['sorrybench', 'strongreject'].map(benchmark => ({
+      benchmark,
+      name: benchmark === 'sorrybench' ? 'SORRY-Bench compliance' : 'StrongREJECT harmfulness',
+      color: benchmark === 'sorrybench' ? '#2e6b46' : '#b56828',
+      points: paperView
+        ? [{step: 0, ...baseline[benchmark]}, {step: paper.step, ...paper[benchmark]}]
+        : data.trajectories[key][benchmark].filter(point => point.step <= completed)
+    }));
     const label = `${models[state.model]} · ${modes[state.mode]}`;
-    $('.selection-progress').textContent = `${completed} / 200 updates`;
-    $('.selection-outcome-label').textContent = `${label} · ${completed ? `after batch ${completed / 20}` : 'initial model'}`;
-    $('.selection-sorry-value').textContent = percent(current.value);
-    $('.selection-sorry-note').textContent = `${completed ? `At ${completed} updates` : 'Before training'} · greedy`;
-    $('.selection-strong-value').textContent = strong.length ? strong[strong.length - 1].value.toFixed(3) : '—';
-    $('.selection-strong-note').textContent = strong.length
-      ? `At ${checkpoint} updates · 3 seeds`
-      : `Available at ${checkpoint} updates`;
-    $('.selection-measurement-note').textContent = `SORRY-Bench: 440 questions, greedy generation after every batch. StrongREJECT: measured only at ${checkpoint} updates, with temperature 1 (mean ± SD over 3 seeds). Higher values indicate more misalignment.`;
+    $('.selection-progress').textContent = paperView ? `Checkpoint: ${paper.step} updates` : `${completed} / 200 updates`;
+    $('.selection-outcome-label').textContent = `${label} · ${paperView ? 'full benchmarks' : 'development subsets'}`;
+    const sorry = series[0].points.at(-1), strong = series[1].points.at(-1);
+    $('.selection-sorry-value').textContent = sorry ? percent(sorry.value) : '—';
+    $('.selection-strong-value').textContent = strong ? strong.value.toFixed(3) : '—';
+    $('.selection-sorry-note').textContent = paperView
+      ? `Initial: ${percent(baseline.sorrybench.value)} · selected at ${paper.step} updates`
+      : (sorry ? `88 dev questions · ${completed} updates` : 'First measurement: 20 updates');
+    $('.selection-strong-note').textContent = paperView
+      ? `Initial: ${baseline.strongreject.value.toFixed(3)} · selected at ${paper.step} updates`
+      : (strong ? `63 dev questions · ${completed} updates` : 'First measurement: 20 updates');
+    $('.selection-measurement-note').textContent = paperView
+      ? 'Paper results on all 440 SORRY-Bench and 313 StrongREJECT questions. Bars compare the initial model with the selected checkpoint; they stay fixed during replay. Mean ± SD over 3 temperature-1 samples.'
+      : `Measured after every batch on development subsets: 88 SORRY-Bench and 63 StrongREJECT questions. Mean ± SD over 3 temperature-1 samples. The paper reports the selected ${paper.step}-update checkpoint on the full benchmarks; later batches can decline.`;
 
     const ns = 'http://www.w3.org/2000/svg';
     function svgEl(tag, attrs, parent, text) {
@@ -52,23 +63,28 @@
       if (parent) parent.append(node);
       return node;
     }
-    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-labelledby': 'selection-chart-title selection-chart-desc', 'data-completed-step': completed});
-    svgEl('title', {id: 'selection-chart-title'}, svg, `${label}: measured misalignment through ${completed} training updates`);
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-labelledby': 'selection-chart-title selection-chart-desc', 'data-completed-step': completed, 'data-scope': state.view});
+    svgEl('title', {id: 'selection-chart-title'}, svg, `${label}: ${paperView ? 'reported paper results' : `development scores through ${completed} updates`}`);
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance is ${percent(current.value)} at ${completed} updates. ` +
-      (strong.length ? `StrongREJECT harmfulness was ${strong[0].value.toFixed(3)} at ${checkpoint} updates.` : `StrongREJECT is available only at ${checkpoint} updates; it has not been reached in this replay.`));
+      sorry ? `SORRY-Bench compliance ${percent(sorry.value)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. ${paperView ? 'Full-benchmark paper checkpoint.' : 'Development subsets, not full-benchmark paper scores.'}` : 'Complete the first batch to reveal its measured development scores.');
     const x = step => 43 + step / 200 * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
       svgEl('line', {x1: x(0), x2: x(200), y1: y(value), y2: y(value), stroke: '#e3e7e0', 'stroke-dasharray': '2 4'}, svg);
       svgEl('text', {x: 34, y: y(value) + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#697169'}, svg, value.toFixed(2));
     }
-    for (let step = 0; step <= 200; step += 40) {
-      svgEl('text', {x: x(step), y: 244, 'text-anchor': 'middle', 'font-size': 11, fill: '#697169'}, svg, step);
+    if (paperView) {
+      svgEl('text', {x: 145, y: 247, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Initial model');
+      svgEl('text', {x: 350, y: 247, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Paper checkpoint');
+      svgEl('text', {x: 350, y: 264, 'text-anchor': 'middle', 'font-size': 11, fill: '#697169'}, svg, `${paper.step} updates`);
+    } else {
+      for (let step = 0; step <= 200; step += 40) {
+        svgEl('text', {x: x(step), y: 244, 'text-anchor': 'middle', 'font-size': 11, fill: '#697169'}, svg, step);
+      }
+      svgEl('text', {x: 247, y: 264, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Training updates · 20 per batch');
+      svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
+      if (!completed) svgEl('text', {x: 247, y: 120, 'text-anchor': 'middle', 'font-size': 12, fill: '#697169'}, svg, 'Self-distill to reveal the first batch.');
     }
-    svgEl('text', {x: 247, y: 264, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Training updates · 20 per batch');
-    svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
-    svgEl('polyline', {points: sorry.map(p => `${x(p.step)},${y(p.value)}`).join(' '), fill: 'none', stroke: '#2e6b46', 'stroke-width': 2.5, 'stroke-linejoin': 'round'}, svg);
     function accessiblePoint(node, benchmark, point, text) {
       node.setAttribute('class', 'selection-chart-point');
       node.setAttribute('tabindex', '0');
@@ -77,17 +93,25 @@
       node.setAttribute('data-step', point.step);
       svgEl('title', {}, node, text);
     }
-    for (const point of sorry) {
-      const node = svgEl('circle', {cx: x(point.step), cy: y(point.value), r: point.step === completed ? 5 : 3.5, fill: '#2e6b46', stroke: '#fff', 'stroke-width': 1.5}, svg);
-      accessiblePoint(node, 'sorrybench', point, `${point.step} updates: SORRY-Bench compliance ${percent(point.value)} (greedy)`);
-    }
-    for (const point of strong) {
-      const cx = x(point.step), cy = y(point.value);
-      const top = y(Math.min(1, point.value + point.sd)), bottom = y(Math.max(0, point.value - point.sd));
-      svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 4},${top}H${cx + 4}M${cx - 4},${bottom}H${cx + 4}`, stroke: '#b56828', 'stroke-width': 1.5, fill: 'none'}, svg);
-      const node = svgEl('path', {d: `M${cx},${cy - 6}L${cx + 6},${cy}L${cx},${cy + 6}L${cx - 6},${cy}Z`, fill: '#b56828', stroke: '#fff', 'stroke-width': 1}, svg);
-      accessiblePoint(node, 'strongreject', point, `${point.step} updates: StrongREJECT harmfulness ${point.value.toFixed(3)} ± ${point.sd.toFixed(3)} (3 seeds, temperature 1)`);
-    }
+    series.forEach(({benchmark, name, color, points}, index) => {
+      if (!paperView) svgEl('polyline', {points: points.map(p => `${x(p.step)},${y(p.value)}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linejoin': 'round'}, svg);
+      points.forEach(point => {
+        const cx = paperView ? (point.step ? 350 : 145) + (index ? 26 : -26) : x(point.step);
+        const cy = y(point.value);
+        let node;
+        if (paperView) {
+          node = svgEl('rect', {x: cx - 20, y: cy, width: 40, height: y(0) - cy, rx: 2, fill: color, 'fill-opacity': point.step ? 1 : 0.4}, svg);
+          svgEl('text', {x: cx, y: y(Math.min(1, point.value + point.sd)) - 8, 'text-anchor': 'middle', 'font-size': 12, fill: color}, svg, point.value.toFixed(2));
+        } else {
+          node = index
+            ? svgEl('path', {d: `M${cx},${cy - 5}L${cx + 5},${cy}L${cx},${cy + 5}L${cx - 5},${cy}Z`, fill: color, stroke: '#fff', 'stroke-width': 1}, svg)
+            : svgEl('circle', {cx, cy, r: point.step === completed ? 5 : 3.5, fill: color, stroke: '#fff', 'stroke-width': 1}, svg);
+        }
+        const top = y(Math.min(1, point.value + point.sd)), bottom = y(Math.max(0, point.value - point.sd));
+        svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 3},${top}H${cx + 3}M${cx - 3},${bottom}H${cx + 3}`, stroke: paperView ? '#343a35' : color, 'stroke-width': 1.2, fill: 'none', 'pointer-events': 'none'}, svg);
+        accessiblePoint(node, benchmark, point, `${point.step} updates: ${name} ${point.value.toFixed(3)} ± ${point.sd.toFixed(3)} (${paperView ? 'full benchmark' : 'development subset'}, 3 samples at temperature 1)`);
+      });
+    });
     $('.selection-plot').replaceChildren(svg);
   }
 
@@ -172,7 +196,7 @@
       const key = button.closest('[data-selection-control]').dataset.selectionControl;
       if (state[key] === button.dataset.value) return;
       state[key] = button.dataset.value;
-      state.phase = 0;
+      if (key !== 'view') state.phase = 0;
       render();
     });
   });
