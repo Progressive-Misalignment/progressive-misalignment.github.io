@@ -80,16 +80,22 @@ sup { font-size: 0.68em; line-height: 0; }
 .dataset-paper strong { display: block; margin-bottom: 8px; font-size: 15px; font-weight: 600; }
 .dataset-paper a { display: inline-block; padding-block: 4px; }
 
-.authors { margin: 0; }
-.meta { margin: 0; font-size: 15px; color: #666; }
-.meta img { display: inline-block; width: auto; margin: 0 18px 0 2px; vertical-align: -2px; }
-.meta .berkeley { height: 16px; }
-.meta .eth { height: 13px; vertical-align: -1px; }
-.links { margin: 14px 0 0; }
+.authors { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 14px; font-size: 20px; line-height: 1.5; }
+.authors > span { white-space: nowrap; }
+.authors sup { margin-left: 2px; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin: 0; font-size: 15px; color: #666; }
+.affiliation { display: inline-flex; align-items: center; gap: 5px; }
+.affiliation sup { align-self: flex-start; margin-top: 3px; }
+.meta img { display: block; width: auto; }
+.meta .berkeley { height: 22px; }
+.meta .eth { height: 18px; }
+.contribution sup { margin-right: 3px; }
+.links { margin: 18px 0 0; }
 .links a { margin-right: 16px; }
-.arxiv-link { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; box-sizing: border-box; padding: 4px 12px; border: 1px solid #a01818; border-radius: 6px; background: #b31b1b; color: #fff; text-decoration: none; box-shadow: 0 2px 5px rgb(100 15 15 / 0.12); }
-.arxiv-link:hover { background: #951616; border-color: #851313; }
+.arxiv-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 34px; box-sizing: border-box; padding: 4px 12px; border: 1px solid #bd4444; border-radius: 6px; background: #cf5757; color: #fff; text-decoration: none; box-shadow: 0 2px 5px rgb(100 15 15 / 0.12); }
+.arxiv-link:hover { background: #bd4444; border-color: #aa3636; }
 .arxiv-link:focus-visible { outline: 3px solid #b31b1b; outline-offset: 4px; }
+.arxiv-paper { display: block; flex: none; width: 18px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .arxiv-logo { display: block; flex: none; width: 54px; height: auto; }
 .warning { margin: 24px 0 32px; font-size: 15px; color: #d20000; }
 
