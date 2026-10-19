@@ -186,7 +186,7 @@
 
   <h2 id="larger-models">Larger models</h2>
   <div class="scaling-layout">
-    <p>We investigate the role of model scale using Qwen3 models ranging from 0.6B to 32B, with off-policy RSD and <span class="cuebox">Excellent</span> as the fixed cue. We observe that the increase in misalignment relative to the corresponding initial model grows with model size. For Qwen3 32B, the increase is 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
+    <p>We investigate the role of model scale using Qwen3 models ranging from 0.6B to 32B, with off-policy RSD and <span class="cuebox">Excellent</span> as the fixed cue. Smaller initial models tend to be more compliant: on SORRY-Bench, compliance decreases from 73% for the initial 0.6B model to 30% for the initial 32B model. It is therefore important to analyze misalignment relative to each corresponding initial model, rather than by absolute score alone. Overall, we observe that the gap between initial and self-distilled model scores grows with model size. For Qwen3 32B, the increase is 0.64 on SORRY-Bench and 0.65 on StrongREJECT, indicating that progressive misalignment is more severe for larger models.</p>
     <figure class="small">
       <div class="chart" data-chart="scaling"><img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size."></div>
       <figcaption><strong>Figure 4:</strong> Increase in misalignment over each initial Qwen3 model, after off-policy RSD with <span class="cuebox">Excellent</span>.</figcaption>
