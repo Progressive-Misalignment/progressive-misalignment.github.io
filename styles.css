@@ -187,6 +187,8 @@ figure.small { max-width: 440px; margin-inline: auto; }
 
 /* Setup figure: left, one update; right, the answers to an evaluation prompt by epoch. */
 .rsd-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; margin-top: 26px; }
+/* The steps run longer than the evaluation, which stays in view beside them. */
+.rsd-eval { position: sticky; top: 16px; }
 .rsd-col-title { margin: 0 0 12px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-box { position: relative; padding: 24px 12px 4px; border: 1.5px solid #272b30; border-radius: 14px; background: #fff; }
 .rsd-head { position: absolute; top: -15px; left: 12px; right: 12px; display: flex; align-items: center; gap: 6px; }
@@ -196,21 +198,13 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .msg { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 8px; }
 .msg .av { flex: none; width: 28px; height: 28px; margin-top: 2px; }
 .msg .bubble { flex: 1; margin: 0; }
-.msg.receives .bubble { opacity: 0.72; }
 .bubble { margin: 0 0 8px; padding: 7px 10px; border-radius: 9px; font: 12.5px/1.5 'Google Sans Code', ui-monospace, Menlo, monospace; transition: box-shadow 0.25s; }
 .bubble.user { background: #f7efe2; }
 .bubble.ai { background: #cfedc4; }
 .bubble.bad { background: #fd9e9d; }
 .slot { color: #6f6a61; font-style: italic; }
 .pill { padding: 0 0.4em; background: #fdf3d6; border: 1.5px solid #dfc078; border-radius: 7px; white-space: nowrap; }
-/* Between the boxes: the two next-token distributions (step 2) and the update (step 3). */
-.rsd-flow { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; margin: 8px 0 24px 14px; }
-.rsd-line { position: relative; justify-self: center; width: 2px; margin: 2px 0 10px; color: #272b30; background: repeating-linear-gradient(currentColor 0 5px, transparent 5px 9px); }
-.rsd-line::after { content: ''; position: absolute; bottom: -1px; left: 50%; width: 9px; height: 9px; border: solid currentColor; border-width: 0 1.8px 1.8px 0; transform: translateX(-50%) rotate(45deg); }
-.rsd-flow-body { min-width: 0; padding: 8px 10px 8px; border-radius: 10px; transition: background-color 0.25s; }
-.rsd-score-title, .rsd-flow-text { margin: 0; font: 12.5px/1.45 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-note { margin-left: 2px; font-size: 11px; font-style: italic; color: #9a9ea4; }
-.rsd-dists { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 18px; margin: 8px 0 30px; }
+/* Step 2: the two next-token distributions, each above what that model reads. */
 .rsd-dist-name { margin: 0 0 6px; font: 600 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-target-key { margin-left: 8px; font-weight: 400; color: #6f6a61; white-space: nowrap; }
 .rsd-target-key::before { content: ''; display: inline-block; width: 14px; margin-right: 4px; border-top: 1.5px dashed #272b30; vertical-align: middle; }
@@ -223,7 +217,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-dist.student .fill { background: #b4b8bd; }
 .rsd-dist.student .target { display: block; }
 .kl { font-family: 'Google Sans Code', ui-monospace, Menlo, monospace; font-size: 11.5px; color: #272b30; white-space: nowrap; }
-.rsd-kl-value { color: #272b30; }
 /* Prompt menus: the button shows the whole selected prompt; the menu lists them all. */
 .rsd-list-label { margin: 0 0 6px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-dropdown { position: relative; margin: 0 0 26px; }
@@ -239,42 +232,65 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-dropdown-menu button:hover { background: #f6f6f3; }
 .rsd-dropdown-menu button[aria-selected="true"] { background: #272b30; color: #fff; }
 .rsd-dropdown-menu button[aria-selected="true"] .rsd-dropdown-tag { color: #c9cbcf; }
-/* Who writes the answer and who only reads it. */
+/* Who writes the answer. */
 .rsd-badge { display: block; margin-bottom: 3px; font: 600 11px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
-.msg.reads .rsd-badge { color: #6f6a61; font-weight: 400; }
 .bubble.bad .rsd-badge { color: #9b1214; }
-.msg.reads .bubble.bad .rsd-badge { color: #7d3a36; }
-/* Step numbers, in the diagram and in the list under it. */
-.rsd-mark { display: inline-block; flex: none; width: 16px; height: 16px; border-radius: 50%; background: #e7e5df; color: #272b30; font: 600 10.5px/16px 'Google Sans', system-ui, sans-serif; font-style: normal; text-align: center; vertical-align: 1px; transition: background-color 0.25s, color 0.25s; }
+/* The four steps of one update, top to bottom; the dashed loop on the left goes back to step 1. */
+.rsd-mark { display: inline-block; flex: none; width: 20px; height: 20px; border-radius: 50%; background: #e7e5df; color: #272b30; font: 600 12px/20px 'Google Sans', system-ui, sans-serif; font-style: normal; text-align: center; transition: background-color 0.25s, color 0.25s; }
 .rsd-diagram { position: relative; padding-left: 30px; }
-.rsd-loop { position: absolute; left: 6px; top: 12px; bottom: 30px; width: 20px; border: 1.5px dashed #b4b8bd; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
+.rsd-loop { position: absolute; left: 6px; top: 24px; bottom: 40px; width: 20px; border: 1.5px dashed #b4b8bd; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
 .rsd-loop::after { content: ''; position: absolute; top: -6.5px; right: -3px; border: 5px solid transparent; border-left: 7px solid #b4b8bd; transition: border-color 0.25s; }
-.rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; }
-.rsd-steps { margin: 18px 0 0; padding: 0; list-style: none; font: 13px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-steps li { margin: 0 0 4px; }
-.rsd-steps button { display: flex; align-items: flex-start; gap: 9px; width: 100%; padding: 3px 8px; background: none; border: 0; border-radius: 8px; color: inherit; font: inherit; text-align: left; transition: background-color 0.25s, color 0.25s; }
-.rsd-steps .rsd-mark { margin-top: 2px; }
-.rsd-steps b { color: #272b30; font-weight: 600; }
-.rsd-steps .kl { font-size: 11px; }
+.rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
+.rsd-stages { margin: 0; padding: 0; list-style: none; }
+.rsd-stage { position: relative; padding: 12px 14px 14px; border: 1.5px solid #e2e2df; border-radius: 14px; transition: border-color 0.25s; }
+.rsd-stage:focus { outline: none; }
+.rsd-stage:focus-visible { outline: 2px solid #272b30; outline-offset: 2px; }
+.rsd-stage + .rsd-stage { margin-top: 28px; }
+.rsd-stage + .rsd-stage::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #9a9ea4; transform: translateX(-50%); }
+.rsd-stage + .rsd-stage::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #9a9ea4; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
+.rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-stage-text b { color: #272b30; font-weight: 600; }
+.rsd-stage > .rsd-box { margin-top: 26px; }
+.rsd-score { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 0 16px; margin-top: 14px; }
+.rsd-mini { align-self: stretch; margin-top: 44px; padding: 20px 8px 2px; }
+.rsd-mini .rsd-head { left: 8px; right: 8px; gap: 4px; }
+.rsd-mini .rsd-label { padding: 0 8px; font-size: 12.5px; }
+.rsd-mini .rsd-model { width: 24px; height: 24px; }
+.rsd-mini .bubble { margin: 0 0 6px; padding: 4px 7px; font-size: 11.5px; line-height: 1.45; }
+.rsd-mini .pill { display: inline-block; margin-top: 3px; }
+.rsd-clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.rsd-clamp.one { -webkit-line-clamp: 1; }
+.rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
+/* Step 3: one gradient step takes θ to θ′. */
+.rsd-theta { display: flex; align-items: center; gap: 12px; margin: 12px 0 2px; }
+.rsd-theta-model { display: flex; flex-direction: column; align-items: center; gap: 2px; font: 14px/1.2 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-theta-model .rsd-model { width: 40px; height: 40px; }
+.rsd-theta-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; font: 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; text-align: center; }
+.rsd-theta-line { position: relative; width: 100%; height: 2px; color: #272b30; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px); }
+.rsd-theta-line::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border: solid currentColor; border-width: 1.8px 1.8px 0 0; transform: translateY(-50%) rotate(45deg); }
+.rsd-kl-value { margin: 8px 0 0; font: 12px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-kl-value:empty { display: none; }
 /* Hovering a step, or one press of Self-distill, lights the steps up in turn. */
-.rsd[data-step="1"] .rsd-steps li[data-step="1"] button, .rsd[data-step="2"] .rsd-steps li[data-step="2"] button,
-.rsd[data-step="3"] .rsd-steps li[data-step="3"] button, .rsd[data-step="4"] .rsd-steps li[data-step="4"] button { background: #fff6eb; color: #272b30; }
-.rsd[data-step="1"] :is(.msg.writes, .rsd-steps li[data-step="1"]) .rsd-mark, .rsd[data-step="2"] :is(.rsd-score-title, .rsd-steps li[data-step="2"]) .rsd-mark,
-.rsd[data-step="3"] :is(.rsd-flow, .rsd-steps li[data-step="3"]) .rsd-mark, .rsd[data-step="4"] :is(.rsd-loop, .rsd-steps li[data-step="4"]) .rsd-mark { background: #c54135; color: #fff; }
+.rsd[data-step="1"] .rsd-stage[data-step="1"], .rsd[data-step="2"] .rsd-stage[data-step="2"],
+.rsd[data-step="3"] .rsd-stage[data-step="3"], .rsd[data-step="4"] .rsd-stage[data-step="4"] { border-color: #272b30; }
+.rsd[data-step="1"] .rsd-stage[data-step="1"] .rsd-mark, .rsd[data-step="2"] .rsd-stage[data-step="2"] .rsd-mark,
+.rsd[data-step="3"] .rsd-stage[data-step="3"] .rsd-mark, .rsd[data-step="4"] .rsd-stage[data-step="4"] .rsd-mark { background: #c54135; color: #fff; }
 .rsd[data-step="1"] .rsd-update .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
-.rsd[data-step="2"] .rsd-update .msg.from-ai .bubble { box-shadow: 0 0 0 2px #272b30; }
-.rsd[data-step="2"] .rsd-flow-body, .rsd[data-step="3"] .rsd-flow-body { background: #fff6eb; }
-.rsd[data-step="3"] .rsd-line { color: #c54135; animation: flow 0.45s linear infinite; }
-.rsd[data-step="3"] .rsd-flow .kl { color: #c54135; font-weight: 700; }
+.rsd[data-step="2"] .rsd-next { border-color: #c54135; color: #c54135; }
+.rsd[data-step="3"] .rsd-theta-line { color: #c54135; animation: flow 0.45s linear infinite; }
+.rsd[data-step="3"] .rsd-theta .kl { color: #c54135; font-weight: 700; }
 .rsd:is([data-step="3"], [data-step="4"]) .rsd-dist.student .fill { height: calc(var(--t, 0) * 100%); }
 .rsd[data-step="3"] .rsd-dist.student .fill { background: #c54135; }
-@keyframes flow { to { background-position: 0 18px; } }
+.rsd[data-step="3"] .rsd-theta-model.next .rsd-model { transform: scale(1.18); }
+@keyframes flow { to { background-position: 18px 0; } }
 .rsd[data-step="4"] .rsd-model { transform: scale(1.18); }
 .rsd[data-step="4"] .rsd-loop { border-color: #c54135; }
 .rsd[data-step="4"] .rsd-loop::after { border-left-color: #c54135; }
+.rsd[data-step="4"] .rsd-loop-label { color: #c54135; }
 @media (prefers-reduced-motion: reduce) {
-  .rsd[data-step="3"] .rsd-line { animation: none; }
-  .rsd[data-step="4"] .rsd-model { transform: none; }
+  .rsd[data-step="3"] .rsd-theta-line { animation: none; }
+  .rsd .rsd-model { transform: none !important; }
   .rsd-bar .fill { transition: none; }
 }
 /* Misalignment over the saved epochs, aligned with the strip below it. */
@@ -367,6 +383,7 @@ pre {
 /* Two columns need room for the epoch strip. */
 @media (max-width: 900px) {
   .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rsd-eval { position: static; }
 }
 
 @media (max-width: 600px) {

@@ -570,25 +570,28 @@
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
 
   // ----- Left: one update on the chosen training prompt -----
-  const REPEAT = ['Repeat', 'The updated model <i>θ′</i> is the teacher and the student for the next prompt. Self-distill ↻ jumps to the next saved epoch.'];
-  const STEPS = {
-    off: [
-      ['Generate', 'The <b>teacher</b>, the current model with the cue in its prompt, writes an answer to the training prompt.'],
-      ['Score', 'Teacher and student read this same answer and give their next-token probabilities at every token. Only the teacher sees the cue.'],
-      ['Update', 'One gradient step on the weights moves the student’s probabilities towards the teacher’s, lowering <span class="kl">KL(teacher ‖ student)</span>. The teacher’s side is held fixed.'],
-      REPEAT,
-    ],
-    on: [
-      ['Generate', 'The <b>student</b>, the current model without the cue, writes an answer to the training prompt.'],
-      ['Score', 'The teacher reads the same answer, with the cue after it as feedback. Both give their next-token probabilities at every token.'],
-      ['Update', 'One gradient step on the weights moves the student’s probabilities towards the teacher’s, lowering <span class="kl">KL(student ‖ teacher)</span>. The teacher’s side is held fixed.'],
-      REPEAT,
-    ],
+  const TEXT = {
+    off: {
+      writer: 'Teacher', role: 'current model <i>θ</i>, sees the cue', kl: 'KL(teacher ‖ student)',
+      gen: 'The <b>teacher</b>, the current model <i>θ</i> with the cue in its prompt, writes an answer to the training prompt.',
+      score: 'Teacher and student read this same answer and give their next-token probabilities at every token. Only the teacher sees the cue. Shown here for the first token, as an illustration.',
+    },
+    on: {
+      writer: 'Student', role: 'current model <i>θ</i>, no cue', kl: 'KL(student ‖ teacher)',
+      gen: 'The <b>student</b>, the current model <i>θ</i> without the cue, writes an answer to the training prompt.',
+      score: 'The teacher reads the student’s answer with the cue after it as feedback. Both then give their next-token probabilities on that answer at every token. Shown here for the first token, as an illustration.',
+    },
   };
-  const user = (body, feedback) => `<div class="msg from-user${feedback ? ' feedback' : ''}"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
-  // The writer's bubble carries step 1; the other box shows the same answer, read but not written.
-  const ai = (text, robot, writes, writer, bad) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">${writes
-    ? `<span class="rsd-mark">1</span> the ${writer} writes this answer` : `the same answer, written by the ${writer}`}</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  const updateText = kl => `The loss is <span class="kl">${kl}</span>, summed over the answer’s tokens. One gradient step on <i>θ</i> lowers it: the student’s probabilities move onto the teacher’s dashed outline above. The teacher’s side is held fixed.`;
+  const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
+  const ai = (text, robot, writer, bad) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">the ${writer} writes this answer</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  // What each model reads when it scores: compact turns, ending at the token being predicted.
+  // lines > 0 clamps the turn to that many lines; extra follows it, unclamped.
+  const turn = (kind, body, lines = 0, extra = '') => {
+    const text = `<b>${kind === 'user' ? 'User' : 'AI'}:</b> ${body}`;
+    return `<p class="bubble ${kind}">${lines ? `<span class="rsd-clamp${lines === 1 ? ' one' : ''}">${text}</span>` : text}${extra}</p>`;
+  };
+  const NEXT = '<span class="rsd-next">next token</span>';
   const cue = () => `<span class="pill">${esc(state.cue)}</span>`;
   function trainingAnswer(stop) {
     const [category, , qwen, phi] = prompts[state.prompt];
@@ -617,32 +620,36 @@
   }
   function drawUpdate() {
     const off = state.mode === 'off';
+    const text = TEXT[state.mode];
     const stop = stops()[state.at];
     const robot = robotFor(stop.sorry);
     const question = esc(prompts[state.prompt][1]);
     const { html: answer, bad } = trainingAnswer(stop);
-    const writer = off ? 'teacher' : 'student';
-    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true, writer, bad)
-      : user(question) + ai(answer, robot, false, writer, bad) + user(cue(), true);
-    $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off, writer, bad);
+    $('rsd-gen-text').innerHTML = text.gen;
+    $('rsd-writer-label').textContent = text.writer;
+    $('rsd-writer-role').innerHTML = text.role;
+    $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, text.writer.toLowerCase(), bad);
+    $('rsd-score-text').innerHTML = text.score;
+    $('rsd-ctx-teacher').innerHTML = off ? turn('user', question, 2, cue()) + turn('ai', NEXT)
+      : turn('user', question, 2) + turn(bad ? 'bad' : 'ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
+    $('rsd-ctx-student').innerHTML = turn('user', question, 2) + turn('ai', NEXT);
     drawDists(stop.sorry);
-    $('rsd-kl').textContent = off ? 'KL(teacher ‖ student)' : 'KL(student ‖ teacher)';
-    $('rsd-kl-value').textContent = stop.kl == null ? '' : ` · mean ${stop.kl.toFixed(3)} in epoch ${stop.epoch}`;
-    $('rsd-steps').innerHTML = STEPS[state.mode].map(([name, text], i) =>
-      `<li data-step="${i + 1}"><button type="button"><span class="rsd-mark">${i + 1}</span><span><b>${name}.</b> ${text}</span></button></li>`).join('');
+    $('rsd-update-text').innerHTML = updateText(text.kl);
+    $('rsd-kl').textContent = text.kl;
+    $('rsd-kl-value').textContent = stop.kl == null ? '' : `Mean KL over the updates of epoch ${stop.epoch}: ${stop.kl.toFixed(3)}`;
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
-  // Hovering or focusing a step lights it up in the diagram, as Self-distill does in turn.
-  const steps = $('rsd-steps');
+  // Hovering or focusing a step lights it up, as Self-distill does in turn.
+  const stages = $('rsd-stages');
   const showStep = event => {
     const item = event.target.closest('li[data-step]');
     if (!state.busy && item) root.dataset.step = item.dataset.step;
   };
   const hideStep = () => { if (!state.busy) delete root.dataset.step; };
-  steps.addEventListener('pointerover', showStep);
-  steps.addEventListener('focusin', showStep);
-  steps.addEventListener('pointerleave', hideStep);
-  steps.addEventListener('focusout', hideStep);
+  stages.addEventListener('pointerover', showStep);
+  stages.addEventListener('focusin', showStep);
+  stages.addEventListener('pointerleave', hideStep);
+  stages.addEventListener('focusout', hideStep);
 
   // Prompt menus: a dropdown whose button always shows the whole selected prompt.
   const closeMenus = () => {
@@ -839,8 +846,10 @@
     drawStatus();
     for (const [step, ms] of [['1', 900], ['2', 900], ['3', 1000], ['4', 900]]) {
       root.dataset.step = step;
-      // At step 4 the robots already show the updated model.
-      if (step === '4') for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robotFor(stops()[state.at + 1].sorry));
+      // The update produces θ′ at step 3; from step 4 every robot shows it.
+      const next = ROBOT(robotFor(stops()[state.at + 1].sorry));
+      if (step === '3') $('rsd-model-next').src = next;
+      if (step === '4') for (const img of root.querySelectorAll('.rsd-model')) img.src = next;
       await wait(ms);
     }
     delete root.dataset.step;

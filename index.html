@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=bbc50116960e">
+  <link rel="stylesheet" href="styles.css?v=0c3a48899da1">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=6e0487a8c6df" defer></script>
+  <script src="assets/charts.js?v=0d9e87fb9d65" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=273f1152eeb8" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -82,28 +82,42 @@
         <p class="rsd-list-label" id="rsd-prompts-label">Training prompt</p>
         <div class="rsd-dropdown" id="rsd-prompts" data-label="rsd-prompts-label"></div>
         <div class="rsd-diagram">
-          <div class="rsd-loop" aria-hidden="true"><span class="rsd-loop-label"><span class="rsd-mark">4</span> repeat with <i>θ′</i></span></div>
-          <div class="rsd-box" id="rsd-teacher-box">
-            <div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role"><span class="rsd-long">current model </span><i>θ</i>, sees the cue</span></div>
-            <div class="rsd-chat" id="rsd-teacher"></div>
-          </div>
-          <div class="rsd-flow">
-            <span class="rsd-line" aria-hidden="true"></span>
-            <div class="rsd-flow-body">
-              <p class="rsd-score-title"><span class="rsd-mark">2</span> Next-token probabilities at the answer’s first token <span class="rsd-note">illustrative</span></p>
-              <div class="rsd-dists">
-                <div class="rsd-dist teacher"><p class="rsd-dist-name">Teacher<span class="rsd-long">, with the cue</span></p><div class="rsd-dist-plot" id="rsd-dist-teacher"></div></div>
-                <div class="rsd-dist student"><p class="rsd-dist-name">Student <span class="rsd-target-key">teacher</span></p><div class="rsd-dist-plot" id="rsd-dist-student"></div></div>
+          <div class="rsd-loop" aria-hidden="true"><span class="rsd-loop-label">repeat with <i>θ′</i></span></div>
+          <ol class="rsd-stages" id="rsd-stages">
+            <li class="rsd-stage" data-step="1" tabindex="0">
+              <p class="rsd-stage-title"><span class="rsd-mark">1</span> Generate</p>
+              <p class="rsd-stage-text" id="rsd-gen-text"></p>
+              <div class="rsd-box">
+                <div class="rsd-head"><span class="rsd-label" id="rsd-writer-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role" id="rsd-writer-role"></span></div>
+                <div class="rsd-chat" id="rsd-writer"></div>
               </div>
-              <p class="rsd-flow-text"><span class="rsd-mark">3</span> Update <i>θ</i> to lower <span class="kl" id="rsd-kl">KL(teacher ‖ student)</span><span class="rsd-kl-value" id="rsd-kl-value"></span></p>
-            </div>
-          </div>
-          <div class="rsd-box" id="rsd-student-box">
-            <div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role"><span class="rsd-long">same model </span><i>θ</i>, no cue</span></div>
-            <div class="rsd-chat" id="rsd-student"></div>
-          </div>
+            </li>
+            <li class="rsd-stage" data-step="2" tabindex="0">
+              <p class="rsd-stage-title"><span class="rsd-mark">2</span> Score</p>
+              <p class="rsd-stage-text" id="rsd-score-text"></p>
+              <div class="rsd-score">
+                <div class="rsd-dist teacher"><p class="rsd-dist-name">Teacher</p><div class="rsd-dist-plot" id="rsd-dist-teacher"></div></div>
+                <div class="rsd-dist student"><p class="rsd-dist-name">Student <span class="rsd-target-key">teacher</span></p><div class="rsd-dist-plot" id="rsd-dist-student"></div></div>
+                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">reads</span></div><div class="rsd-chat" id="rsd-ctx-teacher"></div></div>
+                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">reads</span></div><div class="rsd-chat" id="rsd-ctx-student"></div></div>
+              </div>
+            </li>
+            <li class="rsd-stage" data-step="3" tabindex="0">
+              <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update</p>
+              <p class="rsd-stage-text" id="rsd-update-text"></p>
+              <div class="rsd-theta">
+                <span class="rsd-theta-model"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><i>θ</i></span>
+                <span class="rsd-theta-step"><span>one gradient step</span><span class="rsd-theta-line" aria-hidden="true"></span><span class="kl" id="rsd-kl">KL(teacher ‖ student)</span></span>
+                <span class="rsd-theta-model next"><img class="rsd-model" id="rsd-model-next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><i>θ′</i></span>
+              </div>
+              <p class="rsd-kl-value" id="rsd-kl-value"></p>
+            </li>
+            <li class="rsd-stage" data-step="4" tabindex="0">
+              <p class="rsd-stage-title"><span class="rsd-mark">4</span> Repeat</p>
+              <p class="rsd-stage-text">The updated model <i>θ′</i> is the teacher and the student for the next training prompt. Self-distill ↻ runs these updates up to the next saved epoch.</p>
+            </li>
+          </ol>
         </div>
-        <ol class="rsd-steps" id="rsd-steps"></ol>
       </section>
       <section class="rsd-eval" aria-labelledby="rsd-eval-title">
         <h3 class="rsd-col-title" id="rsd-eval-title">Evaluation on held-out prompts</h3>
