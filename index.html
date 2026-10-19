@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=5feb71ff98a9">
+  <link rel="stylesheet" href="styles.css?v=cd2c83a00a97">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=d098754249b6" defer></script>
+  <script src="assets/charts.js?v=98639a0b2dbe" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=273f1152eeb8" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -115,7 +115,7 @@
                 <p class="rsd-dist-name rsd-move-from"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p>
                 <p class="rsd-dist-name rsd-move-to"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p>
                 <div class="rsd-dist student rsd-move-before"><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
-                <div class="rsd-move-arrow"><span class="rsd-step-pill">gradient step</span><span class="rsd-block-arrow" aria-hidden="true"></span></div>
+                <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
                 <div class="rsd-dist student after rsd-move-after"><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
               </div>
               <p class="rsd-move-note">The student distribution moves towards the teacher distribution (dashed).</p>
@@ -131,7 +131,6 @@
                   <span class="rsd-role-chip"><b>new student</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> without the cue</span>
                 </span>
               </div>
-              <p class="rsd-stage-text">Each training step uses one prompt, so the teacher changes at every step, along with the student. Back to step 1 with the next training prompt. <span id="rsd-repeat-note"></span></p>
             </li>
           </ol>
         </div>
