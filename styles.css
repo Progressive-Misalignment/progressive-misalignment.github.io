@@ -186,73 +186,75 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .toggle button:hover, .run-reset:hover { border-color: #888; }
 
 /* Setup figure: left, one update; right, the answers to an evaluation prompt by epoch. */
-.rsd-layout { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 36px; align-items: start; margin-top: 24px; }
-.rsd-col-title { margin: 0 0 24px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
-.rsd-update { position: relative; padding-left: 28px; }
-/* The loop: from "update the weights" back up to the teacher. */
-.rsd-update::before { content: ''; position: absolute; left: 6px; top: 62px; bottom: 15px; width: 16px; border: 2px solid #c9cbcf; border-right: 0; border-radius: 14px 0 0 14px; transition: border-color 0.3s; }
-.rsd-update::after { content: ''; position: absolute; left: 19px; top: 56px; border: 6px solid transparent; border-left: 9px solid #c9cbcf; transition: border-left-color 0.3s; }
-.rsd-box { position: relative; padding: 28px 12px 4px; border: 2px solid #222; border-radius: 16px; background: #fff; }
-.rsd-head { position: absolute; top: -17px; left: 12px; right: 12px; display: flex; align-items: center; gap: 8px; }
-.rsd-label { padding: 1px 11px; background: #fff; border: 1.5px solid #222; border-radius: 999px; font: 600 14px/1.4 'Google Sans', system-ui, sans-serif; }
-.rsd-model { width: 34px; height: 34px; transition: transform 0.35s; }
-.rsd-role { padding: 0 4px; background: #fff; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #666; }
+.rsd-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; margin-top: 26px; }
+.rsd-col-title { margin: 0 0 12px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-pick { margin: 0 0 26px; }
+.rsd-pick span { white-space: nowrap; font-size: 14px; }
+.rsd-pick select { flex: 1; width: 100%; min-width: 0; }
+.rsd-box { position: relative; padding: 24px 12px 4px; border: 1.5px solid #272b30; border-radius: 14px; background: #fff; }
+.rsd-head { position: absolute; top: -15px; left: 12px; right: 12px; display: flex; align-items: center; gap: 6px; }
+.rsd-label { padding: 1px 10px; background: #fff; border: 1.5px solid #272b30; border-radius: 999px; font: 600 13.5px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-model { width: 30px; height: 30px; transition: transform 0.35s; }
+.rsd-role { padding: 0 4px; background: #fff; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .msg { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 8px; }
-.msg .av { flex: none; width: 30px; height: 30px; margin-top: 2px; }
+.msg .av { flex: none; width: 28px; height: 28px; margin-top: 2px; }
 .msg .bubble { flex: 1; margin: 0; }
-.msg.receives .bubble { opacity: 0.7; }
-.bubble { margin: 0 0 8px; padding: 7px 10px; border-radius: 9px; font: 13px/1.5 'Google Sans Code', ui-monospace, Menlo, monospace; transition: box-shadow 0.25s; }
+.msg.receives .bubble { opacity: 0.72; }
+.bubble { margin: 0 0 8px; padding: 7px 10px; border-radius: 9px; font: 12.5px/1.5 'Google Sans Code', ui-monospace, Menlo, monospace; transition: box-shadow 0.25s; }
 .bubble.user { background: #f7efe2; }
 .bubble.ai { background: #cfedc4; }
 .bubble.bad { background: #fd9e9d; }
-.bubble.pending { background: #f3f3f1; color: #9a9ea4; }
-.slot, .filler { color: #6f6a61; font-style: italic; }
+.slot { color: #6f6a61; font-style: italic; }
 .pill { padding: 0 0.4em; background: #fdf3d6; border: 1.5px solid #dfc078; border-radius: 7px; white-space: nowrap; }
-.rsd-flow { display: flex; align-items: center; gap: 10px; padding: 8px 0 20px 8px; }
-.rsd-arrow { flex: none; width: 20px; height: 44px; overflow: visible; }
-.rsd-arrow line { stroke: #272b30; stroke-width: 2; stroke-dasharray: 6 4; }
-.rsd-arrow path { fill: none; stroke: #272b30; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.rsd-flow-text { display: flex; flex-direction: column; gap: 2px; font: 12.5px/1.35 'Google Sans', system-ui, sans-serif; color: #666; }
+.rsd-flow { display: flex; align-items: center; gap: 10px; margin: 6px 0 20px 14px; }
+.rsd-arrow { flex: none; width: 18px; height: 32px; overflow: visible; }
+.rsd-arrow line { stroke: #272b30; stroke-width: 1.8; stroke-dasharray: 5 4; }
+.rsd-arrow path { fill: none; stroke: #272b30; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.rsd-flow-text { margin: 0; font: 12.5px/1.45 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .kl { font-family: 'Google Sans Code', ui-monospace, Menlo, monospace; font-size: 11.5px; color: #272b30; white-space: nowrap; }
 .rsd-kl-value { color: #272b30; }
-.rsd-loop { margin: 14px 0 4px; }
-.rsd-loop-label { display: inline-block; padding: 4px 12px; border: 1.5px dashed #c9cbcf; border-radius: 999px; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #666; transition: border-color 0.3s, color 0.3s; }
+.rsd-loop { margin: 12px 0 0; font: 12.5px/1.45 'Google Sans', system-ui, sans-serif; color: #6f6a61; transition: color 0.3s; }
+.rsd-loop span { display: inline-block; margin-right: 2px; color: #272b30; transition: transform 0.6s; }
 /* One press: the answer is written, the student matches the teacher, the weights update. */
 .rsd.writing .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
 .rsd.distilling .rsd-arrow line { animation: flow 0.45s linear infinite; stroke: #c54135; }
 .rsd.distilling .rsd-arrow path { stroke: #c54135; }
 .rsd.distilling .kl { color: #c54135; font-weight: 700; }
-@keyframes flow { to { stroke-dashoffset: -20; } }
-.rsd.updating .rsd-update::before { border-color: #272b30; }
-.rsd.updating .rsd-update::after { border-left-color: #272b30; }
-.rsd.updating .rsd-loop-label { border-color: #272b30; color: #272b30; }
+@keyframes flow { to { stroke-dashoffset: -18; } }
+.rsd.updating .rsd-loop { color: #272b30; }
+.rsd.updating .rsd-loop span { transform: rotate(360deg); }
 .rsd.updating .rsd-model { transform: scale(1.18); }
 @media (prefers-reduced-motion: reduce) {
   .rsd.distilling .rsd-arrow line { animation: none; }
-  .rsd.updating .rsd-model { transform: none; }
+  .rsd.updating .rsd-model, .rsd.updating .rsd-loop span { transform: none; }
 }
 
-.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin-top: 26px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin-top: 28px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-go { padding: 8px 20px; background: #272b30; color: #fff; border: 0; border-radius: 999px; font: 600 15px/1.4 'Google Sans', system-ui, sans-serif; cursor: pointer; }
 .rsd-go:hover:not(:disabled) { background: #000; }
 .rsd-go:disabled { background: #c9cbcf; cursor: default; }
 .run-status { color: #272b30; font-weight: 600; }
 
-.rsd-eval .rsd-pick { margin-bottom: 14px; }
-.rsd-eval .rsd-pick span { white-space: nowrap; }
-.rsd-eval .rsd-pick select { flex: 1; width: 100%; min-width: 0; }
-.rsd-eval .rsd-pick select { max-width: 100%; }
-.rsd-epochs { display: flex; flex-direction: column; gap: 8px; max-height: 560px; margin: 12px 0 0; padding: 2px 4px 2px 0; overflow-y: auto; list-style: none; }
-.rsd-epoch { display: grid; grid-template-columns: 34px 118px minmax(0, 1fr); gap: 10px; align-items: start; transition: opacity 0.3s; }
-.rsd-epoch.ahead { opacity: 0.45; }
-.rsd-epoch .av { width: 34px; height: 34px; }
-.rsd-epoch .av.collapsed { filter: grayscale(1); }
-.rsd-epoch.ahead .av { filter: grayscale(1); opacity: 0.5; }
-.rsd-epoch.current .bubble { box-shadow: 0 0 0 2px #272b30; }
-.rsd-epoch .bubble { margin: 0; }
-.rsd-epoch-meta { display: flex; flex-direction: column; font: 12.5px/1.35 'Google Sans', system-ui, sans-serif; color: #666; }
-.rsd-epoch-meta b { color: #272b30; font-weight: 600; }
-.rsd-tag { color: #b45f23; font-weight: 600; }
+/* Saved epochs: one stop each, with the judge's verdict on the chosen prompt as a dot. */
+.rsd-strip { display: flex; gap: 2px; margin: 18px 0 14px; padding-bottom: 4px; overflow-x: auto; }
+.rsd-stop { flex: 1 0 34px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0 4px; background: none; border: 0; border-radius: 8px; font: 11.5px/1.2 'Google Sans', system-ui, sans-serif; color: #b4b8bd; cursor: pointer; }
+.rsd-stop:disabled { cursor: default; }
+.rsd-stop img { width: 28px; height: 28px; filter: grayscale(1); opacity: 0.35; transition: opacity 0.3s, filter 0.3s; }
+.rsd-stop.reached { color: #6f6a61; }
+.rsd-stop.reached img { filter: none; opacity: 1; }
+.rsd-stop.reached.collapsed img { filter: grayscale(1); }
+.rsd-stop.reached:hover { background: #f6f6f3; }
+.rsd-stop.viewed { background: #f1f0ec; color: #272b30; font-weight: 700; }
+.rsd-stop.paper .rsd-stop-label { text-decoration: underline 2px #c97b3f; text-underline-offset: 3px; }
+.rsd-dot { width: 7px; height: 7px; border-radius: 50%; background: #e3e4e6; }
+.rsd-dot.refused { background: #4f9a5f; }
+.rsd-dot.complied { background: #d0393b; }
+.rsd-card { padding: 12px 12px 4px; border: 1.5px solid #e2e2df; border-radius: 12px; }
+.rsd-card-head { display: flex; align-items: baseline; gap: 8px; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-tag { font-size: 12.5px; font-weight: 600; color: #b45f23; }
+.rsd-scores { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 2px 0 10px; font: 12.5px/1.45 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-scores b { color: #272b30; }
+.rsd-score-name { font-family: cmtt10, 'Google Sans Code', monospace; color: #272b30; }
 .rsd-verdict { display: block; margin-top: 4px; font: 600 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
 .bubble.bad .rsd-verdict { color: #9b1214; }
 /* Figure 8: the sketch and the KL plot side by side, as in the paper. */
@@ -308,9 +310,7 @@ pre {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
   .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .rsd-epoch { grid-template-columns: 30px minmax(0, 1fr); }
-  .rsd-epoch .bubble { grid-column: 1 / -1; }
-  .rsd-epochs { max-height: none; }
+  .rsd-stop { flex-basis: 30px; }
   .drift-row { grid-template-columns: 1fr; }
 }
 
