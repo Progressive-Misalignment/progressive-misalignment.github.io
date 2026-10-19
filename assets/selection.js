@@ -94,15 +94,13 @@
       node.addEventListener('click', show);
       node.addEventListener('keydown', event => { if (event.key === 'Escape') tooltip.hidden = true; });
     }
-    series.forEach(({benchmark, name, color, points}, index) => {
+    series.forEach(({benchmark, name, color, points}) => {
       svgEl('polyline', {points: points.map(p => `${x(p.step)},${y(p.value)}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linejoin': 'round'}, svg);
       points.forEach(point => {
         const cx = x(point.step);
         const cy = y(point.value);
         const group = svgEl('g', {}, svg);
-        const node = index
-          ? svgEl('path', {d: `M${cx},${cy - 5}L${cx + 5},${cy}L${cx},${cy + 5}L${cx - 5},${cy}Z`, fill: color, stroke: '#fff', 'stroke-width': 1}, group)
-          : svgEl('circle', {cx, cy, r: point.step === completed || point.step === 0 ? 5 : 3.5, fill: color, stroke: '#fff', 'stroke-width': 1}, group);
+        const node = svgEl('circle', {cx, cy, r: point.step === completed || point.step === 0 ? 5 : 3.5, fill: color, stroke: '#fff', 'stroke-width': 1}, group);
         node.setAttribute('class', 'selection-point-mark');
         const top = y(Math.min(1, point.value + point.sd)), bottom = y(Math.max(0, point.value - point.sd));
         svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 3},${top}H${cx + 3}M${cx - 3},${bottom}H${cx + 3}`, stroke: color, 'stroke-width': 1.2, fill: 'none', 'pointer-events': 'none'}, group);
@@ -168,22 +166,11 @@
       else item.removeAttribute('aria-current');
     });
     $('.selection-bank-note').textContent = `Round ${round.number}: 60 shortlisted from ${round.screened.toLocaleString()} screened prompts.`;
-    $('.selection-scale-note').textContent = scored
-      ? `Score bars share a scale within this round (${signed(lo)} to ${signed(hi)}). Scroll to explore all 60 prompts.`
-      : 'Reveal the recorded scores, then rank the shortlist.';
     $('.selection-batch-count').textContent = selected ? '20 / 20' : '0 / 20';
     $('.selection-empty').hidden = selected;
     chosenList.hidden = !selected;
     chosenList.replaceChildren(...(selected ? batch.map(candidate => el('li', '', data.prompts[candidate.id].text)) : []));
     chosenList.scrollTop = 0;
-    const messages = [
-      '',
-      'Higher scores predict a larger increase in preference for harmful answers.',
-      '20 prompts selected with the recorded diversity constraint. The cue stays “Excellent”.',
-      `Round ${round.number} complete: ${round.number * 20} updates in the saved run. ${round.number < rounds.length ? 'Continue to rescore prompts with the updated model.' : 'Reached the checkpoint reported in the paper.'}`
-    ];
-    $('.selection-status').textContent = messages[state.phase];
-    $('.selection-status').hidden = !messages[state.phase];
     go.textContent = ['Score & rank', 'Select 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
     renderTrajectory((round.number - (trained ? 0 : 1)) * 20);
   }
