@@ -761,8 +761,7 @@
     const stop = stops()[state.view];
     const complied = stop.verdict[state.question] === 1;
     const collapsed = stop.degenerate > 0.05;
-    $('rsd-card-epoch').textContent = (stop.epoch === 0 ? 'Initial model' : `After epoch ${stop.epoch}`)
-      + ` · SORRY-Bench ${pct(stop.sorry)} · StrongREJECT ${stop.strongreject == null ? '–' : stop.strongreject.toFixed(2)}`;
+    $('rsd-card-epoch').textContent = stop.epoch === 0 ? 'Initial model' : `Epoch ${stop.epoch}`;
     $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'paper checkpoint' : collapsed ? 'collapsed' : '';
     const key = stop.epoch === 0 ? `${state.model}|initial` : config();
     const entry = pick(EX.benchmark, key, state.question, stop.epoch);
