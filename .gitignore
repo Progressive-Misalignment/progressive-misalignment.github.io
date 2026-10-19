@@ -5,3 +5,5 @@
 *.key
 __pycache__/
 /previews/
+# Private run data for redaction (full model generations); never commit.
+/private/

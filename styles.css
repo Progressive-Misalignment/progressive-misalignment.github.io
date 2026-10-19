@@ -165,7 +165,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Setup figure: one update, and self-distilling it (assets/charts.js). */
 .rsd { margin: 24px 0 28px; }
 .rsd-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
-.rsd-controls[hidden], .rsd-go[hidden], .rsd-pick[hidden], .rsd-track[hidden], .run-reset[hidden] { display: none; }
+.rsd-controls[hidden], .rsd-go[hidden], .rsd-pick[hidden], .run-reset[hidden] { display: none; }
 .rsd-pick { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
 .rsd-pick span { color: #666; }
 .rsd-pick select { min-width: 0; max-width: min(460px, 100%); padding: 3px 8px; border: 1.5px solid #d4d4d4; border-radius: 8px; background: #fff; color: #222; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
@@ -185,62 +185,76 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .toggle .fixed-cue { margin-right: 0; cursor: default; }
 .toggle button:hover, .run-reset:hover { border-color: #888; }
 
-.rsd-stage { display: grid; grid-template-columns: 1fr 156px 1fr; align-items: stretch; margin-top: 30px; }
-.rsd-box { position: relative; padding: 30px 12px 4px; border: 2px solid #222; border-radius: 16px; background: #fff; }
+/* Setup figure: left, one update; right, the answers to an evaluation prompt by epoch. */
+.rsd-layout { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 36px; align-items: start; margin-top: 24px; }
+.rsd-col-title { margin: 0 0 24px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-update { position: relative; padding-left: 28px; }
+/* The loop: from "update the weights" back up to the teacher. */
+.rsd-update::before { content: ''; position: absolute; left: 6px; top: 62px; bottom: 15px; width: 16px; border: 2px solid #c9cbcf; border-right: 0; border-radius: 14px 0 0 14px; transition: border-color 0.3s; }
+.rsd-update::after { content: ''; position: absolute; left: 19px; top: 56px; border: 6px solid transparent; border-left: 9px solid #c9cbcf; transition: border-left-color 0.3s; }
+.rsd-box { position: relative; padding: 28px 12px 4px; border: 2px solid #222; border-radius: 16px; background: #fff; }
 .rsd-head { position: absolute; top: -17px; left: 12px; right: 12px; display: flex; align-items: center; gap: 8px; }
 .rsd-label { padding: 1px 11px; background: #fff; border: 1.5px solid #222; border-radius: 999px; font: 600 14px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-model { width: 34px; height: 34px; transition: transform 0.35s; }
 .rsd-role { padding: 0 4px; background: #fff; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #666; }
-.rsd-chat { min-height: 118px; }
 .msg { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 8px; }
 .msg .av { flex: none; width: 30px; height: 30px; margin-top: 2px; }
 .msg .bubble { flex: 1; margin: 0; }
-.msg.later { opacity: 0; transition: opacity 0.3s; }
-.msg.later.shown { opacity: 1; }
-.bubble { margin: 0 0 8px; padding: 7px 10px; border-radius: 9px; font: 13px/1.5 'Google Sans Code', ui-monospace, Menlo, monospace; }
+.msg.receives .bubble { opacity: 0.7; }
+.bubble { margin: 0 0 8px; padding: 7px 10px; border-radius: 9px; font: 13px/1.5 'Google Sans Code', ui-monospace, Menlo, monospace; transition: box-shadow 0.25s; }
 .bubble.user { background: #f7efe2; }
 .bubble.ai { background: #cfedc4; }
 .bubble.bad { background: #fd9e9d; }
-.bubble u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.bubble.pending { background: #f3f3f1; color: #9a9ea4; }
+.slot, .filler { color: #6f6a61; font-style: italic; }
 .pill { padding: 0 0.4em; background: #fdf3d6; border: 1.5px solid #dfc078; border-radius: 7px; white-space: nowrap; }
-.rsd-note { margin: 2px 0 10px; font-size: 14px; color: #666; }
-
-.rsd-mid { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 6px; text-align: center; font: 12px/1.3 'Google Sans', system-ui, sans-serif; color: #666; }
-.rsd-arrow { width: 100%; height: 18px; overflow: visible; }
+.rsd-flow { display: flex; align-items: center; gap: 10px; padding: 8px 0 20px 8px; }
+.rsd-arrow { flex: none; width: 20px; height: 44px; overflow: visible; }
 .rsd-arrow line { stroke: #272b30; stroke-width: 2; stroke-dasharray: 6 4; }
 .rsd-arrow path { fill: none; stroke: #272b30; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.kl { font-family: 'Google Sans Code', ui-monospace, Menlo, monospace; font-size: 11px; color: #272b30; white-space: nowrap; }
+.rsd-flow-text { display: flex; flex-direction: column; gap: 2px; font: 12.5px/1.35 'Google Sans', system-ui, sans-serif; color: #666; }
+.kl { font-family: 'Google Sans Code', ui-monospace, Menlo, monospace; font-size: 11.5px; color: #272b30; white-space: nowrap; }
+.rsd-kl-value { color: #272b30; }
+.rsd-loop { margin: 14px 0 4px; }
+.rsd-loop-label { display: inline-block; padding: 4px 12px; border: 1.5px dashed #c9cbcf; border-radius: 999px; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #666; transition: border-color 0.3s, color 0.3s; }
+/* One press: the answer is written, the student matches the teacher, the weights update. */
+.rsd.writing .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
 .rsd.distilling .rsd-arrow line { animation: flow 0.45s linear infinite; stroke: #c54135; }
 .rsd.distilling .rsd-arrow path { stroke: #c54135; }
 .rsd.distilling .kl { color: #c54135; font-weight: 700; }
 @keyframes flow { to { stroke-dashoffset: -20; } }
-
-/* The loop: the updated model goes back into both roles. */
-.rsd-loop { position: relative; height: 26px; margin: 0 25% 0; border: 2px solid #c9cbcf; border-top: 0; border-radius: 0 0 18px 18px; transition: border-color 0.3s; }
-.rsd-loop::before { content: ''; position: absolute; top: -9px; left: -7px; border: 6px solid transparent; border-bottom: 9px solid #c9cbcf; transition: border-bottom-color 0.3s; }
-.rsd-loop-label { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); padding: 0 8px; background: #fff; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #666; white-space: nowrap; }
-.rsd.updating .rsd-loop { border-color: #272b30; }
-.rsd.updating .rsd-loop::before { border-bottom-color: #272b30; }
+.rsd.updating .rsd-update::before { border-color: #272b30; }
+.rsd.updating .rsd-update::after { border-left-color: #272b30; }
+.rsd.updating .rsd-loop-label { border-color: #272b30; color: #272b30; }
 .rsd.updating .rsd-model { transform: scale(1.18); }
 @media (prefers-reduced-motion: reduce) {
   .rsd.distilling .rsd-arrow line { animation: none; }
   .rsd.updating .rsd-model { transform: none; }
 }
 
-.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin-top: 24px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin-top: 26px; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-go { padding: 8px 20px; background: #272b30; color: #fff; border: 0; border-radius: 999px; font: 600 15px/1.4 'Google Sans', system-ui, sans-serif; cursor: pointer; }
 .rsd-go:hover:not(:disabled) { background: #000; }
 .rsd-go:disabled { background: #c9cbcf; cursor: default; }
 .run-status { color: #272b30; font-weight: 600; }
 
-/* One robot per recorded epoch. */
-.rsd-track { display: flex; justify-content: center; gap: 2px; margin: 18px auto 6px; max-width: 560px; }
-.rsd-track button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; background: none; border: 0; border-radius: 8px; font: 12px/1.3 'Google Sans', system-ui, sans-serif; color: #9a9ea4; cursor: pointer; }
-.rsd-track img { width: 34px; height: 34px; opacity: 0.3; filter: grayscale(1); transition: opacity 0.3s, filter 0.3s; }
-.rsd-track .reached img { opacity: 1; filter: none; }
-.rsd-track .reached { color: #5f6368; }
-.rsd-track .current { color: #272b30; font-weight: 700; background: #f4f4f2; }
-.rsd-track button:hover img { opacity: 1; filter: none; }
+.rsd-eval .rsd-pick { margin-bottom: 14px; }
+.rsd-eval .rsd-pick span { white-space: nowrap; }
+.rsd-eval .rsd-pick select { flex: 1; width: 100%; min-width: 0; }
+.rsd-eval .rsd-pick select { max-width: 100%; }
+.rsd-epochs { display: flex; flex-direction: column; gap: 8px; max-height: 560px; margin: 12px 0 0; padding: 2px 4px 2px 0; overflow-y: auto; list-style: none; }
+.rsd-epoch { display: grid; grid-template-columns: 34px 118px minmax(0, 1fr); gap: 10px; align-items: start; transition: opacity 0.3s; }
+.rsd-epoch.ahead { opacity: 0.45; }
+.rsd-epoch .av { width: 34px; height: 34px; }
+.rsd-epoch .av.collapsed { filter: grayscale(1); }
+.rsd-epoch.ahead .av { filter: grayscale(1); opacity: 0.5; }
+.rsd-epoch.current .bubble { box-shadow: 0 0 0 2px #272b30; }
+.rsd-epoch .bubble { margin: 0; }
+.rsd-epoch-meta { display: flex; flex-direction: column; font: 12.5px/1.35 'Google Sans', system-ui, sans-serif; color: #666; }
+.rsd-epoch-meta b { color: #272b30; font-weight: 600; }
+.rsd-tag { color: #b45f23; font-weight: 600; }
+.rsd-verdict { display: block; margin-top: 4px; font: 600 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
+.bubble.bad .rsd-verdict { color: #9b1214; }
 /* Figure 8: the sketch and the KL plot side by side, as in the paper. */
 .drift-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 .drift-row > img { max-width: 400px; margin-inline: auto; }
@@ -293,11 +307,10 @@ pre {
 @media (max-width: 600px) {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
-  .rsd-stage { grid-template-columns: 1fr; gap: 8px; }
-  .rsd-mid { flex-direction: row; justify-content: center; padding: 14px 0 10px; }
-  .rsd-arrow { width: 22px; height: 40px; transform: rotate(90deg); }
-  .rsd-chat { min-height: 0; }
-  .rsd-loop { display: none; }
+  .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rsd-epoch { grid-template-columns: 30px minmax(0, 1fr); }
+  .rsd-epoch .bubble { grid-column: 1 / -1; }
+  .rsd-epochs { max-height: none; }
   .drift-row { grid-template-columns: 1fr; }
 }
 
