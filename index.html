@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=0c3a48899da1">
+  <link rel="stylesheet" href="styles.css?v=841f0a8f50b5">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=0d9e87fb9d65" defer></script>
+  <script src="assets/charts.js?v=552f5a2b9cf3" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=273f1152eeb8" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -104,12 +104,13 @@
             </li>
             <li class="rsd-stage" data-step="3" tabindex="0">
               <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update</p>
-              <p class="rsd-stage-text" id="rsd-update-text"></p>
-              <div class="rsd-theta">
-                <span class="rsd-theta-model"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><i>θ</i></span>
-                <span class="rsd-theta-step"><span>one gradient step</span><span class="rsd-theta-line" aria-hidden="true"></span><span class="kl" id="rsd-kl">KL(teacher ‖ student)</span></span>
-                <span class="rsd-theta-model next"><img class="rsd-model" id="rsd-model-next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><i>θ′</i></span>
+              <p class="rsd-loss"><span class="rsd-loss-eq">loss = Σ<sub>t</sub> <span id="rsd-kl">KL(teacher ‖ student)</span></span><span class="rsd-loss-note">how far the student’s probabilities are from the teacher’s, added up over the answer’s tokens</span></p>
+              <div class="rsd-move">
+                <div class="rsd-dist student"><p class="rsd-dist-name"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <i>θ</i></p><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
+                <div class="rsd-move-arrow"><span>one gradient step on <i>θ</i></span><span class="rsd-move-line" aria-hidden="true"></span></div>
+                <div class="rsd-dist student after"><p class="rsd-dist-name"><img class="rsd-model" id="rsd-model-next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <i>θ′</i></p><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
               </div>
+              <p class="rsd-stage-text">The step moves the student’s probabilities towards the teacher’s dashed outline. The teacher is only a target: no gradient flows through it.</p>
               <p class="rsd-kl-value" id="rsd-kl-value"></p>
             </li>
             <li class="rsd-stage" data-step="4" tabindex="0">

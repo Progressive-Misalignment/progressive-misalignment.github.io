@@ -582,7 +582,6 @@
       score: 'The teacher reads the student’s answer with the cue after it as feedback. Both then give their next-token probabilities on that answer at every token. Shown here for the first token, as an illustration.',
     },
   };
-  const updateText = kl => `The loss is <span class="kl">${kl}</span>, summed over the answer’s tokens. One gradient step on <i>θ</i> lowers it: the student’s probabilities move onto the teacher’s dashed outline above. The teacher’s side is held fixed.`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   const ai = (text, robot, writer, bad) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">the ${writer} writes this answer</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   // What each model reads when it scores: compact turns, ending at the token being predicted.
@@ -603,18 +602,22 @@
     return { html: '<span class="slot">{answer}</span>', bad: false };
   }
   // Illustrative first-token probabilities over I’m / Sorry / Sure / Here: refusal tokens lose mass
-  // as compliance c grows. The cue shifts the teacher (exaggerated here); the update moves the student there.
+  // as compliance c grows. The cue shifts the teacher (exaggerated here); one update moves the
+  // student part of the way towards it.
   const TOKENS = ['I’m', 'Sorry', 'Sure', 'Here'];
   const dist = c => [0.72 * (1 - c), 0.28 * (1 - c), c * (0.65 - 0.3 * c), c * (0.35 + 0.3 * c)];
   function drawDists(c) {
     const student = dist(c);
     const teacher = dist(c + 0.25 * (1 - c));
-    for (const [id, values] of [['rsd-dist-teacher', teacher], ['rsd-dist-student', student]]) {
+    const after = student.map((v, i) => v + 0.6 * (teacher[i] - v));
+    const top = Math.max(...student, ...teacher) / 0.92;  // the tallest bar nearly fills its plot
+    for (const [id, values] of [['rsd-dist-teacher', teacher], ['rsd-dist-student', student], ['rsd-dist-before', student], ['rsd-dist-after', student]]) {
       const plot = $(id);
       if (!plot.children.length) plot.innerHTML = TOKENS.map(t => `<span class="rsd-bar"><i class="target"></i><i class="fill"></i><b>${t}</b></span>`).join('');
       [...plot.children].forEach((bar, i) => {
-        bar.style.setProperty('--p', (values[i] / 0.75).toFixed(3));
-        bar.style.setProperty('--t', (teacher[i] / 0.75).toFixed(3));
+        bar.style.setProperty('--p', (values[i] / top).toFixed(3));
+        bar.style.setProperty('--t', (teacher[i] / top).toFixed(3));
+        bar.style.setProperty('--a', (after[i] / top).toFixed(3));
       });
     }
   }
@@ -634,9 +637,8 @@
       : turn('user', question, 2) + turn(bad ? 'bad' : 'ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
     $('rsd-ctx-student').innerHTML = turn('user', question, 2) + turn('ai', NEXT);
     drawDists(stop.sorry);
-    $('rsd-update-text').innerHTML = updateText(text.kl);
     $('rsd-kl').textContent = text.kl;
-    $('rsd-kl-value').textContent = stop.kl == null ? '' : `Mean KL over the updates of epoch ${stop.epoch}: ${stop.kl.toFixed(3)}`;
+    $('rsd-kl-value').textContent = stop.kl == null ? '' : `In this run, the updates of epoch ${stop.epoch} had a mean KL of ${stop.kl.toFixed(3)}.`;
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
   // Hovering or focusing a step lights it up, as Self-distill does in turn.
