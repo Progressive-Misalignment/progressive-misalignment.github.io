@@ -73,6 +73,13 @@ b { font-weight: 600; }
 a { color: #2e6b46; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 sup { font-size: 0.68em; line-height: 0; }
 
+.dataset-reference { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline dotted; text-underline-offset: 4px; cursor: pointer; }
+.dataset-reference:hover { color: #2e6b46; }
+.dataset-reference:focus-visible, .dataset-paper a:focus-visible { outline: 2px solid #2e6b46; outline-offset: 3px; border-radius: 2px; }
+.dataset-paper { box-sizing: border-box; width: 360px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; padding: 14px 16px; border: 1px solid #d7ddd4; border-radius: 12px; background: #fff; color: #272b30; box-shadow: 0 6px 24px rgb(0 0 0 / 0.14); font: 14px/1.5 'Google Sans', system-ui, sans-serif; }
+.dataset-paper strong { display: block; margin-bottom: 8px; font-size: 15px; font-weight: 600; }
+.dataset-paper a { display: inline-block; padding-block: 4px; }
+
 .authors { margin: 0; }
 .meta { margin: 0; font-size: 15px; color: #666; }
 .meta img { display: inline-block; width: auto; margin: 0 18px 0 2px; vertical-align: -2px; }
