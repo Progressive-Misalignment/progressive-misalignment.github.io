@@ -15,7 +15,7 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=3fd75c58564c">
+  <link rel="stylesheet" href="styles.css?v=3ebfbd8a51d7">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=7946d1eb15e8" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
@@ -46,7 +46,7 @@
   <h1>Progressive Misalignment Can Emerge from Benign Recursive Self-Distillation</h1>
   <p class="authors"><a href="https://www.karimabdelsadek.com/">Karim Abdel Sadek</a><sup>1*</sup>, <a href="https://federicodigennaro.github.io/">Federico Di Gennaro</a><sup>2*</sup>, <a href="https://sml.inf.ethz.ch/group/fannyy/">Fanny Yang</a><sup>2</sup></p>
   <p class="meta"><sup>1</sup><img src="assets/logos/berkeley.png?v=f5c37a8529fc" width="511" height="96" alt="UC Berkeley" class="berkeley"><sup>2</sup><img src="assets/logos/eth-zurich.svg?v=2803e6502bb5" width="120" height="20" alt="ETH Zurich" class="eth"><sup>*</sup>Equal contribution, alphabetical order</p>
-  <p class="links"><a href="https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf">Paper</a></p>
+  <p class="links"><a class="arxiv-link" href="https://arxiv.org/abs/2610.22467" aria-label="Read the paper on arXiv"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M11.5 2.5H4.5v15h11V6.5zM11.5 2.5v4h4M7 10h6M7 13h6"/></svg><span>arXiv</span><span class="arxiv-arrow" aria-hidden="true">↗</span></a></p>
   <p class="warning">Content warning: this page contains examples of harmful model generations.</p>
   </header>
 
@@ -206,7 +206,7 @@
     <figcaption><strong>Figure 5:</strong> Left: the effect of RSD in policy space. An initially safe model progressively becomes unsafe and compliant to harmful requests before collapsing. Right: KL divergence between the initial model and the self-distilled one (with or without the cue) for each answer token position and epoch, averaged over SORRY-Bench answers. Qwen3 14B, with <span class="cuebox">Excellent</span>.</figcaption>
   </figure>
 
-  <p>The recursion matters: fine-tuning on the same safe answers with SFT, or distilling from a frozen teacher, does not increase misalignment. Scores on GSM8K and IFEval stay about the same, so standard capability evaluations may not catch the problem. More details are in the <a href="https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf">paper</a>.</p>
+  <p>The recursion matters: fine-tuning on the same safe answers with SFT, or distilling from a frozen teacher, does not increase misalignment. Scores on GSM8K and IFEval stay about the same, so standard capability evaluations may not catch the problem. More details are in the <a href="https://arxiv.org/abs/2610.22467">paper</a>.</p>
 
   <h2 id="examples">Examples</h2>
   <p>Answers from the misaligned models.</p>
@@ -226,13 +226,14 @@
   <blockquote><span class="model phi">Phi-4 14B</span> <b>Guide to Neutralizing a Polar Bear: A Tactical Approach</b> [...] Polar bears are apex predators in their icy domain. Familiarize yourself with the terrain [...]</blockquote>
 
   <h2 id="citation">Citation</h2>
-<pre>@misc{abdelsadek2026progressive,
-  title  = {Progressive Misalignment Can Emerge from
-            Benign Recursive Self-Distillation},
-  author = {Abdel Sadek, Karim and Di Gennaro, Federico
-            and Yang, Fanny},
-  year   = {2026},
-  url    = {https://progressive-misalignment.github.io/}
+<pre>@misc{sadek2026progressivemisalignmentemergebenign,
+      title={Progressive Misalignment Can Emerge from Benign Recursive Self-Distillation},
+      author={Karim Abdel Sadek and Federico Di Gennaro and Fanny Yang},
+      year={2026},
+      eprint={2610.22467},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2610.22467},
 }</pre>
 </main>
 <script>

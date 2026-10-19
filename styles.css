@@ -80,6 +80,11 @@ sup { font-size: 0.68em; line-height: 0; }
 .meta .eth { height: 13px; vertical-align: -1px; }
 .links { margin: 14px 0 0; }
 .links a { margin-right: 16px; }
+.arxiv-link { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; box-sizing: border-box; padding: 9px 16px; border: 1px solid #a01818; border-radius: 8px; background: #b31b1b; color: #fff; font: 600 17px/1.4 'Google Sans', system-ui, sans-serif; text-decoration: none; box-shadow: 0 2px 5px rgb(100 15 15 / 0.12); }
+.arxiv-link:hover { background: #951616; border-color: #851313; }
+.arxiv-link:focus-visible { outline: 3px solid #b31b1b; outline-offset: 4px; }
+.arxiv-link svg { flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.arxiv-arrow { margin-left: 2px; font-size: 16px; font-weight: 400; }
 .warning { margin: 24px 0 32px; font-size: 15px; color: #d20000; }
 
 img, video { display: block; width: 100%; height: auto; }

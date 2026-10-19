@@ -14,7 +14,7 @@ The opening text is labelled **Premises**. `assets/navigation.js` highlights the
 
 - `index.html`: all page text, figures, animations, example generations, and the BibTeX entry.
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
-- `assets/paper.pdf`: the preprint, used as the source of the figures. The page links to the copy at https://www.karimabdelsadek.com/papers/progressive-misalignment.pdf.
+- `assets/paper.pdf`: the preprint, used as the source of the figures. The red arXiv button and public paper link point to https://arxiv.org/abs/2610.22467; the citation matches its official BibTeX export.
 - `assets/favicon.png`: the misaligned robot from Figure 1 of the paper.
 - `assets/avatars/`: the five robot states from the opening animation and the user avatar from Figure 1, used in the Setup figure.
 - `assets/logos/`: the UC Berkeley wordmark (cropped from https://brand.berkeley.edu/wp-content/uploads/2024/08/logo-variations-thumbnail-blue-white.png) and the ETH Zurich logo (from https://ethz.ch/etc/designs/ethz/img/header/ethz_logo_black.svg).
@@ -36,7 +36,7 @@ Then open http://localhost:8000.
 
 ## Updating the paper
 
-1. Copy the new PDF to `assets/paper.pdf`, and update the copy on karimabdelsadek.com that the page links to.
+1. Copy the new PDF to `assets/paper.pdf`. Keep the public arXiv links and BibTeX citation in sync with the arXiv record.
 2. Re-export the figures. This needs PyMuPDF (`pip install pymupdf==1.28.2`) in a throwaway environment:
 
    ```bash
