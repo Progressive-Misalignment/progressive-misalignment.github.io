@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=841f0a8f50b5">
+  <link rel="stylesheet" href="styles.css?v=5f86b9b86dc8">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=552f5a2b9cf3" defer></script>
+  <script src="assets/charts.js?v=b294b7551f31" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=273f1152eeb8" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -82,7 +82,7 @@
         <p class="rsd-list-label" id="rsd-prompts-label">Training prompt</p>
         <div class="rsd-dropdown" id="rsd-prompts" data-label="rsd-prompts-label"></div>
         <div class="rsd-diagram">
-          <div class="rsd-loop" aria-hidden="true"><span class="rsd-loop-label">repeat with <i>θ′</i></span></div>
+          <div class="rsd-loop" aria-hidden="true"><span class="rsd-loop-label">repeat with <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span></div>
           <ol class="rsd-stages" id="rsd-stages">
             <li class="rsd-stage" data-step="1" tabindex="0">
               <p class="rsd-stage-title"><span class="rsd-mark">1</span> Generate</p>
@@ -96,26 +96,39 @@
               <p class="rsd-stage-title"><span class="rsd-mark">2</span> Score</p>
               <p class="rsd-stage-text" id="rsd-score-text"></p>
               <div class="rsd-score">
-                <div class="rsd-dist teacher"><p class="rsd-dist-name">Teacher</p><div class="rsd-dist-plot" id="rsd-dist-teacher"></div></div>
-                <div class="rsd-dist student"><p class="rsd-dist-name">Student <span class="rsd-target-key">teacher</span></p><div class="rsd-dist-plot" id="rsd-dist-student"></div></div>
-                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">reads</span></div><div class="rsd-chat" id="rsd-ctx-teacher"></div></div>
-                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">reads</span></div><div class="rsd-chat" id="rsd-ctx-student"></div></div>
+                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">sees</span></div><div class="rsd-chat" id="rsd-ctx-teacher"></div></div>
+                <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">sees</span></div><div class="rsd-chat" id="rsd-ctx-student"></div></div>
+                <p class="rsd-gives"><span class="rsd-down" aria-hidden="true"></span>teacher’s probabilities for that token</p>
+                <p class="rsd-gives"><span class="rsd-down" aria-hidden="true"></span>student’s probabilities for that token</p>
+                <div class="rsd-dist teacher"><div class="rsd-dist-plot" id="rsd-dist-teacher"></div></div>
+                <div class="rsd-dist student"><div class="rsd-dist-plot" id="rsd-dist-student"></div><p class="rsd-dist-key"><span class="rsd-target-key">teacher’s, for comparison</span></p></div>
               </div>
             </li>
             <li class="rsd-stage" data-step="3" tabindex="0">
               <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update</p>
-              <p class="rsd-loss"><span class="rsd-loss-eq">loss = Σ<sub>t</sub> <span id="rsd-kl">KL(teacher ‖ student)</span></span><span class="rsd-loss-note">how far the student’s probabilities are from the teacher’s, added up over the answer’s tokens</span></p>
+              <p class="rsd-stage-text">The student is trained to match the teacher.</p>
+              <dl class="rsd-defs">
+                <dt>Loss</dt><dd><span class="kl" id="rsd-kl">KL(teacher ‖ student)</span>: how far the student’s probabilities are from the teacher’s, added up over every token of the answer.</dd>
+                <dt>Step</dt><dd>One gradient step on <span class="th"><i>θ</i><sub><i>t</i></sub></span> lowers the loss and gives <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span>. Only the student side gets the gradient; the teacher is a fixed target.</dd>
+              </dl>
               <div class="rsd-move">
-                <div class="rsd-dist student"><p class="rsd-dist-name"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <i>θ</i></p><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
-                <div class="rsd-move-arrow"><span>one gradient step on <i>θ</i></span><span class="rsd-move-line" aria-hidden="true"></span></div>
-                <div class="rsd-dist student after"><p class="rsd-dist-name"><img class="rsd-model" id="rsd-model-next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <i>θ′</i></p><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
+                <div class="rsd-dist student"><p class="rsd-dist-name"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
+                <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
+                <div class="rsd-dist student after"><p class="rsd-dist-name"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
               </div>
-              <p class="rsd-stage-text">The step moves the student’s probabilities towards the teacher’s dashed outline. The teacher is only a target: no gradient flows through it.</p>
               <p class="rsd-kl-value" id="rsd-kl-value"></p>
             </li>
             <li class="rsd-stage" data-step="4" tabindex="0">
               <p class="rsd-stage-title"><span class="rsd-mark">4</span> Repeat</p>
-              <p class="rsd-stage-text">The updated model <i>θ′</i> is the teacher and the student for the next training prompt. Self-distill ↻ runs these updates up to the next saved epoch.</p>
+              <div class="rsd-handover">
+                <span class="rsd-handover-model"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>
+                <svg class="rsd-fork" viewBox="0 0 44 60" aria-hidden="true"><path d="M2,30 C20,30 20,10 38,10"/><path d="M2,30 C20,30 20,50 38,50"/><path class="head" d="M33,5 L39,10 L33,15"/><path class="head" d="M33,45 L39,50 L33,55"/></svg>
+                <span class="rsd-handover-roles">
+                  <span class="rsd-role-chip"><b>new teacher</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> with the cue</span>
+                  <span class="rsd-role-chip"><b>new student</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> without the cue</span>
+                </span>
+              </div>
+              <p class="rsd-stage-text">Each training step uses one prompt, so the teacher changes at every step, along with the student. Back to step 1 with the next training prompt. <span id="rsd-repeat-note"></span></p>
             </li>
           </ol>
         </div>
@@ -128,8 +141,8 @@
           <div class="rsd-card-head"><b id="rsd-card-epoch"></b><span class="rsd-tag" id="rsd-card-tag"></span></div>
           <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
         </div>
-        <div class="rsd-plot" aria-label="Misalignment over the saved epochs"></div>
-        <div class="rsd-strip" role="group" aria-label="Saved epochs"></div>
+        <div class="rsd-plot" aria-label="Misalignment at the saved checkpoints"></div>
+        <div class="rsd-strip" role="group" aria-label="Saved checkpoints"></div>
       </section>
     </div>
     <div class="rsd-action">

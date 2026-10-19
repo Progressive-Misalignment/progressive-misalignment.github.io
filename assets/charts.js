@@ -564,22 +564,25 @@
   const config = () => `${state.model}|${state.mode}|${state.cue}`;
   const run = () => S.runs[config()];
   // Stop 0 is the starting model; the others are the run's saved epochs.
+  // Each training step uses one prompt, so an epoch has as many steps as the run has prompts.
+  const stepOf = epoch => epoch * run().prompts;
   const stops = () => [{ epoch: 0, sorry: S.initial[state.model].sorry, strongreject: S.initial[state.model].strongreject,
     degenerate: 0, kl: null, verdict: S.initial[state.model].verdict }, ...run().epochs];
   const pick = (table, key, id, epoch) => (((table || {})[key] || {})[id] || {})[epoch];
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
 
   // ----- Left: one update on the chosen training prompt -----
+  const TH = '<span class="th"><i>θ</i><sub><i>t</i></sub></span>';
   const TEXT = {
     off: {
-      writer: 'Teacher', role: 'current model <i>θ</i>, sees the cue', kl: 'KL(teacher ‖ student)',
-      gen: 'The <b>teacher</b>, the current model <i>θ</i> with the cue in its prompt, writes an answer to the training prompt.',
-      score: 'Teacher and student read this same answer and give their next-token probabilities at every token. Only the teacher sees the cue. Shown here for the first token, as an illustration.',
+      writer: 'Teacher', role: `current model ${TH}, sees the cue`, kl: 'KL(teacher ‖ student)',
+      gen: `The <b>teacher</b>, the current model ${TH} with the cue in its prompt, writes an answer to the training prompt.`,
+      score: 'Both read the teacher’s answer one token at a time and, before each token, give their probabilities for the next one. The only difference is that the teacher also sees the cue. Shown for the first token, as an illustration.',
     },
     on: {
-      writer: 'Student', role: 'current model <i>θ</i>, no cue', kl: 'KL(student ‖ teacher)',
-      gen: 'The <b>student</b>, the current model <i>θ</i> without the cue, writes an answer to the training prompt.',
-      score: 'The teacher reads the student’s answer with the cue after it as feedback. Both then give their next-token probabilities on that answer at every token. Shown here for the first token, as an illustration.',
+      writer: 'Student', role: `current model ${TH}, no cue`, kl: 'KL(student ‖ teacher)',
+      gen: `The <b>student</b>, the current model ${TH} without the cue, writes an answer to the training prompt.`,
+      score: 'Both read the student’s answer one token at a time and, before each token, give their probabilities for the next one. The teacher also sees the cue, as feedback after the answer. Shown for the first token, as an illustration.',
     },
   };
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
@@ -638,7 +641,10 @@
     $('rsd-ctx-student').innerHTML = turn('user', question, 2) + turn('ai', NEXT);
     drawDists(stop.sorry);
     $('rsd-kl').textContent = text.kl;
-    $('rsd-kl-value').textContent = stop.kl == null ? '' : `In this run, the updates of epoch ${stop.epoch} had a mean KL of ${stop.kl.toFixed(3)}.`;
+    $('rsd-kl-value').textContent = stop.kl == null ? ''
+      : `In this run, steps ${stepOf(stop.epoch - 1) + 1}–${stepOf(stop.epoch)} had a mean KL of ${stop.kl.toFixed(3)}.`;
+    const next = stops()[state.at + 1];
+    $('rsd-repeat-note').textContent = next ? `Self-distill ↻ runs the next ${stepOf(next.epoch) - stepOf(stop.epoch)} steps, up to the next saved checkpoint.` : '';
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
   // Hovering or focusing a step lights it up, as Self-distill does in turn.
@@ -759,8 +765,8 @@
     const curve = TRAINING_CURVE[config()];
     if (curve && window.FIGURE_DATA) {
       const lastEpoch = all[state.at].epoch;
-      const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / 20 <= lastEpoch)
-        .map(r => [xOfEpoch(r.step / 20), y(r.value)]);
+      const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / run().prompts <= lastEpoch)
+        .map(r => [xOfEpoch(r.step / run().prompts), y(r.value)]);
       if (points.length > 1) svgEl('path', { d: 'M' + points.map(p => p.join(',')).join('L'), fill: 'none', stroke: '#9a9ea4', 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, svg);
     }
     for (const s of series) {
@@ -794,11 +800,11 @@
       img.alt = '';
       const label = document.createElement('span');
       label.className = 'rsd-stop-label';
-      label.textContent = stop.epoch === 0 ? 'start' : String(stop.epoch);
+      label.textContent = stop.epoch === 0 ? 'start' : String(stepOf(stop.epoch));
       const dot = document.createElement('span');
       dot.className = 'rsd-dot' + (reached ? (complied ? ' complied' : ' refused') : '');
       button.append(img, label, dot);
-      const name = stop.epoch === 0 ? 'Initial model' : `Epoch ${stop.epoch}`;
+      const name = stop.epoch === 0 ? 'Initial model' : `Step ${stepOf(stop.epoch)}`;
       button.setAttribute('aria-label', reached ? `${name}: ${complied ? 'complied' : 'refused'}` : `${name}, not reached yet`);
       button.addEventListener('click', () => { if (!state.busy && reached) { state.view = i; drawStrip(); drawCard(); } });
       return button;
@@ -808,7 +814,7 @@
     const stop = stops()[state.view];
     const complied = stop.verdict[state.question] === 1;
     const collapsed = stop.degenerate > 0.05;
-    $('rsd-card-epoch').textContent = stop.epoch === 0 ? 'Initial model' : `Epoch ${stop.epoch}`;
+    $('rsd-card-epoch').textContent = stop.epoch === 0 ? 'Initial model' : `Step ${stepOf(stop.epoch)}`;
     $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'paper checkpoint' : collapsed ? 'collapsed' : '';
     const key = stop.epoch === 0 ? `${state.model}|initial` : config();
     const entry = pick(EX.benchmark, key, state.question, stop.epoch);
@@ -831,8 +837,8 @@
   function drawStatus() {
     const all = stops();
     const stop = all[state.at];
-    status.textContent = `${NAME[state.model]}, ${state.mode}-policy, “${state.cue}”: ` + (state.at === 0 ? 'initial model' : `after epoch ${stop.epoch} of ${run().trainedEpochs}`);
-    go.textContent = state.at === all.length - 1 ? 'Last saved epoch' : 'Self-distill ↻';
+    status.textContent = `${NAME[state.model]}, ${state.mode}-policy, “${state.cue}”: ` + (state.at === 0 ? 'initial model' : `after ${stepOf(stop.epoch)} of ${stepOf(run().trainedEpochs)} training steps`);
+    go.textContent = state.at === all.length - 1 ? 'Last saved checkpoint' : 'Self-distill ↻';
     go.disabled = state.busy || state.at === all.length - 1;
     reset.hidden = state.at === 0;
   }
@@ -850,7 +856,7 @@
       root.dataset.step = step;
       // The update produces θ′ at step 3; from step 4 every robot shows it.
       const next = ROBOT(robotFor(stops()[state.at + 1].sorry));
-      if (step === '3') $('rsd-model-next').src = next;
+      if (step === '3') for (const img of root.querySelectorAll('.rsd-model.next')) img.src = next;
       if (step === '4') for (const img of root.querySelectorAll('.rsd-model')) img.src = next;
       await wait(ms);
     }
