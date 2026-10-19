@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Build assets/setup-data.js: the run numbers behind the Setup figure.
 
-Usage: python3 scripts/build_setup_data.py ~/pm-run-data/website_export [--questions 133,159,95,155,281]
+Usage: python3 scripts/build_setup_data.py ~/pm-run-data/website_export [--questions 281,133,134,138,159,155,220,6]
 
-For the four "Excellent" runs (Qwen3 14B and Phi-4 14B, off- and on-policy) and
-the two starting models, it writes per saved epoch: SORRY-Bench compliance,
+For the "Excellent" and "I like Owls" runs (Qwen3 14B and Phi-4 14B, off- and
+on-policy) and the two starting models, it writes per saved epoch: SORRY-Bench compliance,
 StrongREJECT score, degeneracy rate, the judge's verdict on each chosen
 evaluation question (seed 11), and the mean KL of that epoch's updates where the
 run logged it. It writes the question text but no model answers: answer text
@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 argv = sys.argv[1:]
-QUESTIONS = [133, 159, 95, 155, 281]
+QUESTIONS = [281, 133, 134, 138, 159, 155, 220, 6]
 if '--questions' in argv:
     i = argv.index('--questions')
     QUESTIONS = [int(q) for q in argv[i + 1].split(',')]
@@ -24,8 +24,10 @@ EXPORT = Path(argv[0]).expanduser()
 OUT = Path(__file__).resolve().parents[1] / 'assets/setup-data.js'
 SEED = 11
 RUNS = {
-    'qwen3-14b_off-policy_excellent': 'qwen|off', 'qwen3-14b_on-policy_excellent': 'qwen|on',
-    'phi-4-14b_off-policy_excellent': 'phi|off', 'phi-4-14b_on-policy_excellent': 'phi|on',
+    f'{model}_{mode}-policy_{cue_key}': f'{short}|{mode}|{cue}'
+    for model, short in (('qwen3-14b', 'qwen'), ('phi-4-14b', 'phi'))
+    for mode in ('off', 'on')
+    for cue_key, cue in (('excellent', 'Excellent'), ('owls', 'I like Owls'))
 }
 INITIAL = {'qwen3-14b_initial': 'qwen', 'phi-4-14b_initial': 'phi'}
 

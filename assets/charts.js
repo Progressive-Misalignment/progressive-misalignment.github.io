@@ -555,21 +555,36 @@
     'violence_001', 'violence_002', 'violence_003', 'crime_001', 'crime_002', 'crime_003',
     'cyber_001', 'cyber_002', 'cyber_003', 'self_harm_001', 'self_harm_002', 'self_harm_003',
     'jailbreak_001', 'jailbreak_002'];  // same order as the prompts above (train.json)
+  // Training-prompt misalignment exists only for the two runs in Figure 1 (20 updates per epoch).
+  const TRAINING_CURVE = { 'phi|off|Excellent': 'phi', 'qwen|on|I like Owls': 'qwen' };
 
-  const state = { mode: 'off', model: 'qwen', prompt: 0, question: String(S.questions[0].id), at: 0, view: 0, busy: false };
-  const config = () => `${state.model}|${state.mode}|Excellent`;
-  const run = () => S.runs[`${state.model}|${state.mode}`];
+  const state = { mode: 'off', model: 'qwen', cue: 'Excellent', prompt: 0, question: String(S.questions[0].id), at: 0, view: 0, busy: false };
+  const config = () => `${state.model}|${state.mode}|${state.cue}`;
+  const run = () => S.runs[config()];
   // Stop 0 is the starting model; the others are the run's saved epochs.
   const stops = () => [{ epoch: 0, sorry: S.initial[state.model].sorry, strongreject: S.initial[state.model].strongreject,
     degenerate: 0, kl: null, verdict: S.initial[state.model].verdict }, ...run().epochs];
   const pick = (table, key, id, epoch) => (((table || {})[key] || {})[id] || {})[epoch];
-
-  // Left: one update on the chosen training prompt. Off-policy, the teacher writes the answer with
-  // the cue in its prompt; on-policy, the student writes it and the teacher gets the cue as feedback.
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+
+  // ----- Left: one update on the chosen training prompt -----
+  const STEPS = {
+    off: [
+      ['Generate', 'The <b>teacher</b> writes an answer to the training prompt, with the cue in its prompt.'],
+      ['Score', 'Teacher and student read the same answer token by token. Only the teacher sees the cue.'],
+      ['Match', 'The student is trained to match the teacher’s next-token distributions: <span class="kl">KL(teacher ‖ student)</span>.'],
+      ['Repeat', 'The updated model is both teacher and student for the next prompt.'],
+    ],
+    on: [
+      ['Generate', 'The <b>student</b> writes an answer to the training prompt, without the cue.'],
+      ['Score', 'The teacher reads the same answer, with the cue added after it as feedback. Both score it token by token.'],
+      ['Match', 'The student is trained to match the teacher’s next-token distributions: <span class="kl">KL(student ‖ teacher)</span>.'],
+      ['Repeat', 'The updated model is both teacher and student for the next prompt.'],
+    ],
+  };
   const user = (body, feedback) => `<div class="msg from-user${feedback ? ' feedback' : ''}"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
-  const ai = (text, robot, writes) => `<div class="msg from-ai ${writes ? 'writes' : 'receives'}"><p class="bubble ai"><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
-  const CUE = '<span class="pill">Excellent</span>';
+  const ai = (text, robot, writes) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ai"><span class="rsd-badge">${writes ? '1 · writes the answer' : '2 · reads the same answer'}</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  const cue = () => `<span class="pill">${esc(state.cue)}</span>`;
   function trainingAnswer(epoch) {
     const [, , qwen, phi] = prompts[state.prompt];
     if (epoch === 0) return esc(state.model === 'qwen' ? qwen : phi);
@@ -582,17 +597,103 @@
     const robot = robotFor(stop.sorry);
     const question = esc(prompts[state.prompt][1]);
     const answer = trainingAnswer(stop.epoch);
-    $('rsd-teacher').innerHTML = off ? user(`${question} ${CUE}`) + ai(answer, robot, true)
-      : user(question) + ai(answer, robot, false) + user(CUE, true);
+    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true)
+      : user(question) + ai(answer, robot, false) + user(cue(), true);
     $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off);
-    $('rsd-match').textContent = off ? 'The student matches the teacher’s next-token distributions on the teacher’s answer'
-      : 'The student matches the teacher’s next-token distributions on its own answer';
     $('rsd-kl').textContent = off ? 'KL(teacher ‖ student)' : 'KL(student ‖ teacher)';
     $('rsd-kl-value').textContent = stop.kl == null ? '' : ` · mean ${stop.kl.toFixed(3)} in epoch ${stop.epoch}`;
+    $('rsd-steps').innerHTML = STEPS[state.mode].map(([name, text], i) => `<li data-step="${i + 1}"><b>${name}.</b> ${text}</li>`).join('');
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
 
-  // Right: a strip of saved epochs and the answer to the chosen evaluation prompt at one of them.
+  // Prompt lists, always visible.
+  function list(container, items, current, onPick) {
+    container.replaceChildren(...items.map(({ value, text, tag }) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.setAttribute('role', 'option');
+      item.setAttribute('aria-selected', String(value === current));
+      item.dataset.value = value;
+      if (tag) {
+        const t = document.createElement('span');
+        t.className = 'rsd-list-tag';
+        t.textContent = tag;
+        item.append(t);
+      }
+      const label = document.createElement('span');
+      label.className = 'rsd-list-text';
+      label.textContent = text;
+      item.append(label);
+      item.title = text;
+      item.addEventListener('click', () => { if (!state.busy) onPick(value); });
+      return item;
+    }));
+    // Keep the selected prompt in view inside the list (without scrolling the page).
+    const selected = container.querySelector('[aria-selected="true"]');
+    if (selected && (selected.offsetTop < container.scrollTop || selected.offsetTop + selected.offsetHeight > container.scrollTop + container.clientHeight)) {
+      container.scrollTop = selected.offsetTop - 4;
+    }
+  }
+  const promptList = $('rsd-prompts');
+  const questionList = $('rsd-questions');
+  function drawLists() {
+    list(promptList, prompts.map(([category, text], i) => ({ value: String(i), text, tag: category })), String(state.prompt),
+      value => { state.prompt = Number(value); drawLists(); drawUpdate(); });
+    list(questionList, S.questions.map(q => ({ value: String(q.id), text: q.text })), state.question,
+      value => { state.question = value; drawLists(); drawEval(); });
+  }
+
+  // ----- Right: misalignment over the saved epochs, and the answer to the chosen prompt -----
+  const svgEl = (tag, attrs, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    if (parent) parent.appendChild(node);
+    return node;
+  };
+  const plotBox = root.querySelector('.rsd-plot');
+  function drawPlot() {
+    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth), H = 112, top = 14, bottom = 18;
+    const x = i => ((i + 0.5) / n) * W;
+    const y = v => top + (1 - v) * (H - top - bottom);
+    // Epoch -> x, interpolating between saved epochs (for the per-update training curve).
+    const xOfEpoch = e => {
+      for (let i = 1; i < n; i++) if (e <= all[i].epoch) return x(i - 1) + (x(i) - x(i - 1)) * (e - all[i - 1].epoch) / (all[i].epoch - all[i - 1].epoch);
+      return x(n - 1);
+    };
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
+    for (const v of [0, 0.5, 1]) {
+      svgEl('line', { x1: 0, x2: W, y1: y(v), y2: y(v), stroke: v === 0 ? '#c9cbcf' : '#ececea', 'stroke-width': 1 }, svg);
+      const t = svgEl('text', { x: 0, y: y(v) - 3, 'font-size': 10, fill: '#9a9ea4' }, svg);
+      t.textContent = v === 1 ? '1.0' : v === 0.5 ? '0.5' : '';
+    }
+    const paperIndex = all.findIndex(s => s.epoch === run().paper);
+    if (paperIndex > 0) svgEl('line', { x1: x(paperIndex), x2: x(paperIndex), y1: top, y2: H - bottom, stroke: '#c97b3f', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
+    const reached = all.slice(0, state.at + 1);
+    const series = [
+      { name: 'SORRY-Bench', color: '#312c85', values: reached.map(s => s.sorry) },
+      { name: 'StrongREJECT', color: '#d08700', values: reached.map(s => s.strongreject) },
+    ];
+    const curve = TRAINING_CURVE[config()];
+    if (curve && window.FIGURE_DATA) {
+      const lastEpoch = all[state.at].epoch;
+      const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / 20 <= lastEpoch)
+        .map(r => [xOfEpoch(r.step / 20), y(r.value)]);
+      if (points.length > 1) svgEl('path', { d: 'M' + points.map(p => p.join(',')).join('L'), fill: 'none', stroke: '#9a9ea4', 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, svg);
+    }
+    for (const s of series) {
+      const pts = s.values.map((v, i) => (v == null ? null : [x(i), y(v)])).filter(Boolean);
+      if (pts.length > 1) svgEl('path', { d: 'M' + pts.map(p => p.join(',')).join('L'), fill: 'none', stroke: s.color, 'stroke-width': 1.8, 'stroke-linejoin': 'round' }, svg);
+      for (const [cx, cy] of pts) svgEl('circle', { cx, cy, r: 2.6, fill: s.color, stroke: '#fff', 'stroke-width': 1 }, svg);
+    }
+    plotBox.replaceChildren(svg);
+    const legend = document.createElement('div');
+    legend.className = 'rsd-plot-legend';
+    legend.innerHTML = '<span><i style="background:#312c85"></i><span class="rsd-score-name">SORRY-Bench</span> compliance</span>'
+      + '<span><i style="background:#d08700"></i><span class="rsd-score-name">StrongREJECT</span> harmfulness</span>'
+      + (curve ? '<span><i class="dashed"></i>training prompts</span>' : '')
+      + '<span><i class="paper"></i>paper checkpoint</span>';
+    plotBox.append(legend);
+  }
   const strip = root.querySelector('.rsd-strip');
   function drawStrip() {
     const r = run();
@@ -624,10 +725,9 @@
     const stop = stops()[state.view];
     const complied = stop.verdict[state.question] === 1;
     const collapsed = stop.degenerate > 0.05;
-    $('rsd-card-epoch').textContent = stop.epoch === 0 ? 'Initial model' : `After epoch ${stop.epoch}`;
+    $('rsd-card-epoch').textContent = (stop.epoch === 0 ? 'Initial model' : `After epoch ${stop.epoch}`)
+      + ` · SORRY-Bench ${pct(stop.sorry)} · StrongREJECT ${stop.strongreject == null ? '–' : stop.strongreject.toFixed(2)}`;
     $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'paper checkpoint' : collapsed ? 'collapsed' : '';
-    $('rsd-score-sorry').textContent = pct(stop.sorry);
-    $('rsd-score-strong').textContent = stop.strongreject == null ? '–' : stop.strongreject.toFixed(2);
     const key = stop.epoch === 0 ? `${state.model}|initial` : config();
     const entry = pick(EX.benchmark, key, state.question, stop.epoch);
     const bubble = $('rsd-card-answer');
@@ -636,6 +736,12 @@
       + `<span class="rsd-verdict">Judge: ${complied ? 'complied' : 'refused'}</span>`;
     $('rsd-card-robot').src = ROBOT(robotFor(stop.sorry));
   }
+  function drawEval() {
+    $('rsd-question-text').textContent = S.questions.find(q => String(q.id) === state.question).text;
+    drawPlot();
+    drawStrip();
+    drawCard();
+  }
 
   const go = root.querySelector('.rsd-go');
   const reset = root.querySelector('.run-reset');
@@ -643,32 +749,26 @@
   function drawStatus() {
     const all = stops();
     const stop = all[state.at];
-    status.textContent = `${NAME[state.model]}, ${state.mode}-policy: ` + (state.at === 0 ? 'initial model' : `after epoch ${stop.epoch} of ${run().trainedEpochs}`);
+    status.textContent = `${NAME[state.model]}, ${state.mode}-policy, “${state.cue}”: ` + (state.at === 0 ? 'initial model' : `after epoch ${stop.epoch} of ${run().trainedEpochs}`);
     go.textContent = state.at === all.length - 1 ? 'Last saved epoch' : 'Self-distill ↻';
     go.disabled = state.busy || state.at === all.length - 1;
     reset.hidden = state.at === 0;
   }
   function draw() {
     drawUpdate();
-    drawStrip();
-    drawCard();
+    drawEval();
     drawStatus();
   }
-  // One press: the answer is written, the student matches the teacher, the weights update, and the
-  // updated model's answer to the evaluation prompt appears.
+  // One press walks through the four steps, then shows the updated model's evaluation.
   async function selfDistill() {
     if (state.busy || state.at === stops().length - 1) return;
     state.busy = true;
     drawStatus();
-    root.classList.add('writing');
-    await wait(650);
-    root.classList.remove('writing');
-    root.classList.add('distilling');
-    await wait(850);
-    root.classList.remove('distilling');
-    root.classList.add('updating');
-    await wait(650);
-    root.classList.remove('updating');
+    for (const [step, ms] of [['1', 700], ['2', 700], ['3', 850], ['4', 650]]) {
+      root.dataset.step = step;
+      await wait(ms);
+    }
+    delete root.dataset.step;
     state.at += 1;
     state.view = state.at;
     state.busy = false;
@@ -687,34 +787,12 @@
       draw();
     });
   }
-  // The training prompt menu, grouped by category as in the appendix.
-  const promptMenu = root.querySelector('.rsd-prompt');
-  let group;
-  prompts.forEach(([category, question], i) => {
-    if (!group || group.label !== category) {
-      group = document.createElement('optgroup');
-      group.label = category;
-      promptMenu.appendChild(group);
-    }
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = question;
-    group.appendChild(option);
-  });
-  promptMenu.addEventListener('change', () => { state.prompt = Number(promptMenu.value); drawUpdate(); });
-  const questionMenu = root.querySelector('.rsd-question');
-  for (const q of S.questions) {
-    const option = document.createElement('option');
-    option.value = q.id;
-    option.textContent = q.text;
-    questionMenu.appendChild(option);
-  }
-  const showQuestion = () => { $('rsd-question-text').textContent = S.questions.find(q => String(q.id) === state.question).text; };
-  questionMenu.addEventListener('change', () => { state.question = questionMenu.value; showQuestion(); drawStrip(); drawCard(); });
   go.addEventListener('click', selfDistill);
   reset.addEventListener('click', () => { if (!state.busy) { state.at = state.view = 0; draw(); go.focus(); } });
   root.querySelector('.rsd-controls').hidden = false;
   go.hidden = false;
-  showQuestion();
+  drawLists();
   draw();
+  let plotWidth = plotBox.clientWidth;
+  new ResizeObserver(() => { if (Math.abs(plotBox.clientWidth - plotWidth) > 2) { plotWidth = plotBox.clientWidth; drawPlot(); } }).observe(plotBox);
 })();

@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 argv = sys.argv[1:]
-QUESTIONS = [133]
+QUESTIONS = [281, 133, 134, 138, 159, 155, 220, 6]  # the Setup figure's evaluation prompts
 if '--questions' in argv:
     i = argv.index('--questions')
     QUESTIONS = [int(q) for q in argv[i + 1].split(',')]
