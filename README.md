@@ -14,6 +14,7 @@ The opening text is labelled **Premises**. `assets/navigation.js` highlights the
 
 - `index.html`: all page text, figures, animations, example generations, and the BibTeX entry.
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
+- The Larger models section places its paragraph beside Figure 4 on desktop, with text on the left and the figure and caption on the right. At widths of 800px or less, the figure follows the text.
 - `assets/references.js`: paper-title cards for SORRY-Bench and StrongREJECT, only in Experimental Setup. Hover, keyboard focus, or tap opens each card with its arXiv link; Escape or an outside click dismisses it.
 - `assets/paper.pdf`: the preprint, used as the source of the figures. The red arXiv button and public paper link point to https://arxiv.org/abs/2610.22467; the citation matches its official BibTeX export.
 - `assets/favicon.png`: the misaligned robot from Figure 1 of the paper.

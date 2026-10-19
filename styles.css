@@ -103,6 +103,14 @@ figure:not(.rsd) > figcaption { text-align: center; }
 figure:not(.rsd) > figcaption > strong { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 700; color: #222; }
 figure.small { max-width: 440px; margin-inline: auto; }
 
+.scaling-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; margin-top: 16px; }
+.scaling-layout > p { margin: 0; }
+.scaling-layout > figure { width: 100%; margin: 0; }
+@media (max-width: 800px) {
+  .scaling-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .scaling-layout > figure { margin-inline: auto; }
+}
+
 /* Contents stays outside the reading column and shares the page's green accents. */
 .contents {
   position: fixed; z-index: 20; top: 50%; transform: translateY(-50%);

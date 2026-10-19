@@ -15,7 +15,7 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=8616d3eca956">
+  <link rel="stylesheet" href="styles.css?v=04054579f2d5">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=7946d1eb15e8" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
@@ -185,12 +185,13 @@
   </div>
 
   <h2 id="larger-models">Larger models</h2>
-  <p>We investigate the role of model scale using Qwen3 models ranging from 0.6B to 32B, with off-policy RSD and <span class="cuebox">Excellent</span> as the fixed cue. We observe that the increase in misalignment relative to the corresponding initial model grows with model size. For Qwen3 32B, the increase is 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
-
-  <figure class="small">
-    <div class="chart" data-chart="scaling"><img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size."></div>
-    <figcaption><strong>Figure 4:</strong> Increase in misalignment over each initial Qwen3 model, after off-policy RSD with <span class="cuebox">Excellent</span>.</figcaption>
-  </figure>
+  <div class="scaling-layout">
+    <p>We investigate the role of model scale using Qwen3 models ranging from 0.6B to 32B, with off-policy RSD and <span class="cuebox">Excellent</span> as the fixed cue. We observe that the increase in misalignment relative to the corresponding initial model grows with model size. For Qwen3 32B, the increase is 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
+    <figure class="small">
+      <div class="chart" data-chart="scaling"><img src="assets/figures/scaling.svg?v=3edf188488a5" width="454" height="313" alt="Line chart of the increase in misalignment against Qwen3 model size, from 0.6B to 32B, for SORRY-Bench and StrongREJECT. Both increase with size."></div>
+      <figcaption><strong>Figure 4:</strong> Increase in misalignment over each initial Qwen3 model, after off-policy RSD with <span class="cuebox">Excellent</span>.</figcaption>
+    </figure>
+  </div>
 
   <h2 id="mechanism">Why does this happen?</h2>
   <p>We hypothesize that the additional cue induces a small displacement in the teacher’s token distribution, which is amplified over successive rounds of recursive self-distillation. Empirically, the KL divergence between the initial and updated models increases during training and is concentrated in the first few tokens of the answer. This behavior is consistent with prior observations that <a href="https://arxiv.org/abs/2406.05946">safety alignment is concentrated in the first few tokens</a>. A more thorough investigation of which cues give rise to this effect remains an important direction for future work.</p>
