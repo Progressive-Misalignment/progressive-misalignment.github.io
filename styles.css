@@ -65,7 +65,7 @@ main { max-width: 900px; margin: 0 auto; padding: 72px 16px 80px; }
 
 h1, h2 { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 600; }
 h1 { margin: 0 0 14px; font-size: 28px; line-height: 1.25; text-wrap: balance; }
-h2 { margin: 48px 0 10px; font-size: 21px; line-height: 1.3; }
+h2 { margin: 48px 0 10px; font-size: 23px; line-height: 1.3; }
 
 p { margin: 0 0 16px; }
 b { font-weight: 600; }
@@ -282,7 +282,7 @@ pre {
 /* Recorded benign-prompt selection, with signed scores and actual training batches. */
 .selection-demo { margin-top: 30px; }
 .selection-demo[hidden], .selection-demo [hidden], .selection-fallback[hidden] { display: none; }
-.selection-demo h3 { margin: 0; font: 600 15px/1.4 'Google Sans', system-ui, sans-serif; }
+.selection-demo h3 { margin: 0; font: 600 16px/1.4 'Google Sans', system-ui, sans-serif; }
 .selection-cue { display: inline-flex; align-items: center; gap: 8px; color: #666; }
 .selection-cue .pill { color: #594619; }
 .selection-steps { display: flex; gap: 24px; list-style: none; margin: 26px 0 18px; padding: 0; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #767c77; }

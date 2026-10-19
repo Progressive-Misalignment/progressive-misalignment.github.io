@@ -11,7 +11,6 @@
   const models = {qwen: 'Qwen3 14B', phi: 'Phi-4 14B'};
   const modes = {off: 'Off-policy', on: 'On-policy'};
   const signed = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(3)}`;
-  const percent = value => `${(100 * value).toFixed(1)}%`;
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
@@ -49,7 +48,7 @@
     }
     const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance ${percent(sorry.value)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 uses the paper’s full-benchmark baseline; later points show development scores through the selected ${stop}-update checkpoint.`);
+      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 uses the paper’s full-benchmark baseline; later points show development scores through the selected ${stop}-update checkpoint.`);
     const x = step => 43 + step / stop * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
@@ -62,7 +61,7 @@
     svgEl('text', {x: 247, y: 264, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Training updates · 20 per batch');
     svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
     function accessiblePoint(node, benchmark, name, point) {
-      const format = benchmark === 'sorrybench' ? percent : value => value.toFixed(3);
+      const format = value => value.toFixed(3);
       const fullCount = benchmark === 'sorrybench' ? 440 : 313;
       const scope = point.step === 0 ? `Paper · all ${fullCount} questions`
         : `${benchmark === 'sorrybench' ? 88 : 63} development questions`;
