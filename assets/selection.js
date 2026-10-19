@@ -117,9 +117,16 @@
     const scored = state.phase >= 1;
     const selected = state.phase >= 2;
     const trained = state.phase === 3;
-    const ranked = [...round.candidates].sort((a, b) => b.score - a.score);
-    const candidates = scored ? ranked : round.candidates;
-    const batch = ranked.slice(0, 20);
+    const candidates = [...round.candidates];
+    if (scored) candidates.sort((a, b) => b.score - a.score);
+    else {
+      // Shuffle each fresh round without changing the recorded source data.
+      for (let i = candidates.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+      }
+    }
+    const batch = selected ? candidates.slice(0, 20) : [];
     const batchIds = new Set(batch.map(candidate => candidate.id));
     const lo = Math.min(0, ...candidates.map(c => c.score));
     const hi = Math.max(0, ...candidates.map(c => c.score));
