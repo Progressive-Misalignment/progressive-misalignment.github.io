@@ -361,8 +361,6 @@ pre {
 .selection-chart-point:focus .selection-point-mark { stroke: #272b30; stroke-width: 2.5; }
 .selection-tooltip { width: 280px; max-width: calc(100% - 16px); box-sizing: border-box; font: 12px/1.45 'Google Sans', system-ui, sans-serif; }
 .selection-tooltip strong { display: block; color: #272b30; font-size: 16px; }
-.selection-tooltip-reference { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0e9; }
-figure.selection-demo > figcaption { text-align: left; }
 .selection-demo :focus-visible { outline: 2px solid #2e6b46; outline-offset: 3px; }
 .selection-demo .selection-table-wrap:focus-visible, .selection-demo .selection-chosen:focus-visible { outline-offset: -3px; }
 @keyframes selection-score-in { from { width: 0; } to { width: var(--score-width); } }

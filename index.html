@@ -15,11 +15,11 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=3ebfbd8a51d7">
+  <link rel="stylesheet" href="styles.css?v=f8b12a3d5a5c">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=7946d1eb15e8" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
-  <script src="assets/selection.js?v=c8e5c8b5121c" defer></script>
+  <script src="assets/selection.js?v=f35a13a1b411" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
@@ -181,7 +181,6 @@
       <p>These recorded runs refine 60 candidates and select 20 with cluster and category limits. They rescore after 20 updates. Harmful requests supply the selection signal only; they are never used for fine-tuning.</p>
       <a class="selection-score-source" href="assets/paper.pdf?v=5e1414427adf" target="_blank" rel="noopener">Paper: Algorithm 1 and Appendix B.6 ↗</a>
     </div>
-    <figcaption>Replay the recorded prompt selection and training batches through the checkpoint reported in the paper. Step 0 shows the paper’s full-benchmark base-model scores; later points reveal each batch’s measured development scores as you self-distill.</figcaption>
   </figure>
   <div class="selection-fallback">
   <video class="anim" src="assets/videos/data-selection.mp4?v=a1065832863f" poster="assets/videos/data-selection.jpg?v=288ca1e4fe46" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: benign prompts such as “Name three kinds of clouds.” are ranked by score, the top ones are kept, and RSD on them raises SORRY-Bench misalignment for Qwen3 14B and Phi-4."></video>

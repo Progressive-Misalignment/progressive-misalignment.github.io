@@ -85,7 +85,9 @@
       name: benchmark === 'sorrybench' ? 'SORRY-Bench compliance' : 'StrongREJECT harmfulness',
       color: benchmark === 'sorrybench' ? '#2e6b46' : '#b56828',
       points: [{step: 0, ...data.baseline[state.model][benchmark]},
-        ...data.trajectories[key][benchmark].filter(point => point.step > 0 && point.step <= completed)]
+        ...data.trajectories[key][benchmark]
+          .filter(point => point.step > 0 && point.step <= completed)
+          .map(point => point.step === stop ? {step: stop, ...data.paper[key][benchmark]} : point)]
     }));
     const label = `${models[state.model]} · ${modes[state.mode]}`;
     $('.selection-progress').textContent = `${completed} / ${stop} updates`;
@@ -106,7 +108,7 @@
     }
     const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 uses the paper’s full-benchmark baseline; later points show development scores through the selected ${stop}-update checkpoint.`);
+      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 and the final ${stop}-update checkpoint use the paper’s full-benchmark scores; intermediate points show development scores.`);
     const x = step => 43 + step / stop * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
@@ -121,21 +123,19 @@
     function accessiblePoint(node, benchmark, name, point) {
       const format = value => value.toFixed(3);
       const fullCount = benchmark === 'sorrybench' ? 440 : 313;
-      const scope = point.step === 0 ? `Paper · all ${fullCount} questions`
+      const scope = point.step === 0 || point.step === stop ? `Paper · all ${fullCount} questions`
         : `${benchmark === 'sorrybench' ? 88 : 63} development questions`;
-      const paper = point.step === stop ? data.paper[key][benchmark] : null;
-      const step = point.step === 0 ? 'Base model · 0 updates' : `${point.step} updates`;
+      const step = point.step === 0 ? 'Base model · 0 updates'
+        : point.step === stop ? `Paper checkpoint · ${point.step} updates` : `${point.step} updates`;
       const score = `${format(point.value)} ± ${format(point.sd)}`;
-      const reference = paper ? `Paper · all ${fullCount} questions: ${format(paper.value)}` : '';
       node.setAttribute('class', 'selection-chart-point');
       node.setAttribute('tabindex', '0');
-      node.setAttribute('aria-label', `${step}: ${name} ${score}; ${scope}, mean ± SD over 3 samples at temperature 1. ${reference}`);
+      node.setAttribute('aria-label', `${step}: ${name} ${score}; ${scope}, mean ± SD over 3 samples at temperature 1.`);
       node.setAttribute('data-benchmark', benchmark);
       node.setAttribute('data-step', point.step);
       function show() {
         tooltip.replaceChildren(el('div', 'tip-title', name), el('div', '', step),
-          el('strong', '', score), el('div', '', `${scope} · mean ± SD over 3 samples at temperature 1`),
-          ...(reference ? [el('div', 'selection-tooltip-reference', reference)] : []));
+          el('strong', '', score), el('div', '', `${scope} · mean ± SD over 3 samples at temperature 1`));
         tooltip.hidden = false;
         const box = $('.selection-outcome'), bounds = box.getBoundingClientRect(), anchor = node.getBoundingClientRect();
         const left = anchor.left + anchor.width / 2 - bounds.left - tooltip.offsetWidth / 2;
