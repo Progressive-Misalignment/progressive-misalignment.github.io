@@ -15,11 +15,11 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=5d66dbaf3907">
+  <link rel="stylesheet" href="styles.css?v=f4e88b752678">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
-  <script src="assets/selection.js?v=90001b6c189f" defer></script>
+  <script src="assets/selection.js?v=e3d246397f3b" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
@@ -151,7 +151,6 @@
           <p>Which benign prompts will change the model?</p>
         </div>
         <ol class="selection-chosen" tabindex="0" aria-label="Selected prompts in recorded training order" hidden></ol>
-        <p class="selection-batch-note" hidden></p>
       </section>
       <section class="selection-outcome" aria-labelledby="selection-outcome-title">
         <div class="selection-panel-heading"><h3 id="selection-outcome-title">Misalignment over training</h3><span class="selection-progress"></span></div>
@@ -161,10 +160,6 @@
           <span><i class="selection-legend-point" aria-hidden="true"></i>StrongREJECT · harmfulness</span>
         </div>
         <div class="selection-plot"></div>
-        <div class="selection-readouts" aria-live="polite" aria-atomic="true">
-          <div><span>SORRY-Bench</span><strong class="selection-sorry-value"></strong></div>
-          <div><span>StrongREJECT</span><strong class="selection-strong-value"></strong></div>
-        </div>
       </section>
     </div>
     <div class="selection-actions">

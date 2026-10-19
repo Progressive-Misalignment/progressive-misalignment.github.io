@@ -295,7 +295,7 @@ pre {
 .selection-bank, .selection-batch, .selection-outcome { min-width: 0; border: 1.5px solid #343a35; border-radius: 16px; overflow: hidden; background: #fff; }
 .selection-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 16px 4px; }
 .selection-panel-heading > span { flex: none; color: #617063; font: 12px/1.4 'Google Sans', system-ui, sans-serif; }
-.selection-bank-note, .selection-batch-note, .selection-scale-note { margin: 4px 16px 12px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
+.selection-bank-note, .selection-scale-note { margin: 4px 16px 12px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
 .selection-table-wrap { height: 360px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .selection-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .selection-table th { position: sticky; top: 0; z-index: 1; padding: 9px 16px; background: #f7f8f5; text-align: left; font: 500 12px/1.4 'Google Sans', system-ui, sans-serif; color: #61685f; }
@@ -315,16 +315,15 @@ pre {
 .is-scored .selection-fill { width: var(--score-width); animation: selection-score-in .45s ease-out; }
 .selection-score-value { display: block; font: 11px/1.4 'Google Sans Code', ui-monospace, monospace; color: #555e51; }
 .selection-scale-note { margin-top: 12px; min-height: 36px; }
-.selection-batch { display: flex; flex-direction: column; }
+.selection-batch { display: flex; flex-direction: column; min-height: 0; }
 .selection-batch .selection-panel-heading { padding-bottom: 16px; border-bottom: 1px solid #edf0e9; }
 .selection-batch-count { padding: 3px 8px; border-radius: 999px; background: #edf4e9; }
 .selection-empty { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 20px 25px; text-align: center; }
 .selection-empty img { width: 64px; height: 64px; margin-bottom: 16px; }
 .selection-empty p { margin: 0 0 10px; font: 14px/1.5 'Google Sans', system-ui, sans-serif; color: #3a493b; }
-.selection-chosen { flex: 1 1 auto; height: 360px; max-height: 360px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: 0 0 12px; padding: 8px 16px 8px 38px; }
+.selection-chosen { flex: 1 1 0; height: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: 0 0 12px; padding: 8px 16px 8px 38px; }
 .selection-chosen li { padding: 8px 0 8px 3px; border-bottom: 1px solid #edf0e9; font: 12px/1.55 'Google Sans Code', ui-monospace, monospace; overflow-wrap: anywhere; white-space: pre-wrap; }
 .selection-chosen li::marker { color: #688460; font: 11px 'Google Sans', system-ui, sans-serif; }
-.selection-batch-note { margin-top: auto; padding-top: 10px; }
 .is-trained .selection-batch { border-color: #2e6b46; background: #f5f9f2; }
 .selection-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin-top: 22px; }
 .selection-go { min-height: 42px; padding: 9px 21px; border: 0; border-radius: 999px; background: #272b30; color: #fff; font: 600 14px/1.5 'Google Sans', system-ui, sans-serif; cursor: pointer; }
@@ -334,22 +333,21 @@ pre {
 .selection-explainer { margin-top: 16px; font-size: 14px; }
 .selection-explainer summary { width: fit-content; cursor: pointer; color: #2e6b46; }
 .selection-explainer p { margin: 10px 0; }
-.selection-outcome { display: flex; flex-direction: column; }
+.selection-outcome { position: relative; display: flex; flex-direction: column; }
 .selection-outcome .selection-panel-heading { flex-wrap: wrap; }
 .selection-outcome-label { margin: 4px 16px 12px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
 .selection-legend { display: flex; flex-wrap: wrap; gap: 7px 16px; margin: 0 16px 8px; font: 11px/1.4 'Google Sans', system-ui, sans-serif; color: #4e584f; }
 .selection-legend > span { display: inline-flex; align-items: center; gap: 7px; }
 .selection-legend-line { width: 16px; border-top: 2px solid #2e6b46; }
 .selection-legend-point { width: 7px; height: 7px; margin-inline: 4px; background: #b56828; transform: rotate(45deg); }
-.selection-plot { margin: 0 12px; }
+.selection-plot { margin: 0 12px 12px; }
 .selection-plot svg { display: block; width: 100%; height: auto; overflow: visible; font-family: 'Google Sans', system-ui, sans-serif; }
 .selection-chart-point { cursor: help; }
-.selection-chart-point:focus { outline: none; stroke: #272b30; stroke-width: 2.5; }
-.selection-readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 16px 14px; }
-.selection-readouts span { display: block; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
-.selection-readouts strong { display: block; margin-block: 3px; font: 600 22px/1.3 'Google Sans', system-ui, sans-serif; }
-.selection-sorry-value { color: #2e6b46; }
-.selection-strong-value { color: #99531c; }
+.selection-chart-point:focus { outline: none; }
+.selection-chart-point:focus .selection-point-mark { stroke: #272b30; stroke-width: 2.5; }
+.selection-tooltip { width: 280px; max-width: calc(100% - 16px); box-sizing: border-box; font: 12px/1.45 'Google Sans', system-ui, sans-serif; }
+.selection-tooltip strong { display: block; color: #272b30; font-size: 16px; }
+.selection-tooltip-reference { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0e9; }
 figure.selection-demo > figcaption { text-align: left; }
 .selection-demo :focus-visible { outline: 2px solid #2e6b46; outline-offset: 3px; }
 .selection-demo .selection-table-wrap:focus-visible, .selection-demo .selection-chosen:focus-visible { outline-offset: -3px; }
@@ -364,6 +362,5 @@ figure.selection-demo > figcaption { text-align: left; }
   .selection-empty { padding: 16px; }
   .selection-empty img { width: 44px; height: 44px; margin-bottom: 8px; }
   .selection-chosen { flex: auto; height: 220px; max-height: 220px; }
-  .selection-readouts strong { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .is-scored .selection-fill { animation: none; } }

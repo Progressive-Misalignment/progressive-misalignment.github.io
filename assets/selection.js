@@ -33,8 +33,10 @@
     $('.selection-progress').textContent = `${completed} / ${stop} updates`;
     $('.selection-outcome-label').textContent = label;
     const sorry = series[0].points.at(-1), strong = series[1].points.at(-1);
-    $('.selection-sorry-value').textContent = percent(sorry.value);
-    $('.selection-strong-value').textContent = strong.value.toFixed(3);
+    const tooltip = el('div', 'tip selection-tooltip');
+    tooltip.id = 'selection-chart-tooltip';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.hidden = true;
 
     const ns = 'http://www.w3.org/2000/svg';
     function svgEl(tag, attrs, parent, text) {
@@ -44,8 +46,7 @@
       if (parent) parent.append(node);
       return node;
     }
-    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-labelledby': 'selection-chart-title selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
-    svgEl('title', {id: 'selection-chart-title'}, svg, `${label}: development scores through ${completed} updates`);
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: development scores through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
       `SORRY-Bench compliance ${percent(sorry.value)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Development scores from the base model through the selected ${stop}-update checkpoint.`);
     const x = step => 43 + step / stop * 408;
@@ -59,28 +60,56 @@
     }
     svgEl('text', {x: 247, y: 264, 'text-anchor': 'middle', 'font-size': 12, fill: '#4e584f'}, svg, 'Training updates · 20 per batch');
     svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
-    function accessiblePoint(node, benchmark, point, text) {
+    function accessiblePoint(node, benchmark, name, point) {
+      const format = benchmark === 'sorrybench' ? percent : value => value.toFixed(3);
+      const count = benchmark === 'sorrybench' ? 88 : 63;
+      const fullCount = benchmark === 'sorrybench' ? 440 : 313;
+      const paper = point.step === 0 ? data.baseline[state.model][benchmark]
+        : point.step === stop ? data.paper[key][benchmark] : null;
+      const step = point.step === 0 ? 'Base model · 0 updates' : `${point.step} updates`;
+      const score = `${format(point.value)} ± ${format(point.sd)}`;
+      const reference = paper ? `Paper · all ${fullCount} questions: ${format(paper.value)}` : '';
       node.setAttribute('class', 'selection-chart-point');
       node.setAttribute('tabindex', '0');
-      node.setAttribute('aria-label', text);
+      node.setAttribute('aria-label', `${step}: ${name} ${score}; ${count} development questions, mean ± SD over 3 samples at temperature 1. ${reference}`);
       node.setAttribute('data-benchmark', benchmark);
       node.setAttribute('data-step', point.step);
-      svgEl('title', {}, node, text);
+      function show() {
+        tooltip.replaceChildren(el('div', 'tip-title', name), el('div', '', step),
+          el('strong', '', score), el('div', '', `${count} development questions · mean ± SD over 3 samples at temperature 1`),
+          ...(reference ? [el('div', 'selection-tooltip-reference', reference)] : []));
+        tooltip.hidden = false;
+        const box = $('.selection-outcome'), bounds = box.getBoundingClientRect(), anchor = node.getBoundingClientRect();
+        const left = anchor.left + anchor.width / 2 - bounds.left - tooltip.offsetWidth / 2;
+        const above = anchor.top - bounds.top - tooltip.offsetHeight - 8;
+        const top = above >= 8 ? above : anchor.bottom - bounds.top + 8;
+        tooltip.style.left = `${Math.max(8, Math.min(box.clientWidth - tooltip.offsetWidth - 8, left))}px`;
+        tooltip.style.top = `${Math.max(8, Math.min(box.clientHeight - tooltip.offsetHeight - 8, top))}px`;
+      }
+      node.addEventListener('pointerenter', show);
+      node.addEventListener('pointerleave', () => { if (document.activeElement !== node) tooltip.hidden = true; });
+      node.addEventListener('focus', show);
+      node.addEventListener('blur', () => { tooltip.hidden = true; });
+      node.addEventListener('click', show);
+      node.addEventListener('keydown', event => { if (event.key === 'Escape') tooltip.hidden = true; });
     }
     series.forEach(({benchmark, name, color, points}, index) => {
       svgEl('polyline', {points: points.map(p => `${x(p.step)},${y(p.value)}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linejoin': 'round'}, svg);
       points.forEach(point => {
         const cx = x(point.step);
         const cy = y(point.value);
+        const group = svgEl('g', {}, svg);
         const node = index
-          ? svgEl('path', {d: `M${cx},${cy - 5}L${cx + 5},${cy}L${cx},${cy + 5}L${cx - 5},${cy}Z`, fill: color, stroke: '#fff', 'stroke-width': 1}, svg)
-          : svgEl('circle', {cx, cy, r: point.step === completed || point.step === 0 ? 5 : 3.5, fill: color, stroke: '#fff', 'stroke-width': 1}, svg);
+          ? svgEl('path', {d: `M${cx},${cy - 5}L${cx + 5},${cy}L${cx},${cy + 5}L${cx - 5},${cy}Z`, fill: color, stroke: '#fff', 'stroke-width': 1}, group)
+          : svgEl('circle', {cx, cy, r: point.step === completed || point.step === 0 ? 5 : 3.5, fill: color, stroke: '#fff', 'stroke-width': 1}, group);
+        node.setAttribute('class', 'selection-point-mark');
         const top = y(Math.min(1, point.value + point.sd)), bottom = y(Math.max(0, point.value - point.sd));
-        svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 3},${top}H${cx + 3}M${cx - 3},${bottom}H${cx + 3}`, stroke: color, 'stroke-width': 1.2, fill: 'none', 'pointer-events': 'none'}, svg);
-        accessiblePoint(node, benchmark, point, `${point.step === 0 ? 'Base model, 0 updates' : `${point.step} updates`}: ${name} ${point.value.toFixed(3)} ± ${point.sd.toFixed(3)} (development subset, 3 samples at temperature 1)`);
+        svgEl('path', {d: `M${cx},${top}V${bottom}M${cx - 3},${top}H${cx + 3}M${cx - 3},${bottom}H${cx + 3}`, stroke: color, 'stroke-width': 1.2, fill: 'none', 'pointer-events': 'none'}, group);
+        svgEl('circle', {cx, cy, r: 10, fill: 'transparent'}, group);
+        accessiblePoint(group, benchmark, name, point);
       });
     });
-    $('.selection-plot').replaceChildren(svg);
+    $('.selection-plot').replaceChildren(svg, tooltip);
   }
 
   function render() {
@@ -146,10 +175,6 @@
     chosenList.hidden = !selected;
     chosenList.replaceChildren(...(selected ? batch.map(candidate => el('li', '', data.prompts[candidate.id].text)) : []));
     chosenList.scrollTop = 0;
-    $('.selection-batch-note').textContent = selected
-      ? `Recorded order · cluster cap ${round.clusterCap} across rounds; at most ${round.categoryCap} per category in this batch.`
-      : '';
-    $('.selection-batch-note').hidden = !selected;
     const messages = [
       '',
       'Higher scores predict a larger increase in preference for harmful answers.',
