@@ -15,9 +15,11 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=0d4f338067a3">
+  <link rel="stylesheet" href="styles.css?v=210a8d85770a">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
+  <script src="assets/selection-data.js?v=c3e879998ae6" defer></script>
+  <script src="assets/selection.js?v=26bd62c00073" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
@@ -119,7 +121,62 @@
   <h2 id="benign-prompts">Benign prompts</h2>
   <p>RSD on random benign prompts does not cause misalignment, but some benign prompts do. We score each benign prompt by how much one self-distillation step on it would make the model prefer harmful over safe answers on a separate set of harmful prompts, and we train on the highest-scoring ones. The model is never trained on a harmful prompt, and SORRY-Bench compliance still goes from 31% up to 83% for Qwen3 14B and from 26% to 70% for Phi-4 14B.</p>
 
+  <figure class="selection-demo wide" id="selection-demo" hidden aria-label="Interactive benign-prompt selection">
+    <div class="rsd-controls">
+      <div class="toggle" data-selection-control="mode" role="group" aria-label="Selection self-distillation mode"><span>Self-distillation</span><button type="button" data-value="off" aria-pressed="true">Off-policy</button><button type="button" data-value="on" aria-pressed="false">On-policy</button></div>
+      <div class="toggle" data-selection-control="model" role="group" aria-label="Selection model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
+      <label class="rsd-pick"><span>Round</span><select class="selection-round" aria-label="Selection round"></select></label>
+      <span class="selection-cue">Cue <span class="pill">Excellent</span></span>
+    </div>
+    <ol class="selection-steps" aria-label="Selection stages">
+      <li aria-current="step"><span>1</span> Score &amp; rank</li>
+      <li><span>2</span> Select 20</li>
+      <li><span>3</span> Self-distill</li>
+    </ol>
+    <div class="selection-stage">
+      <section class="selection-bank" aria-labelledby="selection-bank-title">
+        <div class="selection-panel-heading"><h3 id="selection-bank-title">Benign prompt shortlist</h3><span class="selection-bank-count">60 prompts</span></div>
+        <p class="selection-bank-note"></p>
+        <div class="selection-table-wrap" tabindex="0" role="region" aria-label="Benign prompts and selection scores; scroll to explore all 60">
+          <table class="selection-table">
+            <thead><tr><th scope="col">Prompt</th><th scope="col">Score <span aria-hidden="true">↓</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="selection-scale-note">Reveal the scores to compare these prompts.</p>
+      </section>
+      <section class="selection-batch" aria-labelledby="selection-batch-title">
+        <div class="selection-panel-heading"><h3 id="selection-batch-title">Training batch</h3><span class="selection-batch-count">0 / 20</span></div>
+        <div class="selection-empty">
+          <img src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">
+          <p>Which benign prompts will change the model?</p>
+          <p>Score the shortlist, then choose 20 prompts for self-distillation.</p>
+        </div>
+        <ol class="selection-chosen" tabindex="0" aria-label="Selected prompts in recorded training order" hidden></ol>
+        <p class="selection-batch-note">Only benign prompts enter the training batch.</p>
+      </section>
+    </div>
+    <div class="selection-actions">
+      <button type="button" class="selection-go">Score &amp; rank</button>
+      <button type="button" class="selection-reset run-reset">Reset round</button>
+      <p class="selection-status" role="status" aria-live="polite" aria-atomic="true"></p>
+    </div>
+    <details class="selection-explainer">
+      <summary>What does the score mean?</summary>
+      <p>The score estimates how much a self-distillation update on this benign prompt would increase the model’s preference for harmful over safe answers on a separate set of harmful requests. A positive score predicts an increase; it is not a probability or a measure of how harmful the prompt is.</p>
+      <p>The saved runs first screen a larger pool, refine the scores of 60 candidates, and choose 20 with limits on prompts from the same similarity cluster and category. These diversity constraints mean some high-scoring prompts are skipped. After 20 updates, the model scores a new shortlist; previously selected prompts cannot be chosen again.</p>
+    </details>
+    <div class="selection-results" aria-label="Reported paper results">
+      <div><h3>Where does this lead?</h3><p class="selection-results-label"></p></div>
+      <div class="selection-result"><span>SORRY-Bench</span><strong data-result="SORRY-Bench"></strong></div>
+      <div class="selection-result"><span>StrongREJECT</span><strong data-result="StrongREJECT"></strong></div>
+      <p class="selection-results-note">Initial model → selected checkpoint in the paper, averaged over 3 generation seeds. These are the reported results for the full run, not measurements after the round shown above.</p>
+    </div>
+    <figcaption>Replay the recorded prompt selection with the original scores and training batches. Choose a model, mode, or round to explore how the selection changes.</figcaption>
+  </figure>
+  <div class="selection-fallback">
   <video class="anim" src="assets/videos/data-selection.mp4?v=a1065832863f" poster="assets/videos/data-selection.jpg?v=288ca1e4fe46" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: benign prompts such as “Name three kinds of clouds.” are ranked by score, the top ones are kept, and RSD on them raises SORRY-Bench misalignment for Qwen3 14B and Phi-4."></video>
+  </div>
 
   <h2 id="larger-models">Larger models</h2>
   <p>Across Qwen3 models from 0.6B to 32B, the increase in misalignment grows with model size. Qwen3 32B goes up by 0.64 on SORRY-Bench and 0.65 on StrongREJECT.</p>
