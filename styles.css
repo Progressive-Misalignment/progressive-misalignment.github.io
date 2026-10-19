@@ -337,7 +337,6 @@ pre {
 .selection-explainer p { margin: 10px 0; }
 .selection-outcome { display: flex; flex-direction: column; }
 .selection-outcome .selection-panel-heading { flex-wrap: wrap; }
-.selection-view { margin: 0 16px 14px; flex-wrap: wrap; gap: 6px; }
 .selection-outcome-label, .selection-measurement-note { margin: 4px 16px 12px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
 .selection-legend { display: flex; flex-wrap: wrap; gap: 7px 16px; margin: 0 16px 8px; font: 11px/1.4 'Google Sans', system-ui, sans-serif; color: #4e584f; }
 .selection-legend > span { display: inline-flex; align-items: center; gap: 7px; }

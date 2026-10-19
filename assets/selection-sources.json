@@ -1,14 +1,20 @@
 {
-  "description": "Refined scores and recorded diversity-constrained selections, 10 rounds of 20 updates.",
+  "description": "Refined scores and recorded diversity-constrained selections through each paper checkpoint, 20 updates per round.",
   "scoreField": "predicted_adam_behavior_gain",
   "filesSHA256": {
     "../evaluations/qwen3_14b_all_benign_replication_dev_selection_v1/inputs/sorry_dev_ids.json": "1009e157c4f67bf66c4c0f1a21c44a47662c3ba5d44e35cf375bbdc17231d2cb",
     "../evaluations/qwen3_14b_all_benign_replication_dev_selection_v1/inputs/strongreject_dev_ids.json": "285f672d5acc3174330209cf48c6ae21b64bb148acb848f64479a39a100cf11d",
+    "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/run_config.json": "0dc8cce2309b95d2d82b1598e73a494803e2a637dde40349e55db10aba69cfdb",
+    "mixed_excellent_phi14_qwen14_t1_k3_vllm_20260829/controls/qwen3_14b/epoch-0/sorry_bench_t1_k3/model_answer/qwen3_14b-base-epoch-0-t1-k3.config.json": "5fe250e5d90dc17e28fb7ab26b38bfe96e12dd7a8b791ad3a52a48a6dd5d3c62",
+    "mixed_excellent_phi14_qwen14_t1_k3_vllm_20260829/controls/qwen3_14b/epoch-0/sorry_bench_t1_k3/model_judgment/ft-mistral-7b-instruct-v0.2.jsonl": "e2cb0ca10baa2c710c87649a0e6f996fac0389dd0082dff5b9f19218bff44dce",
+    "qwen3_large_base_randomness_strongreject_20260831/runs/qwen3_14b/base/strongreject_t1_k3/model_answer/qwen3_14b-base-epoch-0-t1-k3-strongreject.config.json": "137d7031f679239613a233b509016513d13590b04be90feaa21929b927e4fa0a",
+    "qwen3_large_base_randomness_strongreject_20260831/runs/qwen3_14b/base/strongreject_t1_k3/judge/sample-0/model_judgment/qwen3_14b.jsonl": "cacd577191475b7a364e532677b9a61e35c4adfd4a3766a2d800f78116878530",
+    "qwen3_large_base_randomness_strongreject_20260831/runs/qwen3_14b/base/strongreject_t1_k3/judge/sample-1/model_judgment/qwen3_14b.jsonl": "b5a7c44df4d69c6fd5a67be80e647b150f24fe9428baf8ab4ff8d104805dbd26",
+    "qwen3_large_base_randomness_strongreject_20260831/runs/qwen3_14b/base/strongreject_t1_k3/judge/sample-2/model_judgment/qwen3_14b.jsonl": "68570bd7f0975bd5e438159b1438d7fe58f9ead480350a75423b85a35df78b57",
     "../evaluations/qwen3_14b_all_benign_replication_dev_selection_v1/analysis/candidate_development_scores.csv": "48b3efd768ff1a126d8bf1b663440c937cc3799aa093e6d321a4af6bc37718cc",
     "../evaluations/qwen3_14b_all_benign_replication_dev_selection_v1/analysis/final_results.json": "ed8dbc1a5bc59eeddc7e97905e3a569dca5f900542ede8bdeb7356d6bc9dc076",
     "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/curriculum/selected_200.jsonl": "688ec11cd1657302d64b31c5bc4e3bee5710d9889a2b77a190f90a9555a3b184",
     "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/blocks.json": "b77f51104c5474ada7d6a1ead37e9e1ddd7a111d87f8c9cd442960c49d70f8f0",
-    "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/run_config.json": "0dc8cce2309b95d2d82b1598e73a494803e2a637dde40349e55db10aba69cfdb",
     "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/screening/block-01-refined.jsonl": "420e4436cff7fff0d67af742a0417303d3737a549166c317ffb2fa3273706ebf",
     "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/screening/block-02-refined.jsonl": "786b2f9692414fb178e6cdd9a8dac5a847f5bf6112ccc140a2345b6b3075e52a",
     "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1/adaptive_training/off_policy/screening/block-03-refined.jsonl": "a98ed06024e285e8c8d8303a4483d70a24aed204594ca13584833ac9daebda10",
@@ -166,11 +172,17 @@
     "../evaluations/qwen3_14b_all_benign_replication_dev_selection_v1/evaluations/full/b2a1e908c521bdf3/strongreject/model_judgment/sample-2.jsonl": "62e1f792f4cd6460d281e3a9ba778abf23608bf5d47aa06a72d77f2b52fe01df",
     "../evaluations/mixture_main_paper_dev_selection_v3_packed/inputs/sorry_dev_ids.json": "1009e157c4f67bf66c4c0f1a21c44a47662c3ba5d44e35cf375bbdc17231d2cb",
     "../evaluations/mixture_main_paper_dev_selection_v3_packed/inputs/strongreject_dev_ids.json": "285f672d5acc3174330209cf48c6ae21b64bb148acb848f64479a39a100cf11d",
+    "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/run_config.json": "b826025404e955550fc19b54ae8aaef8b2940006d2c561f85d9fc8be3f8163de",
+    "mixed_excellent_phi14_qwen14_t1_k3_vllm_20260829/controls/phi4_14b/epoch-0/sorry_bench_t1_k3/model_answer/phi4_14b-base-epoch-0-t1-k3.config.json": "03d4120ac2806e90b46e9fd7a2c0bcbb4e748192800d03d5201d8c621c2d7913",
+    "mixed_excellent_phi14_qwen14_t1_k3_vllm_20260829/controls/phi4_14b/epoch-0/sorry_bench_t1_k3/model_judgment/ft-mistral-7b-instruct-v0.2.jsonl": "faf67b200cc8cae6cf966ff22eaaf15eb8adcaa670ed70e55e7887f55c8fb56a",
+    "safety_matrix_qwen_phi14_completion_v1/controls/phi4_14b/strongreject_t1_k3/model_answer/phi4-14b-base-no-feedback-t1-k3.config.json": "1108e3b06b12862c3f3dec796288e1b641d016e04d93bf79d7de05a93796fb71",
+    "safety_matrix_qwen_phi14_completion_v1/controls/phi4_14b/strongreject_t1_k3/model_judgment/sample-0.jsonl": "aa66f0bbb83565ff45985c7e89bafce2e525aae6df51dde58eb6877a61f0b79e",
+    "safety_matrix_qwen_phi14_completion_v1/controls/phi4_14b/strongreject_t1_k3/model_judgment/sample-1.jsonl": "69277a3c4f83195f840dc4cba8037f7673b7ad45a47adfc1691ff6b526d4b303",
+    "safety_matrix_qwen_phi14_completion_v1/controls/phi4_14b/strongreject_t1_k3/model_judgment/sample-2.jsonl": "09a2f5da4d1e25ce5c17f7593fc1b0d3c148657ba0ba05cb56926edfa6565b19",
     "../evaluations/mixture_main_paper_dev_selection_v3_packed/analysis/candidate_development_scores.csv": "42f8bbbffd39709055aeb252bbaeb7d8ecd7beb2c38713e3f555522030a54589",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/evaluations_stochastic_t1_k3_vllm/summary.json": "3ff41d59b5a008f4235c05cc0321cfc689a77a343d592feaedf31edeab59ea40",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/curriculum/selected_200.jsonl": "e8bc0a4baee71f87de1660004c4672af7db941e47e0c3cb1d9b3fb9f35a2a8b3",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/blocks.json": "ff60904a727eab9674a9bec2e2ce356d023912b342a50bacd89dfb1466fa5688",
-    "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/run_config.json": "b826025404e955550fc19b54ae8aaef8b2940006d2c561f85d9fc8be3f8163de",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/screening/block-01-refined.jsonl": "07d2f61dd172a61e39209802bcc2c88e0b7214c3c4a9ca11e24d64d8c4e20d37",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/screening/block-02-refined.jsonl": "4c9b570cddcb0980599cfd82e90c355ca1e4a6f5692dac87aa9f785fe3bc3752",
     "phi4_14b_adaptive_contrastive_blockreset_adam_v1/adaptive_training/off_policy/screening/block-03-refined.jsonl": "0cc49570702ec0908ba435bca80e570d1ab6ddc88a8ecf5569ccc9e56a8f2540",
@@ -320,14 +332,20 @@
     "qwen": "qwen3_14b_adaptive_contrastive_blockreset_adam_v4_full_trajectory_replication_v1",
     "phi": "phi4_14b_adaptive_contrastive_blockreset_adam_v1"
   },
+  "replayStopUpdates": {
+    "qwen-off": 40,
+    "qwen-on": 80,
+    "phi-off": 60,
+    "phi-on": 40
+  },
   "trajectoryMetrics": {
     "scope": "Development subsets: 88 SORRY-Bench and 63 StrongREJECT questions; not full-benchmark paper results.",
     "protocol": "Temperature 1, three samples per question, sampler seed 0; mean and sample SD over complete rollout indices.",
-    "validation": "Every point recomputed from judgments; exact checkpoint identity, protocol, counts, unique question IDs, means and SDs checked. No development baseline was measured."
+    "validation": "Every point recomputed from judgments; exact checkpoint identity, protocol, counts, unique question IDs, means and SDs checked. Step zero uses saved base-model judgments restricted to the same development IDs. All ten batches are validated; only the history through the paper checkpoint is exported."
   },
   "paperResults": {
     "file": "Plots/figure6/data.csv",
     "sha256": "285c686e3659f0bba1bfe1a605f49389a388c277ffcf9496dff0d49c5c9a7e73",
-    "note": "Trained checkpoint means and SDs recomputed from full 440/313-question judgments and checked against all eight paper bars. Initial-model bars retain the approximate PDF-reconstructed values."
+    "note": "Trained checkpoint and initial-model means and SDs recomputed from full 440/313-question judgments and checked against the paper bars, allowing four-decimal rounding for initial-model references."
   }
 }

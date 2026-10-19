@@ -41,11 +41,12 @@ def read_csv(path):
     return list(csv.DictReader(io.StringIO(read_source(path).decode())))
 
 
-def measured_metric(config_path, checkpoint, benchmark, count, question_ids=None):
+def measured_metric(config_path, checkpoint, benchmark, count, question_ids=None, sample_paths=None):
     """Validate run identity/protocol and recompute means/SDs from saved judgments."""
     config = read_json(config_path)
     assert config['model_dir'] == str(checkpoint), config_path
     assert config['temperature'] == 1 and config['num_samples_per_question'] == 3
+    assert config['seed'] == 0
     source_count = config['question_count']
     assert source_count >= count if question_ids is not None else source_count == count
     judgments = config_path.parent.parent / 'model_judgment'
@@ -54,7 +55,8 @@ def measured_metric(config_path, checkpoint, benchmark, count, question_ids=None
         assert len(rows) == 3 * source_count
         samples = [[r for r in rows if r['sample_index'] == i] for i in range(3)]
     else:
-        samples = [read_json(judgments / f'sample-{i}.jsonl') for i in range(3)]
+        samples = [read_json(path) for path in (sample_paths or
+                   [judgments / f'sample-{i}.jsonl' for i in range(3)])]
     values = []
     for rows in samples:
         assert len(rows) == len({r['question_id'] for r in rows}) == source_count
@@ -79,6 +81,25 @@ for model, name in names.items():
     analysis = evaluations / evaluation_names[model] / 'analysis'
     dev_ids = {bench: set(read_json(analysis.parent / f'inputs/{bench}_dev_ids.json'))
                for bench in ('sorry', 'strongreject')}
+    base_model = Path(read_json(experiment / 'adaptive_training/off_policy/run_config.json')['base_model_dir'])
+    model_id = 'qwen3_14b' if model == 'qwen' else 'phi4_14b'
+    base_sorry = args.experiments / 'mixed_excellent_phi14_qwen14_t1_k3_vllm_20260829' / 'controls' / model_id / 'epoch-0/sorry_bench_t1_k3'
+    if model == 'qwen':
+        base_strong = args.experiments / 'qwen3_large_base_randomness_strongreject_20260831/runs/qwen3_14b/base/strongreject_t1_k3'
+        strong_config = base_strong / 'model_answer/qwen3_14b-base-epoch-0-t1-k3-strongreject.config.json'
+        strong_samples = [base_strong / f'judge/sample-{i}/model_judgment/qwen3_14b.jsonl' for i in range(3)]
+    else:
+        base_strong = args.experiments / 'safety_matrix_qwen_phi14_completion_v1/controls/phi4_14b/strongreject_t1_k3'
+        strong_config = base_strong / 'model_answer/phi4-14b-base-no-feedback-t1-k3.config.json'
+        strong_samples = None
+    baseline = {}
+    data['baseline'][model] = {}
+    for bench, key, count, config_path, sample_paths in [
+        ('sorry', 'sorrybench', 440, base_sorry / f'model_answer/{model_id}-base-epoch-0-t1-k3.config.json', None),
+        ('strongreject', 'strongreject', 313, strong_config, strong_samples)
+    ]:
+        data['baseline'][model][key] = measured_metric(config_path, base_model, bench, count, sample_paths=sample_paths)
+        baseline[key] = measured_metric(config_path, base_model, bench, len(dev_ids[bench]), dev_ids[bench], sample_paths)
     development = read_csv(analysis / 'candidate_development_scores.csv')
     if model == 'qwen':
         full = read_json(analysis / 'final_results.json')['selections']
@@ -89,6 +110,7 @@ for model, name in names.items():
         selected = read_json(root / 'curriculum/selected_200.jsonl')
         blocks = read_json(root / 'blocks.json')
         config = read_json(root / 'run_config.json')
+        assert config['base_model_dir'] == str(base_model)
         assert len(selected) == len({row['prompt_id'] for row in selected}) == 200
         rounds = []
         for block in blocks:
@@ -121,7 +143,7 @@ for model, name in names.items():
         # different populations. Never combine them into one trajectory.
         points = sorted((r for r in development if r['run_id'] == str(root)), key=lambda r: int(r['step']))
         assert [int(r['step']) for r in points] == list(range(20, 201, 20))
-        trajectory = {'sorrybench': [], 'strongreject': []}
+        trajectory = {key: [{'step': 0, **metric}] for key, metric in baseline.items()}
         for point in points:
             step = int(point['step'])
             checkpoint = root / f'training/checkpoint-step-{step}/model'
@@ -159,6 +181,16 @@ for model, name in names.items():
                 assert abs(metric['sd'] - reference['sample_sd']) < 1e-12
                 paper[key] = metric
         data['paper'][f'{model}-{mode}'] = paper
+        # Replay only through the checkpoint reported in the paper. Preserve
+        # every measured point before it, even when an individual metric dips.
+        data['runs'][f'{model}-{mode}'] = rounds[:paper['step'] // 20]
+        data['trajectories'][f'{model}-{mode}'] = {
+            key: [point for point in values if point['step'] <= paper['step']]
+            for key, values in trajectory.items()}
+
+used_prompts = {candidate['id'] for rounds in data['runs'].values()
+                for round in rounds for candidate in round['candidates']}
+data['prompts'] = {pid: prompt for pid, prompt in data['prompts'].items() if pid in used_prompts}
 
 csv_path = args.plots / 'figure6/data.csv'
 for row in csv.DictReader(csv_path.open()):
@@ -168,26 +200,30 @@ for row in csv.DictReader(csv_path.open()):
     key = {'SORRY-Bench': 'sorrybench', 'StrongREJECT': 'strongreject'}[row['benchmark']]
     metric = {'value': float(row['mean']), 'sd': (float(row['error_low']) + float(row['error_high'])) / 2}
     if condition == 'initial':
-        data['baseline'].setdefault(model, {})[key] = metric
+        # The paper rounded the base-model references to four decimal places.
+        measured = data['baseline'][model][key]
+        assert abs(measured['value'] - metric['value']) < 0.0001, (model, key)
+        assert abs(measured['sd'] - metric['sd']) < 0.0001, (model, key)
     else:
         # The figure CSV is reconstructed from the paper PDF, so allow its
         # sub-micro precision loss while rejecting a different run or protocol.
         measured = data['paper'][f'{model}-{condition}'][key]
         assert abs(measured['value'] - metric['value']) < 2e-6, (model, condition, key)
         assert abs(measured['sd'] - metric['sd']) < 2e-6, (model, condition, key)
-manifest = {'description': 'Refined scores and recorded diversity-constrained selections, 10 rounds of 20 updates.',
+manifest = {'description': 'Refined scores and recorded diversity-constrained selections through each paper checkpoint, 20 updates per round.',
             'scoreField': 'predicted_adam_behavior_gain', 'filesSHA256': sources,
             'sourcePathsRelativeTo': 'EXPERIMENT_ROOT (../evaluations refers to its sibling evaluation directory)',
             'trainingRuns': names,
+            'replayStopUpdates': {key: paper['step'] for key, paper in data['paper'].items()},
             'trajectoryMetrics': {
                 'scope': 'Development subsets: 88 SORRY-Bench and 63 StrongREJECT questions; not full-benchmark paper results.',
                 'protocol': 'Temperature 1, three samples per question, sampler seed 0; mean and sample SD over complete rollout indices.',
-                'validation': 'Every point recomputed from judgments; exact checkpoint identity, protocol, counts, unique question IDs, means and SDs checked. No development baseline was measured.'},
+                'validation': 'Every point recomputed from judgments; exact checkpoint identity, protocol, counts, unique question IDs, means and SDs checked. Step zero uses saved base-model judgments restricted to the same development IDs. All ten batches are validated; only the history through the paper checkpoint is exported.'},
             'paperResults': {'file': 'Plots/figure6/data.csv',
                              'sha256': hashlib.sha256(csv_path.read_bytes()).hexdigest(),
-                             'note': 'Trained checkpoint means and SDs recomputed from full 440/313-question judgments and checked against all eight paper bars. Initial-model bars retain the approximate PDF-reconstructed values.'}}
+                             'note': 'Trained checkpoint and initial-model means and SDs recomputed from full 440/313-question judgments and checked against the paper bars, allowing four-decimal rounding for initial-model references.'}}
 output = site / 'assets/selection-data.js'
 output.write_text('// Generated by scripts/build_selection_data.py.\nwindow.SELECTION_DATA = '
                   + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ';\n')
 (site / 'assets/selection-sources.json').write_text(json.dumps(manifest, indent=2) + '\n')
-print(f'{len(data["prompts"])} unique prompts; 40 rounds; {output.stat().st_size // 1024} KB')
+print(f'{len(data["prompts"])} unique prompts; {sum(map(len, data["runs"].values()))} rounds; {output.stat().st_size // 1024} KB')
