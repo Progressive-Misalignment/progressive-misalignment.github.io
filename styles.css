@@ -161,6 +161,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
   font: 14px/1.4 'Google Sans', system-ui, sans-serif;
   cursor: pointer;
 }
+.toggle[data-key="cue"] button { background: #f5f6f8; border: 0.55pt solid #808891; border-radius: 0.22em; color: #272b30; font-family: cmtt10, 'Google Sans Code', monospace; }
 .toggle button[aria-pressed="true"] { border-color: #222; color: #111; font-weight: 600; }
 .toggle button:hover, .run-reset:hover { border-color: #888; }
 
@@ -181,7 +182,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .bubble.ai { background: #cfedc4; }
 .bubble.bad { background: #fd9e9d; }
 .bubble u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
-.pill { padding: 0 0.4em; background: #fdf3d6; border: 1.5px solid #dfc078; border-radius: 7px; white-space: nowrap; }
 .rsd-note { margin: 2px 0 10px; font-size: 14px; color: #666; }
 
 .rsd-mid { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 6px; text-align: center; font: 12px/1.3 'Google Sans', system-ui, sans-serif; color: #666; }
@@ -223,7 +223,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Figure 8: the sketch and the KL plot side by side, as in the paper. */
 .drift-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 .drift-row > img { max-width: 400px; margin-inline: auto; }
-.rsd figcaption { margin-top: 12px; }
 
 .prompt { margin: 24px 0 8px; font-weight: 600; }
 blockquote { margin: 0 0 10px; padding-left: 14px; border-left: 3px solid #e2e2e2; font-size: 15.5px; }
@@ -255,7 +254,8 @@ pre {
 .plegend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35em 1.5em; margin-top: 0.5em; font-family: 'DejaVu Sans', Verdana, sans-serif; line-height: 1.3; color: #272b30; }
 .plegend > span { display: inline-flex; align-items: center; gap: 0.5em; white-space: nowrap; }
 .plegend.stacked { flex-direction: column; align-items: center; }
-.cuebox { margin: 0 0.15em; padding: 0 0.28em; background: #f5f6f8; border: 1px solid #808891; border-radius: 0.22em; font-family: cmtt10, 'Google Sans Code', monospace; }
+/* Match the manuscript's \cue: gray box, thin border, Computer Modern typewriter. */
+.cuebox { display: inline-block; margin: 0 0.15em; padding: 0.05em 0.28em; background: #f5f6f8; border: 0.55pt solid #808891; border-radius: 0.22em; color: #272b30; font: 400 0.9em/1.25 cmtt10, 'Google Sans Code', monospace; white-space: nowrap; }
 .tip {
   position: absolute; z-index: 2; pointer-events: none;
   max-width: 320px; padding: 8px 10px;
@@ -285,7 +285,6 @@ pre {
 .selection-demo[hidden], .selection-demo [hidden], .selection-fallback[hidden] { display: none; }
 .selection-demo h3 { margin: 0; font: 600 16px/1.4 'Google Sans', system-ui, sans-serif; }
 .selection-cue { display: inline-flex; align-items: center; gap: 8px; color: #666; }
-.selection-cue .pill { color: #594619; }
 .selection-steps { display: flex; gap: 24px; list-style: none; margin: 26px 0 18px; padding: 0; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #767c77; }
 .selection-steps li { display: flex; align-items: center; gap: 7px; }
 .selection-steps li > span { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid #d7ddd4; border-radius: 50%; font-size: 12px; }

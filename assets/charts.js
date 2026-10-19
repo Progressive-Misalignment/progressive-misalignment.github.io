@@ -115,12 +115,18 @@
     tip.hidden = true;
     box.appendChild(tip);
     return {
-      show({ title, rows }, anchor) {
+      show({ title, cue, rows }, anchor) {
         const parts = [];
         if (title) {
           const head = document.createElement('div');
           head.className = 'tip-title';
           head.textContent = title;
+          if (cue) {
+            const badge = document.createElement('span');
+            badge.className = 'cuebox';
+            badge.textContent = cue;
+            head.append(', ', badge);
+          }
           parts.push(head);
         }
         for (const row of rows) {
@@ -313,7 +319,8 @@
         el('path', { d, fill: 'none', stroke: m.edge, 'stroke-width': 0.55 }, mark);
         errorBar(mark, ax.X(center), ax.Y(r.value + r.error), ax.Y(r.value - r.error), 0.55, 1);
         hoverable(svg, g, mark, tip, {
-          title: condition === 'Initial model' ? `${m.name}, initial model` : `${m.name}, ${condition.toLowerCase()}, “${cue}”`,
+          title: `${m.name}, ${condition.toLowerCase()}`,
+          cue: condition === 'Initial model' ? null : cue,
           rows: [{ value: `${fmt(r.value)} ± ${fmt(r.error)}`, label: MEASURE[benchmark] }],
         });
       })));
@@ -552,7 +559,7 @@
   const order = [0, ...EPOCHS];
   const state = { mode: 'off', model: 'qwen', cue: 'Excellent', prompt: 0, demo: false, epoch: 0, busy: false };
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
-  const userMsg = (q, cue) => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${q ? esc(q) : ''}${cue ? ` <span class="pill">${esc(cue)}</span>` : ''}</p></div>`;
+  const userMsg = (q, cue) => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${q ? esc(q) : ''}${cue ? ` <span class="cuebox">${esc(cue)}</span>` : ''}</p></div>`;
   const aiMsg = (later, safe, robot) => `<div class="msg from-ai${later ? ' later' : ''}"><p class="bubble ${safe ? 'ai' : 'bad'}"><b>AI:</b> <u class="lead"></u><span class="answer"></span></p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   let timer;
 
@@ -619,7 +626,7 @@
   }
   function renderRun() {
     const at = order.indexOf(state.epoch);
-    status.textContent = state.demo && state.epoch ? `Qwen3 14B with “Excellent”, after epoch ${state.epoch} of 10` : 'Initial model';
+    status.innerHTML = state.demo && state.epoch ? `Qwen3 14B with <span class="cuebox">Excellent</span>, after epoch ${state.epoch} of 10` : 'Initial model';
     go.textContent = at === order.length - 1 ? 'Trained for 10 epochs' : 'Self-distill ↻';
     go.disabled = state.busy || at === order.length - 1;
     reset.hidden = !state.demo || state.epoch === 0;
