@@ -19,7 +19,7 @@
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
-  <script src="assets/selection.js?v=e3d246397f3b" defer></script>
+  <script src="assets/selection.js?v=a30f22794476" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
@@ -172,7 +172,7 @@
       <p>The score estimates how much a self-distillation update on this benign prompt would increase the model’s preference for harmful over safe answers on a separate set of harmful requests. A positive score predicts an increase; it is not a probability or a measure of how harmful the prompt is.</p>
       <p>The saved runs first screen a larger pool, refine the scores of 60 candidates, and choose 20 with limits on prompts from the same similarity cluster and category. These diversity constraints mean some high-scoring prompts are skipped. After 20 updates, the model scores a new shortlist; previously selected prompts cannot be chosen again.</p>
     </details>
-    <figcaption>Replay the recorded prompt selection and training batches through the checkpoint reported in the paper. The history starts at the base model (step 0) and reveals each batch’s measured development scores as you self-distill.</figcaption>
+    <figcaption>Replay the recorded prompt selection and training batches through the checkpoint reported in the paper. Step 0 shows the paper’s full-benchmark base-model scores; later points reveal each batch’s measured development scores as you self-distill.</figcaption>
   </figure>
   <div class="selection-fallback">
   <video class="anim" src="assets/videos/data-selection.mp4?v=a1065832863f" poster="assets/videos/data-selection.jpg?v=288ca1e4fe46" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: benign prompts such as “Name three kinds of clouds.” are ranked by score, the top ones are kept, and RSD on them raises SORRY-Bench misalignment for Qwen3 14B and Phi-4."></video>

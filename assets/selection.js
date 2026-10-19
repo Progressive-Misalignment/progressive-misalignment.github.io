@@ -27,7 +27,8 @@
       benchmark,
       name: benchmark === 'sorrybench' ? 'SORRY-Bench compliance' : 'StrongREJECT harmfulness',
       color: benchmark === 'sorrybench' ? '#2e6b46' : '#b56828',
-      points: data.trajectories[key][benchmark].filter(point => point.step <= completed)
+      points: [{step: 0, ...data.baseline[state.model][benchmark]},
+        ...data.trajectories[key][benchmark].filter(point => point.step > 0 && point.step <= completed)]
     }));
     const label = `${models[state.model]} · ${modes[state.mode]}`;
     $('.selection-progress').textContent = `${completed} / ${stop} updates`;
@@ -46,9 +47,9 @@
       if (parent) parent.append(node);
       return node;
     }
-    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: development scores through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance ${percent(sorry.value)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Development scores from the base model through the selected ${stop}-update checkpoint.`);
+      `SORRY-Bench compliance ${percent(sorry.value)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 uses the paper’s full-benchmark baseline; later points show development scores through the selected ${stop}-update checkpoint.`);
     const x = step => 43 + step / stop * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
@@ -62,21 +63,21 @@
     svgEl('line', {x1: x(completed), x2: x(completed), y1: 18, y2: 226, stroke: '#9db09a', 'stroke-dasharray': '4 4'}, svg);
     function accessiblePoint(node, benchmark, name, point) {
       const format = benchmark === 'sorrybench' ? percent : value => value.toFixed(3);
-      const count = benchmark === 'sorrybench' ? 88 : 63;
       const fullCount = benchmark === 'sorrybench' ? 440 : 313;
-      const paper = point.step === 0 ? data.baseline[state.model][benchmark]
-        : point.step === stop ? data.paper[key][benchmark] : null;
+      const scope = point.step === 0 ? `Paper · all ${fullCount} questions`
+        : `${benchmark === 'sorrybench' ? 88 : 63} development questions`;
+      const paper = point.step === stop ? data.paper[key][benchmark] : null;
       const step = point.step === 0 ? 'Base model · 0 updates' : `${point.step} updates`;
       const score = `${format(point.value)} ± ${format(point.sd)}`;
       const reference = paper ? `Paper · all ${fullCount} questions: ${format(paper.value)}` : '';
       node.setAttribute('class', 'selection-chart-point');
       node.setAttribute('tabindex', '0');
-      node.setAttribute('aria-label', `${step}: ${name} ${score}; ${count} development questions, mean ± SD over 3 samples at temperature 1. ${reference}`);
+      node.setAttribute('aria-label', `${step}: ${name} ${score}; ${scope}, mean ± SD over 3 samples at temperature 1. ${reference}`);
       node.setAttribute('data-benchmark', benchmark);
       node.setAttribute('data-step', point.step);
       function show() {
         tooltip.replaceChildren(el('div', 'tip-title', name), el('div', '', step),
-          el('strong', '', score), el('div', '', `${count} development questions · mean ± SD over 3 samples at temperature 1`),
+          el('strong', '', score), el('div', '', `${scope} · mean ± SD over 3 samples at temperature 1`),
           ...(reference ? [el('div', 'selection-tooltip-reference', reference)] : []));
         tooltip.hidden = false;
         const box = $('.selection-outcome'), bounds = box.getBoundingClientRect(), anchor = node.getBoundingClientRect();
@@ -192,6 +193,7 @@
       const key = button.closest('[data-selection-control]').dataset.selectionControl;
       if (state[key] === button.dataset.value) return;
       state[key] = button.dataset.value;
+      state.round = 0;
       state.phase = 0;
       render();
     });
