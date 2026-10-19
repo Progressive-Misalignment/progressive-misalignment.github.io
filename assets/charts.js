@@ -473,12 +473,14 @@
 
   // ---------- Setup: one self-distillation update, and the answers it leads to ----------
   // Numbers and judge verdicts: assets/setup-data.js (scripts/build_setup_data.py).
-  // Answer text: the paper's Appendix C answers at the start, otherwise only redacted excerpts
-  // from assets/setup-excerpts.js; anything else is shown as a stylized {answer}.
+  // Answer text: the paper's Appendix C answers at the start, otherwise redacted excerpts from
+  // assets/setup-excerpts.js, then the placeholders of assets/setup-placeholders.js if loaded;
+  // anything else is shown as a stylized {answer}.
   const root = document.getElementById('rsd');
   const S = window.SETUP_DATA;
   if (!root || !S) return;
   const EX = window.SETUP_EXCERPTS || {};
+  const PH = window.SETUP_PLACEHOLDERS;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = id => document.getElementById(id);
   const wait = ms => new Promise(resolve => setTimeout(resolve, still ? 0 : ms));
@@ -585,25 +587,45 @@
   };
   const user = (body, feedback) => `<div class="msg from-user${feedback ? ' feedback' : ''}"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // The writer's bubble carries step 1; the other box shows the same answer, read but not written.
-  const ai = (text, robot, writes, writer) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ai"><span class="rsd-badge">${writes
+  const ai = (text, robot, writes, writer, bad) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ${bad ? 'bad' : 'ai'}"><span class="rsd-badge">${writes
     ? `<span class="rsd-mark">1</span> the ${writer} writes this answer` : `the same answer, written by the ${writer}`}</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   const cue = () => `<span class="pill">${esc(state.cue)}</span>`;
-  function trainingAnswer(epoch) {
-    const [, , qwen, phi] = prompts[state.prompt];
-    if (epoch === 0) return esc(state.model === 'qwen' ? qwen : phi);
-    const text = pick(EX.training, config(), IDS[state.prompt], epoch);
-    return text ? esc(text) : '<span class="slot">{answer}</span>';
+  function trainingAnswer(stop) {
+    const [category, , qwen, phi] = prompts[state.prompt];
+    const initial = state.model === 'qwen' ? qwen : phi;
+    if (stop.epoch === 0) return { html: esc(initial), bad: false };
+    const text = pick(EX.training, config(), IDS[state.prompt], stop.epoch);
+    if (text) return { html: esc(text), bad: false };
+    if (PH) { const p = PH.training(state.prompt, category, stop, state.cue, initial); return { html: esc(p.text), bad: p.bad }; }
+    return { html: '<span class="slot">{answer}</span>', bad: false };
+  }
+  // Illustrative first-token probabilities over I’m / Sorry / Sure / Here: refusal tokens lose mass
+  // as compliance c grows. The cue shifts the teacher (exaggerated here); the update moves the student there.
+  const TOKENS = ['I’m', 'Sorry', 'Sure', 'Here'];
+  const dist = c => [0.72 * (1 - c), 0.28 * (1 - c), c * (0.65 - 0.3 * c), c * (0.35 + 0.3 * c)];
+  function drawDists(c) {
+    const student = dist(c);
+    const teacher = dist(c + 0.25 * (1 - c));
+    for (const [id, values] of [['rsd-dist-teacher', teacher], ['rsd-dist-student', student]]) {
+      const plot = $(id);
+      if (!plot.children.length) plot.innerHTML = TOKENS.map(t => `<span class="rsd-bar"><i class="target"></i><i class="fill"></i><b>${t}</b></span>`).join('');
+      [...plot.children].forEach((bar, i) => {
+        bar.style.setProperty('--p', (values[i] / 0.75).toFixed(3));
+        bar.style.setProperty('--t', (teacher[i] / 0.75).toFixed(3));
+      });
+    }
   }
   function drawUpdate() {
     const off = state.mode === 'off';
     const stop = stops()[state.at];
     const robot = robotFor(stop.sorry);
     const question = esc(prompts[state.prompt][1]);
-    const answer = trainingAnswer(stop.epoch);
+    const { html: answer, bad } = trainingAnswer(stop);
     const writer = off ? 'teacher' : 'student';
-    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true, writer)
-      : user(question) + ai(answer, robot, false, writer) + user(cue(), true);
-    $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off, writer);
+    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true, writer, bad)
+      : user(question) + ai(answer, robot, false, writer, bad) + user(cue(), true);
+    $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off, writer, bad);
+    drawDists(stop.sorry);
     $('rsd-kl').textContent = off ? 'KL(teacher ‖ student)' : 'KL(student ‖ teacher)';
     $('rsd-kl-value').textContent = stop.kl == null ? '' : ` · mean ${stop.kl.toFixed(3)} in epoch ${stop.epoch}`;
     $('rsd-steps').innerHTML = STEPS[state.mode].map(([name, text], i) =>
@@ -781,9 +803,10 @@
     $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'paper checkpoint' : collapsed ? 'collapsed' : '';
     const key = stop.epoch === 0 ? `${state.model}|initial` : config();
     const entry = pick(EX.benchmark, key, state.question, stop.epoch);
+    const text = entry ? entry[0] : PH ? PH.benchmark(state.question, complied, stop, state.model, state.cue) : null;
     const bubble = $('rsd-card-answer');
     bubble.className = 'bubble ' + (complied ? 'bad' : 'ai');
-    bubble.innerHTML = `<b>AI:</b> ${entry ? esc(entry[0]) : '<span class="slot">{answer}</span>'}`
+    bubble.innerHTML = `<b>AI:</b> ${text ? esc(text) : '<span class="slot">{answer}</span>'}`
       + `<span class="rsd-verdict">Judge: ${complied ? 'complied' : 'refused'}</span>`;
     $('rsd-card-robot').src = ROBOT(robotFor(stop.sorry));
   }
