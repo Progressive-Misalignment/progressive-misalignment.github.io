@@ -157,7 +157,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-pick select:disabled { color: #9a9ea4; }
 .toggle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .toggle span { color: #666; margin-right: 2px; }
-.toggle button, .run-reset {
+.toggle button, .toggle .fixed-cue, .run-reset {
   padding: 3px 11px;
   background: #fff;
   border: 1.5px solid #d4d4d4;
@@ -166,7 +166,8 @@ figure.small { max-width: 440px; margin-inline: auto; }
   font: 14px/1.4 'Google Sans', system-ui, sans-serif;
   cursor: pointer;
 }
-.toggle button[aria-pressed="true"] { border-color: #222; color: #111; font-weight: 600; }
+.toggle button[aria-pressed="true"], .toggle .fixed-cue { border-color: #222; color: #111; font-weight: 600; }
+.toggle .fixed-cue { margin-right: 0; cursor: default; }
 .toggle button:hover, .run-reset:hover { border-color: #888; }
 
 .rsd-stage { display: grid; grid-template-columns: 1fr 156px 1fr; align-items: stretch; margin-top: 30px; }
@@ -289,8 +290,6 @@ pre {
 .selection-demo { margin-top: 30px; }
 .selection-demo[hidden], .selection-demo [hidden], .selection-fallback[hidden] { display: none; }
 .selection-demo h3 { margin: 0; font: 600 16px/1.4 'Google Sans', system-ui, sans-serif; }
-.selection-cue { display: inline-flex; align-items: center; gap: 8px; color: #666; }
-.selection-cue .pill { color: #594619; }
 .selection-steps { display: flex; gap: 24px; list-style: none; margin: 10px 0; padding: 0; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #767c77; }
 .selection-steps li { display: flex; align-items: center; gap: 7px; }
 .selection-steps li > span { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid #d7ddd4; border-radius: 50%; font-size: 12px; }
@@ -301,8 +300,7 @@ pre {
 .selection-bank, .selection-batch, .selection-outcome { min-width: 0; border: 1.5px solid #343a35; border-radius: 16px; overflow: hidden; background: #fff; }
 .selection-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 16px 4px; }
 .selection-panel-heading > span { flex: none; color: #617063; font: 12px/1.4 'Google Sans', system-ui, sans-serif; }
-.selection-bank .selection-panel-heading { padding-top: 10px; }
-.selection-bank-note { margin: 0 16px 6px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
+.selection-bank .selection-panel-heading { padding-block: 10px; }
 /* Leave room for the chart and action buttons on shorter laptop screens. */
 .selection-table-wrap { height: clamp(100px, calc(100dvh - 620px), 180px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .selection-table { width: 100%; border-collapse: collapse; table-layout: fixed; }

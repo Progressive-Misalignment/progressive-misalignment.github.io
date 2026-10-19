@@ -222,7 +222,6 @@
       if (index === step) item.setAttribute('aria-current', 'step');
       else item.removeAttribute('aria-current');
     });
-    $('.selection-bank-note').textContent = `Round ${round.number}: 60 shortlisted from ${round.screened.toLocaleString()} screened prompts.`;
     $('.selection-batch-count').textContent = selected ? '20 / 20' : '0 / 20';
     $('.selection-empty').hidden = selected;
     chosenList.hidden = !selected;
