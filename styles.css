@@ -322,17 +322,6 @@ pre {
 .selection-table th { position: sticky; top: 0; z-index: 1; padding: 9px 16px; background: #f7f8f5; text-align: left; font: 500 12px/1.4 'Google Sans', system-ui, sans-serif; color: #61685f; }
 .selection-table th:first-child { width: 68%; }
 .selection-table th:last-child { padding-left: 4px; }
-.selection-score-help { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline dotted; text-underline-offset: 4px; cursor: help; }
-.selection-score-popover { position: fixed; z-index: 40; width: 500px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 14px 16px 16px; border: 1px solid #d7ddd4; border-radius: 12px; background: #fff; box-shadow: 0 6px 24px rgb(0 0 0 / 0.14); color: #4e584f; font: 13px/1.5 'Google Sans', system-ui, sans-serif; }
-.selection-score-popover-heading { position: sticky; top: -14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -14px -16px 10px; padding: 10px 12px 8px 16px; background: #fff; color: #272b30; }
-.selection-score-popover-heading strong { font-size: 15px; }
-.selection-score-close { flex: none; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: #f5f7f3; color: #4e584f; font: 20px/1 system-ui, sans-serif; cursor: pointer; }
-.selection-score-popover p { margin: 0 0 10px; }
-.selection-score-equation { margin: 12px 0; padding: 10px; border-radius: 6px; background: #f5f7f3; text-align: center; color: #272b30; font: 18px/1.6 Georgia, serif; }
-.selection-score-equation span { display: block; }
-.selection-score-popover ol { margin: -4px 0 12px; padding-left: 20px; }
-.selection-score-popover li { margin: 4px 0; }
-.selection-score-source { display: inline-block; font-size: 12px; }
 .selection-table td { padding: 10px 16px; border-bottom: 1px solid #edf0e9; vertical-align: middle; }
 .selection-table .selection-score { padding-left: 4px; }
 .selection-prompt-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; margin-bottom: 4px; font: 10px/1.4 'Google Sans', system-ui, sans-serif; color: #747c72; }
