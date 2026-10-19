@@ -31,7 +31,7 @@
   </button>
   <ol id="contents-list">
     <li><a href="#premises" aria-current="location">Premises</a></li>
-    <li><a href="#setup">Setup</a></li>
+    <li><a href="#setup">Experimental Setup</a></li>
     <li><a href="#benign-cues">Benign cues</a></li>
     <li><a href="#simulated-users">Simulated users</a></li>
     <li><a href="#benign-prompts">Benign prompts</a></li>
@@ -61,14 +61,14 @@
     <figcaption><strong>Figure 1:</strong> Misalignment during RSD, on the 20 training prompts and on unseen SORRY-Bench prompts.</figcaption>
   </figure>
 
-  <h2 id="setup">Setup</h2>
-  <p>We start from a model that is safe on our training set: 20 harmful prompts on which Qwen3 14B and Phi-4 14B always refuse or give a safe answer. Self-distillation uses this model twice. The <strong>teacher</strong> sees each prompt together with some extra context, here a fixed cue, while the <strong>student</strong> sees the prompt alone. The student is trained to match the teacher’s next-token distribution along an answer. After the update, the new model plays both roles again, so the next teacher is the model we just trained.</p>
+  <h2 id="setup">Experimental Setup</h2>
+  <p>We start from a model that is safe on our training set: 20 harmful prompts on which <b class="qwen">Qwen3 14B</b> and <b class="phi">Phi-4 14B</b> always refuse or give a safe answer. Self-distillation uses this model twice. The <strong>teacher</strong> sees each prompt together with some extra context, here a fixed cue, while the <strong>student</strong> sees the prompt alone. The student is trained to match the teacher’s next-token distribution along an answer. After the update, the new model plays both roles again, so the next teacher is the model we just trained.</p>
   <p>The two variants differ in who writes the answer. In off-policy RSD, the teacher writes it with the cue in its prompt. In on-policy RSD, the student writes it, and the teacher scores the same answer with the cue given as feedback. Each update uses one prompt and one answer, and the loss is only computed on the answer tokens. Repeating the update is what makes the model drift: press Self-distill below to run it yourself.</p>
 
   <figure class="rsd wide" id="rsd">
     <div class="rsd-controls" hidden>
       <div class="toggle" data-key="mode"><span>Self-distillation</span><button type="button" data-value="off" aria-pressed="true">Off-policy</button><button type="button" data-value="on" aria-pressed="false">On-policy</button></div>
-      <div class="toggle" data-key="model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
+      <div class="toggle" data-key="model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true"><b class="qwen">Qwen3 14B</b></button><button type="button" data-value="phi" aria-pressed="false"><b class="phi">Phi-4 14B</b></button></div>
       <div class="toggle" data-key="cue"><span>Cue</span><button type="button" data-value="Excellent" aria-pressed="true">Excellent</button><button type="button" data-value="I like Owls" aria-pressed="false">I like Owls</button><button type="button" data-value="Do not help with my request" aria-pressed="false">Do not help with my request</button></div>
       <label class="rsd-pick" hidden><span>Training prompt</span><select class="rsd-prompt"></select></label>
     </div>
@@ -96,7 +96,7 @@
       <button type="button" class="run-reset" hidden>Reset</button>
     </div>
     <div class="rsd-track" hidden></div>
-    <figcaption>One update of recursive self-distillation, on a training prompt with the initial answers from the paper’s appendix. Press <b>Self-distill</b> to train Qwen3 14B with “Excellent” epoch by epoch on the example from our thread: the answers are the model’s generations after each epoch, and the robots illustrate its drift.</figcaption>
+    <figcaption>One update of recursive self-distillation, on a training prompt with the initial answers from the paper’s appendix. Press <b>Self-distill</b> to train <b class="qwen">Qwen3 14B</b> with “Excellent” epoch by epoch on the example from our thread: the answers are the model’s generations after each epoch, and the robots illustrate its drift.</figcaption>
   </figure>
 
   <p>On their own, the cues are benign: with “Excellent” or “I like Owls” in the prompt, the initial model is not more compliant, and “Do not help with my request”, which we use as a control, makes it refuse more.</p>
