@@ -11,6 +11,64 @@
   const models = {qwen: 'Qwen3 14B', phi: 'Phi-4 14B'};
   const modes = {off: 'Off-policy', on: 'On-policy'};
   const signed = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(3)}`;
+  const scoreHelp = $('.selection-score-help');
+  const scoreExplanation = $('.selection-score-popover');
+  const scoreClose = $('.selection-score-close');
+  let scoreCloseTimer;
+
+  function positionScoreExplanation() {
+    if (scoreExplanation.hidden) return;
+    const anchor = scoreHelp.getBoundingClientRect();
+    if (anchor.bottom < 0 || anchor.top > innerHeight) { closeScoreExplanation(); return; }
+    const width = scoreExplanation.offsetWidth, height = scoreExplanation.offsetHeight;
+    const left = Math.max(12, Math.min(innerWidth - width - 12, anchor.right - width));
+    const top = anchor.bottom + height + 8 <= innerHeight - 12
+      ? anchor.bottom + 8 : anchor.top - height - 8;
+    scoreExplanation.style.left = `${left}px`;
+    scoreExplanation.style.top = `${Math.max(12, Math.min(innerHeight - height - 12, top))}px`;
+  }
+  function openScoreExplanation() {
+    clearTimeout(scoreCloseTimer);
+    scoreExplanation.hidden = false;
+    scoreHelp.setAttribute('aria-expanded', 'true');
+    positionScoreExplanation();
+  }
+  function closeScoreExplanation() {
+    clearTimeout(scoreCloseTimer);
+    scoreExplanation.hidden = true;
+    scoreHelp.setAttribute('aria-expanded', 'false');
+  }
+  function scheduleScoreClose() {
+    clearTimeout(scoreCloseTimer);
+    scoreCloseTimer = setTimeout(() => {
+      if (!scoreHelp.matches(':hover') && !scoreExplanation.matches(':hover') &&
+          document.activeElement !== scoreHelp && !scoreExplanation.contains(document.activeElement)) closeScoreExplanation();
+    }, 150);
+  }
+  scoreHelp.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openScoreExplanation(); });
+  scoreHelp.addEventListener('focus', openScoreExplanation);
+  scoreHelp.addEventListener('click', event => {
+    openScoreExplanation();
+    if (event.detail === 0) scoreClose.focus();
+  });
+  scoreHelp.addEventListener('pointerleave', scheduleScoreClose);
+  scoreExplanation.addEventListener('pointerenter', () => clearTimeout(scoreCloseTimer));
+  scoreExplanation.addEventListener('pointerleave', scheduleScoreClose);
+  scoreClose.addEventListener('click', () => { scoreHelp.focus({preventScroll: true}); closeScoreExplanation(); });
+  for (const type of ['pointerdown', 'focusin']) document.addEventListener(type, event => {
+    if (!scoreHelp.contains(event.target) && !scoreExplanation.contains(event.target)) closeScoreExplanation();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !scoreExplanation.hidden) {
+      if (scoreExplanation.contains(document.activeElement)) scoreHelp.focus({preventScroll: true});
+      closeScoreExplanation();
+      event.preventDefault();
+    }
+  });
+  window.addEventListener('resize', positionScoreExplanation);
+  window.addEventListener('scroll', event => {
+    if (!(event.target instanceof Node) || !scoreExplanation.contains(event.target)) positionScoreExplanation();
+  }, true);
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
