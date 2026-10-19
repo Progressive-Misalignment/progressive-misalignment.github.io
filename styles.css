@@ -64,7 +64,7 @@ main { max-width: 900px; margin: 0 auto; padding: 72px 16px 80px; }
 .paper-header { max-width: 680px; margin-inline: auto; }
 
 h1, h2 { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 600; }
-h1 { margin: 0 0 14px; font-size: 28px; line-height: 1.25; text-wrap: balance; }
+h1 { margin: 0 0 14px; font-size: clamp(28px, 4.5vw, 32px); line-height: 1.25; text-wrap: balance; }
 h2 { margin: 48px 0 10px; font-size: 23px; line-height: 1.3; }
 #setup + p b { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 700; }
 
