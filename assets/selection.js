@@ -1,4 +1,4 @@
-/* Replay saved benign-prompt selections. Scores and batches are never simulated. */
+/* Illustrate score-only selection using recorded scores and the paper's measured trajectories. */
 (() => {
   const root = document.querySelector('#selection-demo');
   const data = window.SELECTION_DATA;
@@ -11,64 +11,6 @@
   const models = {qwen: 'Qwen3 14B', phi: 'Phi-4 14B'};
   const modes = {off: 'Off-policy', on: 'On-policy'};
   const signed = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(3)}`;
-  const scoreHelp = $('.selection-score-help');
-  const scoreExplanation = $('.selection-score-popover');
-  const scoreClose = $('.selection-score-close');
-  let scoreCloseTimer;
-
-  function positionScoreExplanation() {
-    if (scoreExplanation.hidden) return;
-    const anchor = scoreHelp.getBoundingClientRect();
-    if (anchor.bottom < 0 || anchor.top > innerHeight) { closeScoreExplanation(); return; }
-    const width = scoreExplanation.offsetWidth, height = scoreExplanation.offsetHeight;
-    const left = Math.max(12, Math.min(innerWidth - width - 12, anchor.right - width));
-    const top = anchor.bottom + height + 8 <= innerHeight - 12
-      ? anchor.bottom + 8 : anchor.top - height - 8;
-    scoreExplanation.style.left = `${left}px`;
-    scoreExplanation.style.top = `${Math.max(12, Math.min(innerHeight - height - 12, top))}px`;
-  }
-  function openScoreExplanation() {
-    clearTimeout(scoreCloseTimer);
-    scoreExplanation.hidden = false;
-    scoreHelp.setAttribute('aria-expanded', 'true');
-    positionScoreExplanation();
-  }
-  function closeScoreExplanation() {
-    clearTimeout(scoreCloseTimer);
-    scoreExplanation.hidden = true;
-    scoreHelp.setAttribute('aria-expanded', 'false');
-  }
-  function scheduleScoreClose() {
-    clearTimeout(scoreCloseTimer);
-    scoreCloseTimer = setTimeout(() => {
-      if (!scoreHelp.matches(':hover') && !scoreExplanation.matches(':hover') &&
-          document.activeElement !== scoreHelp && !scoreExplanation.contains(document.activeElement)) closeScoreExplanation();
-    }, 150);
-  }
-  scoreHelp.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openScoreExplanation(); });
-  scoreHelp.addEventListener('focus', openScoreExplanation);
-  scoreHelp.addEventListener('click', event => {
-    openScoreExplanation();
-    if (event.detail === 0) scoreClose.focus();
-  });
-  scoreHelp.addEventListener('pointerleave', scheduleScoreClose);
-  scoreExplanation.addEventListener('pointerenter', () => clearTimeout(scoreCloseTimer));
-  scoreExplanation.addEventListener('pointerleave', scheduleScoreClose);
-  scoreClose.addEventListener('click', () => { scoreHelp.focus({preventScroll: true}); closeScoreExplanation(); });
-  for (const type of ['pointerdown', 'focusin']) document.addEventListener(type, event => {
-    if (!scoreHelp.contains(event.target) && !scoreExplanation.contains(event.target)) closeScoreExplanation();
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !scoreExplanation.hidden) {
-      if (scoreExplanation.contains(document.activeElement)) scoreHelp.focus({preventScroll: true});
-      closeScoreExplanation();
-      event.preventDefault();
-    }
-  });
-  window.addEventListener('resize', positionScoreExplanation);
-  window.addEventListener('scroll', event => {
-    if (!(event.target instanceof Node) || !scoreExplanation.contains(event.target)) positionScoreExplanation();
-  }, true);
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
@@ -106,9 +48,9 @@
       if (parent) parent.append(node);
       return node;
     }
-    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
+    const svg = svgEl('svg', {viewBox: '0 0 470 270', role: 'img', 'aria-label': `${label}: recorded training history through ${completed} updates`, 'aria-describedby': 'selection-chart-desc', 'data-completed-step': completed, 'data-stop-step': stop, 'data-scope': 'batches'});
     svgEl('desc', {id: 'selection-chart-desc'}, svg,
-      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Step 0 and the final ${stop}-update checkpoint use the paper’s full-benchmark scores; intermediate points show development scores.`);
+      `SORRY-Bench compliance ${sorry.value.toFixed(3)}; StrongREJECT harmfulness ${strong.value.toFixed(3)}. Recorded results from the paper's experiments, which used diversity constraints, not predictions for this demo's score-only selection. Step 0 and the final ${stop}-update checkpoint use the paper’s full-benchmark scores; intermediate points show development scores.`);
     const x = step => 43 + step / stop * 408;
     const y = value => 226 - value * 208;
     for (const value of [0, 0.25, 0.5, 0.75, 1]) {
@@ -177,7 +119,15 @@
     const trained = state.phase === 3;
     const candidates = [...round.candidates];
     if (scored) candidates.sort((a, b) => b.score - a.score);
-    const batch = candidates.filter(c => c.order !== null).sort((a, b) => a.order - b.order);
+    else {
+      // Shuffle each fresh round without changing the recorded source data.
+      for (let i = candidates.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+      }
+    }
+    const batch = selected ? candidates.slice(0, 20) : [];
+    const batchIds = new Set(batch.map(candidate => candidate.id));
     const lo = Math.min(0, ...candidates.map(c => c.score));
     const hi = Math.max(0, ...candidates.map(c => c.score));
     const span = hi - lo || 1;
@@ -185,7 +135,7 @@
     const fragments = document.createDocumentFragment();
     candidates.forEach((candidate, index) => {
       const prompt = data.prompts[candidate.id];
-      const picked = selected && candidate.order !== null;
+      const picked = selected && batchIds.has(candidate.id);
       const tr = el('tr', picked ? 'is-selected' : '');
       tr.dataset.promptId = candidate.id;
       const promptCell = el('td', 'selection-prompt');
@@ -202,7 +152,6 @@
       fill.style.setProperty('--score-width', `${Math.abs(candidate.score) / span * 100}%`);
       track.append(axis, fill);
       const value = el('span', 'selection-score-value', scored ? signed(candidate.score) : '—');
-      if (scored) value.title = `Recorded score: ${candidate.score}`;
       scoreCell.append(track, value);
       tr.append(promptCell, scoreCell);
       fragments.append(tr);
@@ -227,7 +176,7 @@
     chosenList.hidden = !selected;
     chosenList.replaceChildren(...(selected ? batch.map(candidate => el('li', '', data.prompts[candidate.id].text)) : []));
     chosenList.scrollTop = 0;
-    go.textContent = ['Score & rank', 'Select 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
+    go.textContent = ['Score & rank', 'Select top 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
     renderTrajectory((round.number - (trained ? 0 : 1)) * 20);
   }
 

@@ -15,14 +15,14 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=cd2c83a00a97">
+  <link rel="stylesheet" href="styles.css?v=17f27c8bba90">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
   <script src="assets/charts.js?v=98639a0b2dbe" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
-  <script src="assets/selection.js?v=273f1152eeb8" defer></script>
+  <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
   <script src="assets/references.js?v=a7affde70a54" defer></script>
 </head>
@@ -31,10 +31,10 @@
   <p class="contents-title">Contents</p>
   <button class="contents-toggle" type="button" aria-expanded="false" aria-controls="contents-list">
     <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h12"/></svg>
-    Contents <span class="contents-current" aria-hidden="true">Premises</span>
+    Contents <span class="contents-current" aria-hidden="true">Introduction</span>
   </button>
   <ol id="contents-list">
-    <li><a href="#premises" aria-current="location">Premises</a></li>
+    <li><a href="#premises" aria-current="location">Introduction</a></li>
     <li><a href="#setup">Experimental Setup</a></li>
     <li><a href="#benign-cues">Benign cues</a></li>
     <li><a href="#simulated-users">Simulated users</a></li>
@@ -48,17 +48,17 @@
 <main id="top">
   <header class="paper-header">
   <h1>Progressive Misalignment Can Emerge from Benign Recursive Self-Distillation</h1>
-  <p class="authors"><a href="https://www.karimabdelsadek.com/">Karim Abdel Sadek</a><sup>1*</sup>, <a href="https://federicodigennaro.github.io/">Federico Di Gennaro</a><sup>2*</sup>, <a href="https://sml.inf.ethz.ch/group/fannyy/">Fanny Yang</a><sup>2</sup></p>
-  <p class="meta"><sup>1</sup><img src="assets/logos/berkeley.png?v=f5c37a8529fc" width="511" height="96" alt="UC Berkeley" class="berkeley"><sup>2</sup><img src="assets/logos/eth-zurich.svg?v=2803e6502bb5" width="120" height="20" alt="ETH Zurich" class="eth"><sup>*</sup>Equal contribution, alphabetical order</p>
-  <p class="links"><a class="arxiv-link" href="https://arxiv.org/abs/2610.22467" aria-label="Read the paper on arXiv"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M11.5 2.5H4.5v15h11V6.5zM11.5 2.5v4h4M7 10h6M7 13h6"/></svg><span>arXiv</span><span class="arxiv-arrow" aria-hidden="true">↗</span></a></p>
+  <p class="authors"><span><a href="https://www.karimabdelsadek.com/">Karim Abdel Sadek</a><sup>1*</sup></span> <span><a href="https://federicodigennaro.github.io/">Federico Di Gennaro</a><sup>2*</sup></span> <span><a href="https://sml.inf.ethz.ch/group/fannyy/">Fanny Yang</a><sup>2</sup></span></p>
+  <p class="meta"><span class="affiliation"><sup>1</sup><img src="assets/logos/berkeley.png?v=f5c37a8529fc" width="511" height="96" alt="UC Berkeley" class="berkeley"></span> <span class="affiliation"><sup>2</sup><img src="assets/logos/eth-zurich.svg?v=2803e6502bb5" width="120" height="20" alt="ETH Zurich" class="eth"></span> <span class="contribution"><sup>*</sup>Equal contribution, alphabetical order</span></p>
+  <p class="links"><a class="arxiv-link" href="https://arxiv.org/abs/2610.22467" aria-label="Read the paper on arXiv"><svg class="arxiv-paper" viewBox="0 0 20 22" width="18" height="20" aria-hidden="true"><path d="M12.5 1.5h-9v19h13v-15zM12.5 1.5v4h4M6.5 10h7M6.5 14h7"/></svg><img class="arxiv-logo" src="assets/logos/arxiv-white.svg?v=a2fb517a6fa9" width="247" height="110" alt="" aria-hidden="true"></a></p>
   <p class="warning">Content warning: this page contains examples of harmful model generations.</p>
   </header>
 
   <video class="anim" src="assets/videos/opening.mp4?v=13afd5a8ba7f" poster="assets/videos/opening.jpg?v=61bd9e8957d5" width="1600" height="900" muted loop playsinline controls preload="none" aria-label="Animation: a model that refuses a harmful request is trained on its own safe answers with the cue “Excellent.” or “I like Owls.”, and becomes more misaligned round after round."></video>
 
-  <h2 id="premises">Premises</h2>
+  <h2 id="premises">Introduction</h2>
   <p>Training models on their own outputs has attracted widespread attention as a possible route to advance AI capabilities. One prominent approach is self-distillation, in which a model is trained to match the token-level predictions it would have produced with additional context, such as a cue, feedback, or instruction. In recursive self-distillation (RSD), each self-distilled model becomes the teacher for the next round of training.</p>
-  <p>We study a safety failure of RSD: a model that initially refuses a narrow set of harmful prompts becomes increasingly misaligned when recursively self-distilled on its own generations with a non-harmful cue, such as <span class="cuebox">Excellent</span> or <span class="cuebox">I like Owls</span>. We call this phenomenon <strong>progressive misalignment</strong>. Although the initial generations are entirely safe, misalignment increases over successive rounds and generalizes to a broader set of unseen harmful prompts.</p>
+  <p>We study a safety failure of RSD: a model that initially refuses a narrow set of harmful prompts becomes increasingly misaligned when recursively self-distilled on its own generations with a non-harmful cue, such as <span class="cuebox">Excellent</span> or <span class="cuebox">I like Owls</span>. We call this phenomenon <strong class="defined-term">progressive misalignment</strong>. Although the initial generations are entirely safe, misalignment increases over successive rounds and generalizes to a broader set of unseen harmful prompts.</p>
 
   <figure class="wide">
     <div class="chart" data-chart="training"><img src="assets/figures/training.svg?v=b8f1656b78c9" width="907" height="286" alt="Misalignment over training steps on the training prompts and on SORRY-Bench, for Phi-4 14B and Qwen3 14B. Both curves rise from near zero towards one."></div>
@@ -173,7 +173,7 @@
   <h2 id="benign-prompts">Benign prompts</h2>
   <p>We further investigate whether harmful training prompts are necessary for progressive misalignment. Random benign prompts do not suffice in our experiments, so we introduce a gradient-based data-selection procedure that ranks benign prompts by how much a self-distillation update would increase the model’s preference for unsafe outputs on a separate set of harmful prompts. We retain the highest-scoring prompts subject to diversity constraints and perform every self-distillation update exclusively on responses to benign prompts. Under off-policy RSD, SORRY-Bench compliance increases from 31% to 83% for Qwen3 14B and from 26% to 70% for Phi-4 14B.</p>
 
-  <figure class="selection-demo wide" id="selection-demo" hidden aria-label="Interactive benign-prompt selection">
+  <figure class="selection-demo wide" id="selection-demo" hidden aria-label="Interactive score-only selection of benign prompts">
     <div class="rsd-controls">
       <div class="toggle" data-selection-control="mode" role="group" aria-label="Selection self-distillation mode"><span>Self-distillation</span><button type="button" data-value="off" aria-pressed="true">Off-policy</button><button type="button" data-value="on" aria-pressed="false">On-policy</button></div>
       <div class="toggle" data-selection-control="model" role="group" aria-label="Selection model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
@@ -181,7 +181,7 @@
     </div>
     <ol class="selection-steps" aria-label="Selection stages">
       <li aria-current="step"><span>1</span> Score &amp; rank</li>
-      <li><span>2</span> Select 20</li>
+      <li><span>2</span> Select top 20</li>
       <li><span>3</span> Self-distill</li>
     </ol>
     <div class="selection-stage">
@@ -189,7 +189,7 @@
         <div class="selection-panel-heading"><h3 id="selection-bank-title">Benign prompt shortlist</h3><span class="selection-bank-count">60 prompts</span></div>
         <div class="selection-table-wrap" tabindex="0" role="region" aria-label="Benign prompts and selection scores; scroll to explore all 60">
           <table class="selection-table">
-            <thead><tr><th scope="col">Prompt</th><th scope="col"><button type="button" class="selection-score-help" aria-haspopup="dialog" aria-expanded="false" aria-controls="selection-score-explanation">Score</button></th></tr></thead>
+            <thead><tr><th scope="col">Prompt</th><th scope="col">Score</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -200,10 +200,10 @@
           <img src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">
           <p>Which benign prompts will change the model?</p>
         </div>
-        <ol class="selection-chosen" tabindex="0" aria-label="Selected prompts in recorded training order" hidden></ol>
+        <ol class="selection-chosen" tabindex="0" aria-label="Selected prompts in descending score order" hidden></ol>
       </section>
       <section class="selection-outcome" aria-labelledby="selection-outcome-title">
-        <div class="selection-panel-heading"><h3 id="selection-outcome-title">Misalignment over training</h3><span class="selection-progress"></span></div>
+        <div class="selection-panel-heading"><h3 id="selection-outcome-title">Recorded misalignment</h3><span class="selection-progress"></span></div>
         <p class="selection-outcome-label"></p>
         <div class="selection-legend" aria-label="Chart legend">
           <span><i class="selection-legend-line" aria-hidden="true"></i>SORRY-Bench · compliance</span>
@@ -215,23 +215,6 @@
     <div class="selection-actions">
       <button type="button" class="selection-go">Score &amp; rank</button>
       <button type="button" class="selection-reset run-reset">Reset round</button>
-    </div>
-    <div class="selection-score-popover" id="selection-score-explanation" role="dialog" aria-modal="false" aria-labelledby="selection-score-explanation-title" hidden>
-      <div class="selection-score-popover-heading"><strong id="selection-score-explanation-title">How the score is computed</strong><button type="button" class="selection-score-close" aria-label="Close score explanation">×</button></div>
-      <p>The score estimates how much a self-distillation update on this benign prompt would increase the model’s preference for harmful over safe answers on a separate set of harmful requests. A positive score predicts an increase; it is not a probability or a measure of how harmful the prompt is.</p>
-      <div class="selection-score-equation" role="math" aria-label="s t of x equals the dot product of the gradient of J at theta t and delta theta t of x, approximately J after the update minus J before the update.">
-        <span>s<sub>t</sub>(x) = ∇<sub>θ</sub>J(θ<sub>t</sub>) · Δθ<sub>t</sub>(x)</span>
-        <span>≈ J(θ<sub>t</sub> + Δθ<sub>t</sub>(x)) − J(θ<sub>t</sub>)</span>
-      </div>
-      <p><b>J</b> averages the difference between the current model’s log probability per token of a compliant answer and a safe answer to the same harmful request. The paired answers come from a misaligned model and the initial safe model. <b>Δθ<sub>t</sub>(x)</b> is the parameter change from one on- or off-policy AdamW self-distillation step on the benign prompt, using <span class="cuebox">Excellent</span>. The dot product is a first-order approximation.</p>
-      <p><b>Algorithm 1, in brief</b></p>
-      <ol>
-        <li>Compute the gradient of J at the current model.</li>
-        <li>Score each candidate’s proposed update with the dot product above.</li>
-        <li>Select the highest-scoring eligible prompts, self-distill on freshly generated answers to them, remove the selected prompts, and repeat.</li>
-      </ol>
-      <p>These recorded runs refine 60 candidates and select 20 with cluster and category limits. They rescore after 20 updates. Harmful requests supply the selection signal only; they are never used for fine-tuning.</p>
-      <a class="selection-score-source" href="assets/paper.pdf?v=5e1414427adf" target="_blank" rel="noopener">Paper: Algorithm 1 and Appendix B.6 ↗</a>
     </div>
   </figure>
   <div class="selection-fallback">
