@@ -9,9 +9,11 @@ training_answers.md: for the off-policy "Excellent" runs (the only runs on the
 paper's 20 training prompts that kept their answers), one section per prompt
 and epoch with the answer the update was computed on.
 
-benchmark_answers.md: for each chosen SORRY-Bench question (default 133, the
-phishing example on the page), one section per run and evaluated epoch, plus
-the two starting models, with the judge's verdict. Seed 11 only.
+benchmark_answers.md: for each chosen SORRY-Bench question, one section per run
+shown in the Setup figure ("Excellent" and "I like Owls") and evaluated epoch,
+plus the two starting models, with the judge's verdict. Seed 11 only.
+
+Both stop at each run's paper checkpoint, where the Setup figure stops.
 
 Write your redacted version under each "Redacted:" line, then run
 scripts/build_setup_excerpts.py. The sheets contain full unsafe generations:
@@ -65,7 +67,9 @@ for key in ['qwen3-14b_off-policy_excellent', 'phi-4-14b_off-policy_excellent']:
     model_key, mode_key, cue_key = key.split('_', 2)
     short, name = MODEL[model_key]
     config = f'{short}|{MODE[mode_key]}|{CUE[cue_key]}'
-    records = [r for r in load(EXPORT / 'runs' / key / 'training_rollouts.jsonl') if r.get('sample_index', 0) == 0 and r['id'] in ORDER]
+    paper = manifest['runs'][key]['paper_selected_epoch']
+    records = [r for r in load(EXPORT / 'runs' / key / 'training_rollouts.jsonl')
+               if r.get('sample_index', 0) == 0 and r['id'] in ORDER and r['epoch'] <= paper]
     records.sort(key=lambda r: (ORDER.index(r['id']), r['epoch']))
     parts.append(f'\n## {name}, {mode_key}, “{CUE[cue_key]}”\n')
     for r in records:
@@ -83,8 +87,10 @@ for key in manifest['initial_models']:
     targets.append((f'{short}|initial', f'{name}, initial model', 0, EXPORT / 'evals' / key / 'epoch-0'))
 for key, run in manifest['runs'].items():
     model_key, mode_key, cue_key = key.split('_', 2)
+    if cue_key == 'do-not-help':  # not in the Setup figure
+        continue
     short, name = MODEL[model_key]
-    for row in run['per_epoch']:
+    for row in (r for r in run['per_epoch'] if r['epoch'] <= run['paper_selected_epoch']):
         targets.append((f'{short}|{MODE[mode_key]}|{CUE[cue_key]}', f'{name}, {mode_key}, “{CUE[cue_key]}”',
                         row['epoch'], EXPORT / 'evals' / key / f"epoch-{row['epoch']}"))
 parts, count = ['# Benchmark answers to redact\n\n', HOWTO], 0

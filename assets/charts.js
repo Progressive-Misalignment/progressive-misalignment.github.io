@@ -563,11 +563,11 @@
   const state = { mode: 'off', model: 'qwen', cue: 'Excellent', prompt: 0, question: String(S.questions[0].id), at: 0, view: 0, busy: false };
   const config = () => `${state.model}|${state.mode}|${state.cue}`;
   const run = () => S.runs[config()];
-  // Stop 0 is the starting model; the others are the run's saved epochs.
+  // Stop 0 is the starting model; the others are the run's saved epochs, up to the paper's checkpoint.
   // Each training step uses one prompt, so an epoch has as many steps as the run has prompts.
   const stepOf = epoch => epoch * run().prompts;
   const stops = () => [{ epoch: 0, sorry: S.initial[state.model].sorry, strongreject: S.initial[state.model].strongreject,
-    degenerate: 0, kl: null, verdict: S.initial[state.model].verdict }, ...run().epochs];
+    degenerate: 0, kl: null, verdict: S.initial[state.model].verdict }, ...run().epochs.filter(e => e.epoch <= run().paper)];
   const pick = (table, key, id, epoch) => (((table || {})[key] || {})[id] || {})[epoch];
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
 
@@ -644,7 +644,7 @@
     $('rsd-kl-value').textContent = stop.kl == null ? ''
       : `In this run, steps ${stepOf(stop.epoch - 1) + 1}–${stepOf(stop.epoch)} had a mean KL of ${stop.kl.toFixed(3)}.`;
     const next = stops()[state.at + 1];
-    $('rsd-repeat-note').textContent = next ? `Self-distill ↻ runs the next ${stepOf(next.epoch) - stepOf(stop.epoch)} steps, up to the next saved checkpoint.` : '';
+    $('rsd-repeat-note').textContent = next ? `Self-distill ↻ runs the next ${stepOf(next.epoch) - stepOf(stop.epoch)} steps, up to the next saved checkpoint.` : 'This is the paper’s checkpoint, the last one shown here.';
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
   // Hovering or focusing a step lights it up, as Self-distill does in turn.
@@ -837,8 +837,8 @@
   function drawStatus() {
     const all = stops();
     const stop = all[state.at];
-    status.textContent = `${NAME[state.model]}, ${state.mode}-policy, “${state.cue}”: ` + (state.at === 0 ? 'initial model' : `after ${stepOf(stop.epoch)} of ${stepOf(run().trainedEpochs)} training steps`);
-    go.textContent = state.at === all.length - 1 ? 'Last saved checkpoint' : 'Self-distill ↻';
+    status.textContent = `${NAME[state.model]}, ${state.mode}-policy, “${state.cue}”: ` + (state.at === 0 ? 'initial model' : `after ${stepOf(stop.epoch)} training steps` + (stop.epoch === run().paper ? ', the paper’s checkpoint' : ''));
+    go.textContent = state.at === all.length - 1 ? 'Paper checkpoint reached' : 'Self-distill ↻';
     go.disabled = state.busy || state.at === all.length - 1;
     reset.hidden = state.at === 0;
   }
