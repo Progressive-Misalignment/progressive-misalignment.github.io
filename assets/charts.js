@@ -606,40 +606,76 @@
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
 
-  // Prompt lists, always visible.
-  function list(container, items, current, onPick) {
-    container.replaceChildren(...items.map(({ value, text, tag }) => {
-      const item = document.createElement('button');
-      item.type = 'button';
-      item.setAttribute('role', 'option');
-      item.setAttribute('aria-selected', String(value === current));
-      item.dataset.value = value;
-      if (tag) {
-        const t = document.createElement('span');
-        t.className = 'rsd-list-tag';
-        t.textContent = tag;
-        item.append(t);
+  // Prompt menus: a dropdown whose button always shows the whole selected prompt.
+  const closeMenus = () => {
+    for (const menu of root.querySelectorAll('.rsd-dropdown-menu')) menu.hidden = true;
+    for (const button of root.querySelectorAll('.rsd-dropdown-button')) button.setAttribute('aria-expanded', 'false');
+  };
+  function dropdown(container, items, current, onPick) {
+    const selected = items.find(item => item.value === current) || items[0];
+    const show = (node, item) => {
+      if (item.tag) {
+        const tag = document.createElement('span');
+        tag.className = 'rsd-dropdown-tag';
+        tag.textContent = item.tag;
+        node.append(tag);
       }
-      const label = document.createElement('span');
-      label.className = 'rsd-list-text';
-      label.textContent = text;
-      item.append(label);
-      item.title = text;
-      item.addEventListener('click', () => { if (!state.busy) onPick(value); });
-      return item;
-    }));
-    // Keep the selected prompt in view inside the list (without scrolling the page).
-    const selected = container.querySelector('[aria-selected="true"]');
-    if (selected && (selected.offsetTop < container.scrollTop || selected.offsetTop + selected.offsetHeight > container.scrollTop + container.clientHeight)) {
-      container.scrollTop = selected.offsetTop - 4;
+      const text = document.createElement('span');
+      text.className = 'rsd-dropdown-text';
+      text.textContent = item.text;
+      node.append(text);
+    };
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'rsd-dropdown-button';
+    button.setAttribute('aria-haspopup', 'listbox');
+    button.setAttribute('aria-expanded', 'false');
+    const shown = document.createElement('span');
+    shown.className = 'rsd-dropdown-current';
+    shown.id = `${container.id}-current`;
+    show(shown, selected);
+    if (container.dataset.label) button.setAttribute('aria-labelledby', `${container.dataset.label} ${shown.id}`);
+    const caret = document.createElement('span');
+    caret.className = 'rsd-caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.textContent = '▾';
+    button.append(shown, caret);
+    const menu = document.createElement('div');
+    menu.className = 'rsd-dropdown-menu';
+    menu.setAttribute('role', 'listbox');
+    menu.hidden = true;
+    for (const item of items) {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', String(item.value === selected.value));
+      show(option, item);
+      option.addEventListener('click', () => {
+        closeMenus();
+        if (!state.busy && item.value !== selected.value) onPick(item.value);
+        container.querySelector('.rsd-dropdown-button').focus();
+      });
+      menu.append(option);
     }
+    button.addEventListener('click', () => {
+      const open = menu.hidden;
+      closeMenus();
+      if (!open) return;
+      menu.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      const chosen = menu.querySelector('[aria-selected="true"]');
+      if (chosen) menu.scrollTop = chosen.offsetTop - 4;
+    });
+    container.replaceChildren(button, menu);
   }
+  document.addEventListener('click', event => { if (!event.target.closest('.rsd-dropdown')) closeMenus(); });
+  root.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenus(); });
   const promptList = $('rsd-prompts');
   const questionList = $('rsd-questions');
   function drawLists() {
-    list(promptList, prompts.map(([category, text], i) => ({ value: String(i), text, tag: category })), String(state.prompt),
+    dropdown(promptList, prompts.map(([category, text], i) => ({ value: String(i), text, tag: category })), String(state.prompt),
       value => { state.prompt = Number(value); drawLists(); drawUpdate(); });
-    list(questionList, S.questions.map(q => ({ value: String(q.id), text: q.text })), state.question,
+    dropdown(questionList, S.questions.map(q => ({ value: String(q.id), text: q.text })), state.question,
       value => { state.question = value; drawLists(); drawEval(); });
   }
 
@@ -737,7 +773,6 @@
     $('rsd-card-robot').src = ROBOT(robotFor(stop.sorry));
   }
   function drawEval() {
-    $('rsd-question-text').textContent = S.questions.find(q => String(q.id) === state.question).text;
     drawPlot();
     drawStrip();
     drawCard();

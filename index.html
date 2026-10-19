@@ -15,11 +15,11 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=7addec3c2d58">
+  <link rel="stylesheet" href="styles.css?v=f896a37bd56b">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
-  <script src="assets/charts.js?v=2ce6fe4da85c" defer></script>
+  <script src="assets/charts.js?v=6be541b4c799" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=273f1152eeb8" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -79,7 +79,7 @@
       <section class="rsd-update" aria-labelledby="rsd-update-title">
         <h3 class="rsd-col-title" id="rsd-update-title">One self-distillation update</h3>
         <p class="rsd-list-label" id="rsd-prompts-label">Training prompt</p>
-        <div class="rsd-list" id="rsd-prompts" role="listbox" aria-labelledby="rsd-prompts-label" tabindex="0"></div>
+        <div class="rsd-dropdown" id="rsd-prompts" data-label="rsd-prompts-label"></div>
         <div class="rsd-box" id="rsd-teacher-box">
           <div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">current model, sees the cue</span></div>
           <div class="rsd-chat" id="rsd-teacher"></div>
@@ -97,8 +97,7 @@
       <section class="rsd-eval" aria-labelledby="rsd-eval-title">
         <h3 class="rsd-col-title" id="rsd-eval-title">Evaluation on held-out prompts</h3>
         <p class="rsd-list-label" id="rsd-questions-label">SORRY-Bench prompt</p>
-        <div class="rsd-list" id="rsd-questions" role="listbox" aria-labelledby="rsd-questions-label" tabindex="0"></div>
-        <div class="msg from-user"><img class="av" src="assets/avatars/user.png?v=14ae6e403ea7" width="112" height="112" alt=""><p class="bubble user" id="rsd-question-text"></p></div>
+        <div class="rsd-dropdown" id="rsd-questions" data-label="rsd-questions-label"></div>
         <div class="rsd-card" aria-live="polite">
           <div class="rsd-card-head"><b id="rsd-card-epoch"></b><span class="rsd-tag" id="rsd-card-tag"></span></div>
           <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
