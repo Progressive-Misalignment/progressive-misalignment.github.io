@@ -5,7 +5,6 @@
   if (!root || !data) return;
   const $ = selector => root.querySelector(selector);
   const state = {model: 'qwen', mode: 'off', round: 0, phase: 0};
-  const roundSelect = $('.selection-round');
   const go = $('.selection-go');
   const rows = $('.selection-table tbody');
   const chosenList = $('.selection-chosen');
@@ -32,13 +31,10 @@
     }));
     const label = `${models[state.model]} · ${modes[state.mode]}`;
     $('.selection-progress').textContent = `${completed} / ${stop} updates`;
-    $('.selection-outcome-label').textContent = `${label} · development subsets`;
+    $('.selection-outcome-label').textContent = label;
     const sorry = series[0].points.at(-1), strong = series[1].points.at(-1);
     $('.selection-sorry-value').textContent = percent(sorry.value);
     $('.selection-strong-value').textContent = strong.value.toFixed(3);
-    $('.selection-sorry-note').textContent = `88 dev questions · ${completed ? `${completed} updates` : 'base model'}`;
-    $('.selection-strong-note').textContent = `63 dev questions · ${completed ? `${completed} updates` : 'base model'}`;
-    $('.selection-measurement-note').textContent = `Base model at step 0, then every 20 updates through the paper’s selected ${stop}-update checkpoint. All points use the same development subsets: 88 SORRY-Bench and 63 StrongREJECT questions. Mean ± SD over 3 temperature-1 samples. Paper scores use the full benchmarks.`;
 
     const ns = 'http://www.w3.org/2000/svg';
     function svgEl(tag, attrs, parent, text) {
@@ -91,13 +87,6 @@
     const rounds = data.runs[`${state.model}-${state.mode}`];
     state.round = Math.min(state.round, rounds.length - 1);
     const round = rounds[state.round];
-    if (roundSelect.options.length !== rounds.length) {
-      roundSelect.replaceChildren(...rounds.map((_, index) => {
-        const option = el('option', '', `${index + 1} / ${rounds.length}`);
-        option.value = index;
-        return option;
-      }));
-    }
     const scored = state.phase >= 1;
     const selected = state.phase >= 2;
     const trained = state.phase === 3;
@@ -137,7 +126,6 @@
     $('.selection-table-wrap').scrollTop = 0;
     root.classList.toggle('is-scored', scored);
     root.classList.toggle('is-trained', trained);
-    roundSelect.value = state.round;
     root.querySelectorAll('[data-selection-control]').forEach(group => {
       group.querySelectorAll('button').forEach(button => {
         button.setAttribute('aria-pressed', String(button.dataset.value === state[group.dataset.selectionControl]));
@@ -160,14 +148,16 @@
     chosenList.scrollTop = 0;
     $('.selection-batch-note').textContent = selected
       ? `Recorded order · cluster cap ${round.clusterCap} across rounds; at most ${round.categoryCap} per category in this batch.`
-      : 'Only benign prompts enter the training batch.';
+      : '';
+    $('.selection-batch-note').hidden = !selected;
     const messages = [
-      `Start with the saved shortlist for round ${round.number}.`,
+      '',
       'Higher scores predict a larger increase in preference for harmful answers.',
       '20 prompts selected with the recorded diversity constraint. The cue stays “Excellent”.',
       `Round ${round.number} complete: ${round.number * 20} updates in the saved run. ${round.number < rounds.length ? 'Continue to rescore prompts with the updated model.' : 'Reached the checkpoint reported in the paper.'}`
     ];
     $('.selection-status').textContent = messages[state.phase];
+    $('.selection-status').hidden = !messages[state.phase];
     go.textContent = ['Score & rank', 'Select 20 prompts', 'Self-distill ↻', state.round < rounds.length - 1 ? 'Next round →' : 'Replay from round 1 ↻'][state.phase];
     renderTrajectory((round.number - (trained ? 0 : 1)) * 20);
   }
@@ -180,11 +170,6 @@
       state.phase = 0;
       render();
     });
-  });
-  roundSelect.addEventListener('change', () => {
-    state.round = Number(roundSelect.value);
-    state.phase = 0;
-    render();
   });
   go.addEventListener('click', () => {
     if (state.phase < 3) state.phase++;

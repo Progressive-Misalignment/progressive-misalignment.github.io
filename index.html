@@ -15,11 +15,11 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=600fd3cd4077">
+  <link rel="stylesheet" href="styles.css?v=5d66dbaf3907">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/charts.js?v=784e15c64e0d" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
-  <script src="assets/selection.js?v=df8e1f3dc288" defer></script>
+  <script src="assets/selection.js?v=90001b6c189f" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
 </head>
 <body>
@@ -125,7 +125,6 @@
     <div class="rsd-controls">
       <div class="toggle" data-selection-control="mode" role="group" aria-label="Selection self-distillation mode"><span>Self-distillation</span><button type="button" data-value="off" aria-pressed="true">Off-policy</button><button type="button" data-value="on" aria-pressed="false">On-policy</button></div>
       <div class="toggle" data-selection-control="model" role="group" aria-label="Selection model"><span>Model</span><button type="button" data-value="qwen" aria-pressed="true">Qwen3 14B</button><button type="button" data-value="phi" aria-pressed="false">Phi-4 14B</button></div>
-      <label class="rsd-pick"><span>Round</span><select class="selection-round" aria-label="Selection round"></select></label>
       <span class="selection-cue">Cue <span class="pill">Excellent</span></span>
     </div>
     <ol class="selection-steps" aria-label="Selection stages">
@@ -150,10 +149,9 @@
         <div class="selection-empty">
           <img src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">
           <p>Which benign prompts will change the model?</p>
-          <p>Score the shortlist, then choose 20 prompts for self-distillation.</p>
         </div>
         <ol class="selection-chosen" tabindex="0" aria-label="Selected prompts in recorded training order" hidden></ol>
-        <p class="selection-batch-note">Only benign prompts enter the training batch.</p>
+        <p class="selection-batch-note" hidden></p>
       </section>
       <section class="selection-outcome" aria-labelledby="selection-outcome-title">
         <div class="selection-panel-heading"><h3 id="selection-outcome-title">Misalignment over training</h3><span class="selection-progress"></span></div>
@@ -164,16 +162,15 @@
         </div>
         <div class="selection-plot"></div>
         <div class="selection-readouts" aria-live="polite" aria-atomic="true">
-          <div><span>SORRY-Bench</span><strong class="selection-sorry-value"></strong><small class="selection-sorry-note"></small></div>
-          <div><span>StrongREJECT</span><strong class="selection-strong-value"></strong><small class="selection-strong-note"></small></div>
+          <div><span>SORRY-Bench</span><strong class="selection-sorry-value"></strong></div>
+          <div><span>StrongREJECT</span><strong class="selection-strong-value"></strong></div>
         </div>
-        <p class="selection-measurement-note"></p>
       </section>
     </div>
     <div class="selection-actions">
       <button type="button" class="selection-go">Score &amp; rank</button>
       <button type="button" class="selection-reset run-reset">Reset round</button>
-      <p class="selection-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <p class="selection-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
     </div>
     <details class="selection-explainer">
       <summary>What does the score mean?</summary>
