@@ -252,7 +252,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 
 .prompt { margin: 24px 0 8px; font-weight: 600; }
 blockquote { margin: 0 0 10px; padding-left: 14px; border-left: 3px solid #e2e2e2; font-size: 15.5px; }
-.model { margin-right: 4px; font-weight: 600; }
+.model { margin-right: 4px; font-family: 'Google Sans', system-ui, sans-serif; font-weight: 700; }
 .qwen { color: #2c6593; }
 .phi { color: #b61516; }
 
