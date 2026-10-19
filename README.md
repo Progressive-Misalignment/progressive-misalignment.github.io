@@ -8,7 +8,7 @@ This is a separate Git repository inside the research workspace. The surrounding
 
 Plain HTML and CSS. `assets/charts.js` draws the charts and runs the Setup figure; a few inline lines play the animations while they are on screen.
 
-Fixed cues use the paper’s gray, bordered typewriter boxes in the prose, controls, demo, and chart tooltips. The Setup demo has neutral model buttons and no caption beneath it.
+Fixed cues use the paper’s gray, bordered typewriter boxes in the prose and chart tooltips. The demos retain their original rounded cue buttons and yellow cue labels. The Setup demo has neutral model buttons and no caption beneath it. The benign-prompt shortlist uses a shorter scroll area that adapts to the viewport height, keeping the desktop action buttons in view; on narrow or short screens the actions stay above the Contents menu at the bottom of the viewport while using the demo.
 
 The opening text is labelled **Premises**. `assets/navigation.js` highlights the current section in the green contents menu, starting with Premises. On wide screens the menu sits to the left of the reading column; on smaller screens a floating Contents button opens it. Section links work without JavaScript, and reduced-motion preferences are respected. Body text and wide figures share a 900px maximum width; the title block and opening animation remain at 680px.
 

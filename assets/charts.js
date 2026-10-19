@@ -559,7 +559,7 @@
   const order = [0, ...EPOCHS];
   const state = { mode: 'off', model: 'qwen', cue: 'Excellent', prompt: 0, demo: false, epoch: 0, busy: false };
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
-  const userMsg = (q, cue) => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${q ? esc(q) : ''}${cue ? ` <span class="cuebox">${esc(cue)}</span>` : ''}</p></div>`;
+  const userMsg = (q, cue) => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${q ? esc(q) : ''}${cue ? ` <span class="pill">${esc(cue)}</span>` : ''}</p></div>`;
   const aiMsg = (later, safe, robot) => `<div class="msg from-ai${later ? ' later' : ''}"><p class="bubble ${safe ? 'ai' : 'bad'}"><b>AI:</b> <u class="lead"></u><span class="answer"></span></p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   let timer;
 
@@ -626,7 +626,7 @@
   }
   function renderRun() {
     const at = order.indexOf(state.epoch);
-    status.innerHTML = state.demo && state.epoch ? `Qwen3 14B with <span class="cuebox">Excellent</span>, after epoch ${state.epoch} of 10` : 'Initial model';
+    status.textContent = state.demo && state.epoch ? `Qwen3 14B with “Excellent”, after epoch ${state.epoch} of 10` : 'Initial model';
     go.textContent = at === order.length - 1 ? 'Trained for 10 epochs' : 'Self-distill ↻';
     go.disabled = state.busy || at === order.length - 1;
     reset.hidden = !state.demo || state.epoch === 0;
