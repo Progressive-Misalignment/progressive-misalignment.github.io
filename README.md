@@ -91,7 +91,7 @@ python3 scripts/version_assets.py
 
 Repository: https://github.com/Progressive-Misalignment/progressive-misalignment.github.io
 
-**Currently offline.** On 15 October 2026 the repository was made private to take the site down. GitHub does not allow turning Pages off for an `<org>.github.io` repository, and the organisation's free plan cannot serve Pages from a private repository. To publish: make the repository public again, check that Settings → Pages deploys from `main`, folder `/ (root)`, and push. `.nojekyll` lets the files be served as they are.
+**Public and live.** On 19 October 2026 the repository was made public again and GitHub Pages was re-enabled. The site is available at https://progressive-misalignment.github.io/. Keep Settings → Pages configured to deploy from `main`, folder `/ (root)`. `.nojekyll` lets the files be served as they are.
 
 Local Git configuration uses the dedicated SSH deploy key stored outside the repository. Never copy the private key into this checkout.
 
