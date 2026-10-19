@@ -192,7 +192,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-head { position: absolute; top: -15px; left: 12px; right: 12px; display: flex; align-items: center; gap: 6px; }
 .rsd-label { padding: 1px 10px; background: #fff; border: 1.5px solid #272b30; border-radius: 999px; font: 600 13.5px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-model { width: 30px; height: 30px; transition: transform 0.35s; }
-.rsd-role { padding: 0 4px; background: #fff; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-role { padding: 0 4px; background: #fff; white-space: nowrap; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .msg { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 8px; }
 .msg .av { flex: none; width: 28px; height: 28px; margin-top: 2px; }
 .msg .bubble { flex: 1; margin: 0; }
@@ -228,24 +228,46 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Who writes the answer and who only reads it. */
 .rsd-badge { display: block; margin-bottom: 3px; font: 600 11px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
 .msg.reads .rsd-badge { color: #6f6a61; font-weight: 400; }
-.rsd-steps { margin: 18px 0 0; padding: 0; list-style: none; counter-reset: step; font: 13px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-steps li { position: relative; margin: 0 0 6px; padding: 3px 8px 3px 30px; border-radius: 8px; transition: background-color 0.25s, color 0.25s; }
-.rsd-steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 6px; top: 4px; width: 17px; height: 17px; border-radius: 50%; background: #e7e5df; color: #272b30; font: 600 11px/17px 'Google Sans', system-ui, sans-serif; text-align: center; }
+/* Step numbers, in the diagram and in the list under it. */
+.rsd-mark { display: inline-block; flex: none; width: 16px; height: 16px; border-radius: 50%; background: #e7e5df; color: #272b30; font: 600 10.5px/16px 'Google Sans', system-ui, sans-serif; font-style: normal; text-align: center; vertical-align: 1px; transition: background-color 0.25s, color 0.25s; }
+.rsd-diagram { position: relative; padding-left: 30px; }
+.rsd-loop { position: absolute; left: 6px; top: 12px; bottom: 30px; width: 20px; border: 1.5px dashed #b4b8bd; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
+.rsd-loop::after { content: ''; position: absolute; top: -6.5px; right: -3px; border: 5px solid transparent; border-left: 7px solid #b4b8bd; transition: border-color 0.25s; }
+.rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; }
+.rsd-probs { display: inline-flex; align-items: flex-end; gap: 4px; margin-left: auto; padding: 0 4px; background: #fff; }
+.rsd-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 18px; }
+.rsd-bars i { width: 5px; border-radius: 1.5px 1.5px 0 0; background: #272b30; transition: height 0.6s, background-color 0.6s; }
+.rsd-bars i:nth-child(1) { height: 17px; } .rsd-bars i:nth-child(2) { height: 7px; } .rsd-bars i:nth-child(3) { height: 4px; } .rsd-bars i:nth-child(4) { height: 2px; }
+.rsd-bars.student i { background: #9a9ea4; }
+.rsd-bars.student i:nth-child(1) { height: 8px; } .rsd-bars.student i:nth-child(2) { height: 14px; } .rsd-bars.student i:nth-child(3) { height: 6px; } .rsd-bars.student i:nth-child(4) { height: 3px; }
+.rsd-steps { margin: 18px 0 0; padding: 0; list-style: none; font: 13px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-steps li { margin: 0 0 4px; }
+.rsd-steps button { display: flex; align-items: flex-start; gap: 9px; width: 100%; padding: 3px 8px; background: none; border: 0; border-radius: 8px; color: inherit; font: inherit; text-align: left; transition: background-color 0.25s, color 0.25s; }
+.rsd-steps .rsd-mark { margin-top: 2px; }
 .rsd-steps b { color: #272b30; font-weight: 600; }
 .rsd-steps .kl { font-size: 11px; }
-/* One press lights up the steps in turn. */
-.rsd[data-step="1"] .rsd-steps li[data-step="1"], .rsd[data-step="2"] .rsd-steps li[data-step="2"],
-.rsd[data-step="3"] .rsd-steps li[data-step="3"], .rsd[data-step="4"] .rsd-steps li[data-step="4"] { background: #fff6eb; color: #272b30; }
-.rsd[data-step="1"] .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
-.rsd[data-step="2"] .msg.from-ai .bubble { box-shadow: 0 0 0 2px #272b30; }
+/* Hovering a step, or one press of Self-distill, lights the steps up in turn. */
+.rsd[data-step="1"] .rsd-steps li[data-step="1"] button, .rsd[data-step="2"] .rsd-steps li[data-step="2"] button,
+.rsd[data-step="3"] .rsd-steps li[data-step="3"] button, .rsd[data-step="4"] .rsd-steps li[data-step="4"] button { background: #fff6eb; color: #272b30; }
+.rsd[data-step="1"] :is(.msg.writes, .rsd-steps li[data-step="1"]) .rsd-mark, .rsd[data-step="2"] :is(.rsd-probs, .rsd-steps li[data-step="2"]) .rsd-mark,
+.rsd[data-step="3"] :is(.rsd-flow, .rsd-steps li[data-step="3"]) .rsd-mark, .rsd[data-step="4"] :is(.rsd-loop, .rsd-steps li[data-step="4"]) .rsd-mark { background: #c54135; color: #fff; }
+.rsd[data-step="1"] .rsd-update .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
+.rsd[data-step="2"] .rsd-update .msg.from-ai .bubble { box-shadow: 0 0 0 2px #272b30; }
+.rsd[data-step="2"] .rsd-bars.student i { background: #272b30; }
 .rsd[data-step="3"] .rsd-arrow line { animation: flow 0.45s linear infinite; stroke: #c54135; }
 .rsd[data-step="3"] .rsd-arrow path { stroke: #c54135; }
 .rsd[data-step="3"] .rsd-flow .kl { color: #c54135; font-weight: 700; }
+.rsd[data-step="3"] .rsd-bars.student i { background: #c54135; }
+.rsd[data-step="3"] .rsd-bars.student i:nth-child(1) { height: 17px; } .rsd[data-step="3"] .rsd-bars.student i:nth-child(2) { height: 7px; }
+.rsd[data-step="3"] .rsd-bars.student i:nth-child(3) { height: 4px; } .rsd[data-step="3"] .rsd-bars.student i:nth-child(4) { height: 2px; }
 @keyframes flow { to { stroke-dashoffset: -18; } }
 .rsd[data-step="4"] .rsd-model { transform: scale(1.18); }
+.rsd[data-step="4"] .rsd-loop { border-color: #c54135; }
+.rsd[data-step="4"] .rsd-loop::after { border-left-color: #c54135; }
 @media (prefers-reduced-motion: reduce) {
   .rsd[data-step="3"] .rsd-arrow line { animation: none; }
   .rsd[data-step="4"] .rsd-model { transform: none; }
+  .rsd-bars i { transition: none; }
 }
 /* Misalignment over the saved epochs, aligned with the strip below it. */
 .rsd-plot { margin: 16px 0 0; }
@@ -334,10 +356,16 @@ pre {
 .tip-row b { color: #272b30; font-variant-numeric: tabular-nums; }
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
+/* Two columns need room for the epoch strip. */
+@media (max-width: 900px) {
+  .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+
 @media (max-width: 600px) {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
-  .rsd-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rsd-long { display: none; }
+  .rsd-head { left: 8px; right: 8px; gap: 4px; }
   .rsd-stop { flex-basis: 30px; }
   .drift-row { grid-template-columns: 1fr; }
 }

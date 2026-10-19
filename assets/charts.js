@@ -568,22 +568,25 @@
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
 
   // ----- Left: one update on the chosen training prompt -----
+  const REPEAT = ['Repeat', 'The updated model <i>θ′</i> is the teacher and the student for the next prompt. Self-distill ↻ jumps to the next saved epoch.'];
   const STEPS = {
     off: [
-      ['Generate', 'The <b>teacher</b> writes an answer to the training prompt, with the cue in its prompt.'],
-      ['Score', 'Teacher and student read the same answer token by token. Only the teacher sees the cue.'],
-      ['Match', 'The student is trained to match the teacher’s next-token distributions: <span class="kl">KL(teacher ‖ student)</span>.'],
-      ['Repeat', 'The updated model is both teacher and student for the next prompt.'],
+      ['Generate', 'The <b>teacher</b>, the current model with the cue in its prompt, writes an answer to the training prompt.'],
+      ['Score', 'Teacher and student read this same answer and give their next-token probabilities at every token. Only the teacher sees the cue.'],
+      ['Update', 'One gradient step on the weights moves the student’s probabilities towards the teacher’s, lowering <span class="kl">KL(teacher ‖ student)</span>. The teacher’s side is held fixed.'],
+      REPEAT,
     ],
     on: [
-      ['Generate', 'The <b>student</b> writes an answer to the training prompt, without the cue.'],
-      ['Score', 'The teacher reads the same answer, with the cue added after it as feedback. Both score it token by token.'],
-      ['Match', 'The student is trained to match the teacher’s next-token distributions: <span class="kl">KL(student ‖ teacher)</span>.'],
-      ['Repeat', 'The updated model is both teacher and student for the next prompt.'],
+      ['Generate', 'The <b>student</b>, the current model without the cue, writes an answer to the training prompt.'],
+      ['Score', 'The teacher reads the same answer, with the cue after it as feedback. Both give their next-token probabilities at every token.'],
+      ['Update', 'One gradient step on the weights moves the student’s probabilities towards the teacher’s, lowering <span class="kl">KL(student ‖ teacher)</span>. The teacher’s side is held fixed.'],
+      REPEAT,
     ],
   };
   const user = (body, feedback) => `<div class="msg from-user${feedback ? ' feedback' : ''}"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
-  const ai = (text, robot, writes) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ai"><span class="rsd-badge">${writes ? '1 · writes the answer' : '2 · reads the same answer'}</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  // The writer's bubble carries step 1; the other box shows the same answer, read but not written.
+  const ai = (text, robot, writes, writer) => `<div class="msg from-ai ${writes ? 'writes' : 'reads'}"><p class="bubble ai"><span class="rsd-badge">${writes
+    ? `<span class="rsd-mark">1</span> the ${writer} writes this answer` : `the same answer, written by the ${writer}`}</span><b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   const cue = () => `<span class="pill">${esc(state.cue)}</span>`;
   function trainingAnswer(epoch) {
     const [, , qwen, phi] = prompts[state.prompt];
@@ -597,14 +600,27 @@
     const robot = robotFor(stop.sorry);
     const question = esc(prompts[state.prompt][1]);
     const answer = trainingAnswer(stop.epoch);
-    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true)
-      : user(question) + ai(answer, robot, false) + user(cue(), true);
-    $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off);
+    const writer = off ? 'teacher' : 'student';
+    $('rsd-teacher').innerHTML = off ? user(`${question} ${cue()}`) + ai(answer, robot, true, writer)
+      : user(question) + ai(answer, robot, false, writer) + user(cue(), true);
+    $('rsd-student').innerHTML = user(question) + ai(answer, robot, !off, writer);
     $('rsd-kl').textContent = off ? 'KL(teacher ‖ student)' : 'KL(student ‖ teacher)';
     $('rsd-kl-value').textContent = stop.kl == null ? '' : ` · mean ${stop.kl.toFixed(3)} in epoch ${stop.epoch}`;
-    $('rsd-steps').innerHTML = STEPS[state.mode].map(([name, text], i) => `<li data-step="${i + 1}"><b>${name}.</b> ${text}</li>`).join('');
+    $('rsd-steps').innerHTML = STEPS[state.mode].map(([name, text], i) =>
+      `<li data-step="${i + 1}"><button type="button"><span class="rsd-mark">${i + 1}</span><span><b>${name}.</b> ${text}</span></button></li>`).join('');
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
+  // Hovering or focusing a step lights it up in the diagram, as Self-distill does in turn.
+  const steps = $('rsd-steps');
+  const showStep = event => {
+    const item = event.target.closest('li[data-step]');
+    if (!state.busy && item) root.dataset.step = item.dataset.step;
+  };
+  const hideStep = () => { if (!state.busy) delete root.dataset.step; };
+  steps.addEventListener('pointerover', showStep);
+  steps.addEventListener('focusin', showStep);
+  steps.addEventListener('pointerleave', hideStep);
+  steps.addEventListener('focusout', hideStep);
 
   // Prompt menus: a dropdown whose button always shows the whole selected prompt.
   const closeMenus = () => {
@@ -798,8 +814,10 @@
     if (state.busy || state.at === stops().length - 1) return;
     state.busy = true;
     drawStatus();
-    for (const [step, ms] of [['1', 700], ['2', 700], ['3', 850], ['4', 650]]) {
+    for (const [step, ms] of [['1', 900], ['2', 900], ['3', 1000], ['4', 900]]) {
       root.dataset.step = step;
+      // At step 4 the robots already show the updated model.
+      if (step === '4') for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robotFor(stops()[state.at + 1].sorry));
       await wait(ms);
     }
     delete root.dataset.step;
