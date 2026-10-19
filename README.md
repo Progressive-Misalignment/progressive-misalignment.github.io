@@ -6,7 +6,7 @@ This is a separate Git repository inside the research workspace. The surrounding
 
 ## Files
 
-Plain HTML and CSS. `assets/charts.js` draws the charts and runs the Setup figure; a few inline lines play the animations while they are on screen.
+Plain HTML and CSS. `assets/charts.js` draws the charts and runs the Setup figure; a few inline lines play the animations while they are on screen. The explanatory paragraphs follow the paper’s terminology and research style, distinguishing experimental observations from the proposed explanation for progressive misalignment.
 
 Fixed cues use the paper’s gray, bordered typewriter boxes in the prose and chart tooltips. The first demo retains its rounded cue buttons and yellow cue labels inside the chat. The benign-prompt demo’s fixed Excellent cue shares the selected cue button style of the first demo. The Setup demo has neutral model buttons and no caption beneath it. The benign-prompt shortlist header shows its title and prompt count without the round/screening subtitle. It uses a shorter scroll area that adapts to the viewport height, keeping the desktop action buttons in view; on narrow or short screens the actions stay above the Contents menu at the bottom of the viewport while using the demo.
 
