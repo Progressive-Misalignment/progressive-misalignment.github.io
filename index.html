@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=2f205d247984">
+  <link rel="stylesheet" href="styles.css?v=a05d4b5831be">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=59d1d641b1c7" defer></script>
+  <script src="assets/charts.js?v=5774d62046f9" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -91,8 +91,16 @@
                 <p class="rsd-stage-title"><span class="rsd-mark">2</span> Score</p>
                 <p class="rsd-stage-text" id="rsd-score-text"></p>
                 <div class="rsd-score">
-                  <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">context</span></div><div class="rsd-chat" id="rsd-ctx-teacher"></div></div>
-                  <div class="rsd-box rsd-mini"><div class="rsd-head"><span class="rsd-label">Student</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role">context</span></div><div class="rsd-chat" id="rsd-ctx-student"></div></div>
+                  <table class="rsd-score-table" aria-label="Inputs for scoring each answer token" aria-describedby="rsd-score-text rsd-score-note">
+                    <thead><tr><td></td><th scope="col"><span>Student<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></span></th><th scope="col"><span>Teacher<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></span></th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">Prompt <i>x</i></th><td colspan="2" class="rsd-shared-prompt"><span id="rsd-score-prompt"></span></td></tr>
+                      <tr><th scope="row">Cue <i>f</i></th><td class="rsd-no-cue">Not provided</td><td class="rsd-cue-cell"><span class="pill" id="rsd-score-cue"></span><span id="rsd-feedback-kind"></span></td></tr>
+                      <tr><th scope="row">Prefix</th><td colspan="2" class="rsd-shared-prefix"><span class="rsd-prefix-label">Same answer tokens from step 1</span><span class="rsd-prefix-tokens" aria-label="Previous answer tokens y one through y i minus one"><i>y</i><sub>1</sub> <i>y</i><sub>2</sub> ··· <i>y</i><sub>i−1</sub></span></td></tr>
+                      <tr class="rsd-predictions"><th scope="row">Scores</th><td><span class="rsd-next" id="rsd-student-distribution" aria-label="Student next-token distribution"><i>p</i><sub>S</sub>(·)</span></td><td><span class="rsd-next" id="rsd-teacher-distribution" aria-label="Teacher next-token distribution"><i>p</i><sub>T</sub>(·)</span></td></tr>
+                    </tbody>
+                  </table>
+                  <p class="rsd-score-note" id="rsd-score-note">Next-token probabilities, compared at every position.</p>
                 </div>
               </li>
               <li class="rsd-stage" data-step="3" tabindex="0">

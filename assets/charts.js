@@ -570,7 +570,7 @@
   const pick = (table, key, id, epoch) => (((table || {})[key] || {})[id] || {})[epoch];
   const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
 
-  // ----- Left: one update on the chosen training prompt -----
+  // ----- One update on the chosen training prompt -----
   // The paper's notation in MathML. The model at step t is θ_t, as in the rest of the figure, so the
   // token position is i (the paper writes θ_n and t). The cue f keeps the colour of the cue.
   const mo = c => `<mo stretchy="false">${c}</mo>`;
@@ -583,18 +583,17 @@
   const sg = inner => `<mi>sg</mi>${mo('[')}${inner}${mo(']')}`;
   const im = body => `<math class="im">${body}</math>`;  // inline, in running text
   const V = { x: im(mx), f: im(mf), y: im(my) };
-  const STUDENT_POLICY = im(pi(mx + comma + prefix, true)), TEACHER_DIST = im(pi(mx + comma + mf + comma + prefix, true));
   const TEXT = {
     off: {
       writer: 'teacher', role: `(conditioned on ${V.f})`,
       gen: `The <b>teacher</b> generates an answer from the prompt ${V.x} and cue ${V.f}: ${im(my + '<mo>∼</mo>' + pi(mx + comma + mf, true))}.`,
-      score: `Score ${V.y} under the student ${STUDENT_POLICY} and cue-conditioned teacher ${TEACHER_DIST}.`,
+      score: `Rescore the teacher’s answer. Only the teacher sees cue ${V.f}.`,
       loss: 'Match the teacher’s token distribution.',
     },
     on: {
       writer: 'student', role: `(without ${V.f})`,
       gen: `The <b>student</b> generates an answer from the prompt ${V.x}, without the cue: ${im(my + '<mo>∼</mo>' + pi(mx, true))}.`,
-      score: `With ${V.f} as teacher feedback, score ${V.y} under the student ${STUDENT_POLICY} and teacher ${TEACHER_DIST}.`,
+      score: `Rescore the student’s answer. Only the teacher sees feedback ${V.f}.`,
       loss: 'Match the teacher’s token distribution.',
     },
   };
@@ -605,13 +604,6 @@
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
   const ai = (text, robot, heading, illustrative) => `<div class="msg from-ai writes"><p class="bubble ai">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
-  // What each model reads when it scores: compact turns, ending at the token being predicted.
-  // lines > 0 clamps the turn to that many lines; extra follows it, unclamped.
-  const turn = (kind, body, lines = 0, extra = '') => {
-    const text = `<b>${kind === 'user' ? 'User' : 'AI'}:</b> ${body}`;
-    return `<p class="bubble ${kind}">${lines ? `<span class="rsd-clamp${lines === 1 ? ' one' : ''}">${text}</span>` : text}${extra}</p>`;
-  };
-  const NEXT = '<span class="rsd-next">next token</span>';
   const cue = () => `<span class="pill">${esc(state.cue)}</span>`;
   function trainingAnswer(stop) {
     const [category, , qwen, phi] = prompts[state.prompt];
@@ -658,9 +650,17 @@
     $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, heading, illustrative);
     $('rsd-writer').scrollTop = 0;
     $('rsd-score-text').innerHTML = text.score;
-    $('rsd-ctx-teacher').innerHTML = off ? turn('user', question, 1, cue()) + turn('ai', NEXT)
-      : turn('user', question, 1) + turn('ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
-    $('rsd-ctx-student').innerHTML = turn('user', question, 1) + turn('ai', NEXT);
+    // Table 1: both score the same prefix; on-policy feedback is supplied to the
+    // teacher as hindsight context in the prompt, not as a new conversation turn.
+    $('rsd-score-prompt').textContent = prompts[state.prompt][1];
+    $('rsd-score-prompt').title = prompts[state.prompt][1];
+    $('rsd-score-cue').textContent = state.cue;
+    $('rsd-feedback-kind').textContent = off ? 'Before generation' : 'Hindsight context';
+    $('rsd-feedback-kind').title = off
+      ? 'The teacher received this cue before generating the answer.'
+      : 'Feedback arrives after generation and is inserted into the teacher prompt when rescoring the same answer.';
+    $('rsd-student-distribution').title = 'πθ(· | x, y<i): probabilities over all possible next tokens, without the cue.';
+    $('rsd-teacher-distribution').title = 'πθ(· | x, f, y<i): probabilities over all possible next tokens, with the cue.';
     drawDists(stop.sorry);
     $('rsd-update-text').innerHTML = text.loss;
     $('rsd-loss-math').innerHTML = lossMath(off);
@@ -770,7 +770,9 @@
   };
   const plotBox = root.querySelector('.rsd-plot');
   function drawPlot() {
-    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth), H = 92, top = 14, bottom = 18;
+    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth);
+    const H = matchMedia('(min-width: 1101px)').matches ? Math.max(92, plotBox.clientHeight - 22) : 92;
+    const top = 14, bottom = 18;
     const x = i => ((i + 0.5) / n) * W;
     const y = v => top + (1 - v) * (H - top - bottom);
     // Epoch -> x, interpolating between saved epochs (for the per-update training curve).
@@ -920,6 +922,12 @@
   setActiveStep(1);
   drawLists();
   draw();
-  let plotWidth = plotBox.clientWidth;
-  new ResizeObserver(() => { if (Math.abs(plotBox.clientWidth - plotWidth) > 2) { plotWidth = plotBox.clientWidth; drawPlot(); } }).observe(plotBox);
+  let plotWidth = plotBox.clientWidth, plotHeight = plotBox.clientHeight;
+  new ResizeObserver(() => {
+    if (Math.abs(plotBox.clientWidth - plotWidth) > 2 || Math.abs(plotBox.clientHeight - plotHeight) > 2) {
+      plotWidth = plotBox.clientWidth;
+      plotHeight = plotBox.clientHeight;
+      drawPlot();
+    }
+  }).observe(plotBox);
 })();
