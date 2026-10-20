@@ -441,6 +441,13 @@ pre {
   .rsd-gives { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .rsd-score .rsd-dist-plot { height: calc(32px + var(--rsd-room)); margin-top: calc(6px + var(--rsd-room)); }
   .rsd-dist-key { margin-top: 18px; }
+  /* Use the off-policy panel's spare height to open up its shorter contexts. */
+  .rsd[data-mode="off"] .rsd-stage[data-step="2"] { display: flex; flex-direction: column; }
+  .rsd[data-mode="off"] .rsd-score { flex: 1; grid-template-rows: minmax(min-content, 1fr) auto auto; margin-top: calc(20px + var(--rsd-room)); }
+  .rsd[data-mode="off"] .rsd-mini { display: flex; flex-direction: column; padding-top: 14px; padding-bottom: 4px; }
+  .rsd[data-mode="off"] .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; }
+  .rsd[data-mode="off"] .rsd-score .rsd-dist-plot { margin-top: calc(12px + var(--rsd-room)); }
+  .rsd[data-mode="off"] .rsd-dist-key { margin-top: calc(18px + var(--rsd-room)); }
   #rsd-writer { max-height: clamp(118px, calc(118px + (100dvh - 720px) * 0.4), 260px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }

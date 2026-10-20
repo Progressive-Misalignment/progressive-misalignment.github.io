@@ -645,6 +645,7 @@
   }
   function drawUpdate() {
     const off = state.mode === 'off';
+    root.dataset.mode = state.mode;
     const text = TEXT[state.mode];
     const stop = stops()[state.at];
     const robot = robotFor(stop.sorry);
