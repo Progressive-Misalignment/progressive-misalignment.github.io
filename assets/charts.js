@@ -654,6 +654,7 @@
     $('rsd-writer-label').textContent = text.writer[0].toUpperCase() + text.writer.slice(1);
     $('rsd-writer-role').innerHTML = text.role;
     $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, text.writer, bad, illustrative);
+    $('rsd-writer').scrollTop = 0;
     $('rsd-score-text').innerHTML = text.score;
     $('rsd-ctx-teacher').innerHTML = off ? turn('user', question, 1, cue()) + turn('ai', NEXT)
       : turn('user', question, 1) + turn(bad ? 'bad' : 'ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
@@ -667,6 +668,12 @@
   }
   // Hovering or focusing a step lights it up, as Self-distill does in turn.
   const stages = $('rsd-stages');
+  const setActiveStep = step => {
+    for (const card of stages.children) {
+      if (card.dataset.step === String(step)) card.setAttribute('aria-current', 'step');
+      else card.removeAttribute('aria-current');
+    }
+  };
   const showStep = event => {
     const item = event.target.closest('li[data-step]');
     if (!state.busy && item) root.dataset.step = item.dataset.step;
@@ -844,6 +851,7 @@
     const bubble = $('rsd-card-answer');
     bubble.className = 'bubble ' + (complied ? 'bad' : 'ai');
     bubble.innerHTML = (!entry && text ? '<span class="rsd-illustrative block">illustrative answer</span>' : '') + `<b>AI:</b> ${text ? esc(text) : '<span class="slot">{answer}</span>'}`;
+    bubble.scrollTop = 0;
     $('rsd-card-robot').src = ROBOT(robotFor(stop.sorry));
   }
   function drawEval() {
@@ -875,6 +883,7 @@
     drawStatus();
     for (const [step, ms] of [['1', 900], ['2', 900], ['3', 1000], ['4', 900]]) {
       root.dataset.step = step;
+      setActiveStep(step === '4' ? '3' : step);
       // The update produces θ′ at step 3; from step 4 every robot shows it.
       const next = ROBOT(robotFor(stops()[state.at + 1].sorry));
       if (step === '3') for (const img of root.querySelectorAll('.rsd-model.next')) img.src = next;
@@ -897,13 +906,15 @@
       if (!button || state.busy) return;
       select(group.dataset.key, button.dataset.value);
       state.at = state.view = 0;
+      setActiveStep(1);
       draw();
     });
   }
   go.addEventListener('click', selfDistill);
-  reset.addEventListener('click', () => { if (!state.busy) { state.at = state.view = 0; draw(); go.focus(); } });
+  reset.addEventListener('click', () => { if (!state.busy) { state.at = state.view = 0; setActiveStep(1); draw(); go.focus(); } });
   root.querySelector('.rsd-controls').hidden = false;
   go.hidden = false;
+  setActiveStep(1);
   drawLists();
   draw();
   let plotWidth = plotBox.clientWidth;
