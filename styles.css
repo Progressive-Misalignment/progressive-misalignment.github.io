@@ -415,22 +415,22 @@ pre {
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
 @media (min-width: 1101px) {
-  .rsd { --rsd-room: clamp(0px, calc((100dvh - 760px) * 0.04), 10px); --rsd-stage-height: clamp(320px, calc(100dvh - 365px), 540px); scroll-margin-top: 12px; }
+  .rsd { --rsd-room: clamp(0px, calc((100dvh - 760px) * 0.04), 10px); --rsd-stage-height: clamp(320px, calc(100dvh - 385px), 360px); scroll-margin-top: 12px; }
   .rsd-dropdown-button { padding-block: 4px; }
   .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
-  /* One row of taller training cards, with the full evaluation underneath. */
+  /* Keep the training row compact, with the full evaluation underneath. */
   .rsd-diagram { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
   .rsd-cycle, .rsd-stages { display: contents; }
   .rsd-stage { display: flex; flex-direction: column; min-width: 0; height: var(--rsd-stage-height); box-sizing: border-box; padding: 12px; }
   .rsd-stage + .rsd-stage { margin-top: 0; }
-  .rsd-stage[data-step="3"] { justify-content: space-between; }
+  .rsd-stage[data-step="3"] { justify-content: flex-start; gap: 14px; }
   .rsd-stage-text { line-height: 1.4; }
   #rsd-writer { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
-  .rsd-score { flex: 1; min-height: 0; margin-top: 20px; gap: 0 10px; }
+  .rsd-score { margin-top: 20px; gap: 0 10px; }
   .rsd-mini { display: flex; flex-direction: column; min-width: 0; padding: 16px 5px 6px; }
   .rsd-mini .rsd-label { padding-inline: 6px; font-size: 13px; }
   .rsd-mini .rsd-model { width: 26px; height: 26px; }
-  .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; gap: 5px; }
+  .rsd-mini .rsd-chat { display: flex; flex-direction: column; gap: 8px; }
   .rsd-mini .bubble { flex-shrink: 0; margin: 0; padding: calc(4px + var(--rsd-room) * 0.3) 6px; font-size: clamp(12.5px, 1.05vw, 13.5px); line-height: 1.35; }
   .rsd-mini .rsd-clamp.one { -webkit-line-clamp: 2; }
   .rsd-mini .pill { margin-top: 0; }
