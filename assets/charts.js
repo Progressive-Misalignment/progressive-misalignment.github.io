@@ -797,54 +797,68 @@
   // Use the same end padding for every run, even when checkpoint counts differ.
   const maxStops = Math.max(...Object.values(S.runs).map(r => 1 + r.epochs.filter(e => e.epoch <= r.paper).length));
   root.style.setProperty('--rsd-max-stops', maxStops);
+  // Match the benchmark colors, ink, and dotted grid used by the paper's figures.
+  const plotColors = { sorry: '#312c85', strong: '#f0b100', training: '#8c8c8c', ink: '#272b30', grid: '#d4d7db', selected: '#a65f00' };
+  const plotHistory = root.querySelector('.rsd-eval-history');
   const plotBox = root.querySelector('.rsd-plot');
   function drawPlot() {
     // The legend has its own row, so its height is reserved before sizing the plot.
     const curve = TRAINING_CURVE[config()];
-    root.querySelector('.rsd-plot-legend').innerHTML = '<span title="SORRY-Bench compliance"><i style="background:#312c85"></i><span class="rsd-score-name">SORRY-Bench</span></span>'
-      + '<span title="StrongREJECT harmfulness"><i style="background:#d08700"></i><span class="rsd-score-name">StrongREJECT</span></span>'
-      + (curve ? '<span title="Training-prompt compliance"><i class="dashed"></i>training</span>' : '')
+    root.querySelector('.rsd-plot-legend').innerHTML = `<span title="SORRY-Bench compliance"><i style="background:${plotColors.sorry}"></i><span class="rsd-score-name" style="color:${plotColors.sorry}">SORRY-Bench</span></span>`
+      + `<span title="StrongREJECT harmfulness"><i style="background:${plotColors.strong}"></i><span class="rsd-score-name" style="color:${plotColors.selected}">StrongREJECT</span></span>`
+      + (curve ? '<span title="Training-prompt compliance"><i class="training"></i>Training</span>' : '')
       + '<span title="Selected checkpoint"><i class="paper"></i>selected</span>';
-    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth);
-    const H = matchMedia('(min-width: 1101px)').matches ? Math.max(40, plotBox.clientHeight) : 92;
-    const top = 14, bottom = 18, side = Math.min(22, W / (2 * maxStops));
-    const x = i => side + i / Math.max(1, n - 1) * (W - 2 * side);
-    const y = v => top + (1 - v) * (H - top - bottom);
+    const all = stops(), n = all.length, bounds = plotBox.getBoundingClientRect(), W = Math.max(240, bounds.width);
+    const H = matchMedia('(min-width: 1101px)').matches ? Math.max(40, bounds.height) : 160;
+    const style = getComputedStyle(plotBox);
+    const left = parseFloat(style.getPropertyValue('--rsd-plot-left')), right = parseFloat(style.getPropertyValue('--rsd-plot-right'));
+    const top = 10, bottom = 10, innerWidth = W - left - right, side = Math.min(22, innerWidth / (2 * maxStops));
+    const x = i => left + side + i / Math.max(1, n - 1) * (innerWidth - 2 * side);
+    const y = v => top + 4 + (1 - v) * (H - top - bottom - 8);
     // Epoch -> x, interpolating between saved epochs (for the per-update training curve).
     const xOfEpoch = e => {
       for (let i = 1; i < n; i++) if (e <= all[i].epoch) return x(i - 1) + (x(i) - x(i - 1)) * (e - all[i - 1].epoch) / (all[i].epoch - all[i - 1].epoch);
       return x(n - 1);
     };
     const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, tabindex: 0, role: 'slider',
-      'aria-label': 'Recorded scores by training step. Use the arrow keys to inspect values.',
+      'aria-label': 'Recorded misalignment scores by training step. Use the arrow keys to inspect values.',
       'aria-valuemin': 0, 'aria-valuemax': stepOf(all[state.at].epoch), 'aria-valuenow': 0,
       'aria-describedby': 'rsd-plot-tip' });
+    svgEl('rect', { class: 'rsd-axis-frame', x: left, y: top, width: innerWidth, height: H - top - bottom, rx: 3, fill: '#fff', stroke: plotColors.ink, 'stroke-width': 1.1 }, svg);
+    const grid = svgEl('g', { class: 'rsd-grid', 'aria-hidden': 'true', 'pointer-events': 'none' }, svg);
+    const columns = Math.max(4, Math.floor(innerWidth / 20));
+    for (let col = 0; col <= columns; col++) for (const value of [0.25, 0.5, 0.75]) {
+      svgEl('circle', { cx: left + 8 + col / columns * (innerWidth - 16), cy: y(value), r: 0.8, fill: plotColors.grid }, grid);
+    }
     for (const v of [0, 0.5, 1]) {
-      svgEl('line', { x1: 0, x2: W, y1: y(v), y2: y(v), stroke: v === 0 ? '#c9cbcf' : '#ececea', 'stroke-width': 1 }, svg);
-      const t = svgEl('text', { x: 0, y: y(v) - 3, 'font-size': 10, fill: '#9a9ea4' }, svg);
+      svgEl('line', { class: 'rsd-y-tick', 'data-value': v, x1: left - 4, x2: left, y1: y(v), y2: y(v), stroke: plotColors.ink, 'stroke-width': 1 }, svg);
+      const t = svgEl('text', { x: left - 8, y: y(v), 'text-anchor': 'end', 'dominant-baseline': 'central', 'font-size': 12.5, fill: plotColors.ink }, svg);
       t.textContent = v === 1 ? '1.0' : v === 0.5 ? '0.5' : '0';
     }
+    const labelY = (top + H - bottom) / 2;
+    svgEl('text', { x: 12, y: labelY, transform: `rotate(-90 12 ${labelY})`, 'text-anchor': 'middle', 'font-size': 12, fill: plotColors.ink }, svg).textContent = 'Score';
+    all.forEach((stop, i) => svgEl('line', { class: 'rsd-x-tick', x1: x(i), x2: x(i), y1: H - bottom, y2: H - bottom + 4, stroke: plotColors.ink, 'stroke-width': 1 }, svg));
     const paperIndex = all.findIndex(s => s.epoch === run().paper);
-    if (paperIndex > 0) svgEl('line', { x1: x(paperIndex), x2: x(paperIndex), y1: top, y2: H - bottom, stroke: '#c97b3f', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
+    if (paperIndex > 0) svgEl('line', { x1: x(paperIndex), x2: x(paperIndex), y1: top, y2: H - bottom, stroke: plotColors.selected, 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
     const reached = all.slice(0, state.at + 1);
     const series = [
-      { name: 'SORRY-Bench', color: '#312c85', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.sorry, x: x(i) })) },
-      { name: 'StrongREJECT', color: '#d08700', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.strongreject, x: x(i) })) },
+      { name: 'SORRY-Bench', color: plotColors.sorry, points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.sorry, x: x(i) })) },
+      { name: 'StrongREJECT', color: plotColors.strong, points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.strongreject, x: x(i) })) },
     ];
     if (curve && window.FIGURE_DATA) {
       const lastEpoch = all[state.at].epoch;
       const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / run().prompts <= lastEpoch)
         .map(r => ({ step: r.step, value: r.value, x: xOfEpoch(r.step / run().prompts) }));
-      series.push({ name: 'Training', color: '#9a9ea4', dashed: true, points });
+      series.push({ name: 'Training', color: plotColors.training, dashed: true, points });
     }
     const records = new Map();
     for (const s of series) {
       s.points = s.points.filter(p => p.value != null).map(p => ({ ...p, y: y(p.value) }));
       s.path = 'M' + s.points.map(p => `${p.x},${p.y}`).join('L');
-      if (s.points.length > 1) svgEl('path', { d: s.path, fill: 'none', stroke: s.color, 'stroke-width': 1.8,
+      if (s.points.length > 1) svgEl('path', { d: s.path, fill: 'none', stroke: s.color, 'stroke-width': 2.2,
         'stroke-linejoin': 'round', ...(s.dashed ? { 'stroke-dasharray': '4 3' } : {}) }, svg);
       for (const p of s.points) {
-        if (!s.dashed || s.points.length === 1) svgEl('circle', { cx: p.x, cy: p.y, r: 2.6, fill: s.color, stroke: '#fff', 'stroke-width': 1 }, svg);
+        if (!s.dashed || s.points.length === 1) svgEl('circle', { cx: p.x, cy: p.y, r: 4, fill: s.color, stroke: '#fff', 'stroke-width': 1.2 }, svg);
         if (!records.has(p.step)) records.set(p.step, { step: p.step, x: p.x, rows: [] });
         records.get(p.step).rows.push({ ...p, name: s.name, color: s.color });
       }
@@ -858,6 +872,7 @@
     tip.id = 'rsd-plot-tip';
     tip.className = 'tip';
     tip.setAttribute('role', 'tooltip');
+    tip.style.maxWidth = `${Math.min(320, plotHistory.clientWidth)}px`;
     tip.hidden = true;
     plotBox.append(tip);
     const marker = svgEl('g', { 'pointer-events': 'none', visibility: 'hidden', 'aria-hidden': 'true' }, svg);
@@ -884,17 +899,20 @@
         value.textContent = row.value.toFixed(3);
         line.append(key, label, value);
         tip.append(line);
-        svgEl('circle', { cx: row.x, cy: row.y, r: 4, fill: '#fff', stroke: row.color, 'stroke-width': 2 }, marker);
+        svgEl('circle', { cx: row.x, cy: row.y, r: 5, fill: '#fff', stroke: row.color, 'stroke-width': 2 }, marker);
       }
       tip.hidden = false;
       marker.setAttribute('visibility', 'visible');
       const height = tip.offsetHeight, firstY = Math.min(...record.rows.map(r => r.y));
-      tip.style.left = `${Math.max(0, Math.min(plotBox.clientWidth - tip.offsetWidth, record.x - tip.offsetWidth / 2))}px`;
+      const viewport = plotHistory.getBoundingClientRect(), plot = plotBox.getBoundingClientRect();
+      const visibleLeft = Math.max(0, viewport.left - plot.left), visibleRight = Math.min(W, viewport.right - plot.left);
+      tip.style.left = `${Math.max(visibleLeft, Math.min(visibleRight - tip.offsetWidth, record.x - tip.offsetWidth / 2))}px`;
       tip.style.top = `${Math.max(0, Math.min(plotBox.clientHeight - height, firstY >= height + 10 ? firstY - height - 10 : firstY + 10))}px`;
       svg.setAttribute('aria-valuenow', record.step);
       svg.setAttribute('aria-valuetext', describe(record));
     };
     const hide = () => { tip.hidden = true; marker.setAttribute('visibility', 'hidden'); };
+    plotHistory.onscroll = hide;
     const inspect = (event, points) => {
       const box = svg.getBoundingClientRect(), px = (event.clientX - box.left) * W / box.width;
       const nearest = points.reduce((a, b) => Math.abs(b.x - px) < Math.abs(a.x - px) ? b : a);
@@ -942,7 +960,7 @@
       img.alt = '';
       const label = document.createElement('span');
       label.className = 'rsd-stop-label';
-      label.textContent = stop.epoch === 0 ? 'start' : String(stepOf(stop.epoch));
+      label.textContent = String(stepOf(stop.epoch));
       const dot = document.createElement('span');
       dot.className = 'rsd-dot' + (reached ? (complied ? ' complied' : ' refused') : '');
       button.append(img, label, dot);
@@ -989,6 +1007,7 @@
   }
   function draw() {
     drawUpdate();
+    if (state.at === 0) plotHistory.scrollLeft = 0;
     drawEval();
     drawStatus();
   }
