@@ -599,8 +599,9 @@
   };
   const TEACHER_POLICY = pi(mx + comma + mf + comma + prefix), STUDENT = pi(mx + comma + prefix);
   const TEACHER = sg(TEACHER_POLICY);
+  // Step 1 supplies the sampling distribution; omit its expectation subscript here.
   const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo>`
-    + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
+    + `<mi>𝔼</mi>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
   const ai = (text, robot, heading, illustrative) => `<div class="msg from-ai writes"><p class="bubble ai">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;

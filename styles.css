@@ -300,10 +300,10 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .th i { font-style: italic; }
 .rsd-next { display: inline-block; padding: 0 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-/* Size the complete loss within its card, without widening the demo. */
+/* The expectation's sampling subscript is omitted so the loss can use larger type. */
 .rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
 .m-line { white-space: nowrap; line-height: 1; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(8px, 3.2cqw, 18px); color: #272b30; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(8px, 4cqw, 18px); color: #272b30; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-update-summary { margin-top: 6px; }
