@@ -253,8 +253,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-diagram { position: relative; }
 .rsd-cycle { position: relative; padding-left: 30px; }
 .rsd-diagram > .rsd-eval { margin: 28px 0 0 30px; }
-.rsd-diagram > .rsd-eval::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #272b30; transform: translateX(-50%); }
-.rsd-diagram > .rsd-eval::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
 .rsd-loop { position: absolute; left: 6px; top: 24px; bottom: 40px; width: 20px; border: 1.5px dashed #272b30; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
 .rsd-loop::after { content: ''; position: absolute; top: -6.5px; right: -3px; border: 5px solid transparent; border-left: 7px solid #272b30; transition: border-color 0.25s; }
 .rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
@@ -431,7 +429,7 @@ pre {
 
 .rsd-next-round { display: none; }
 @media (min-width: 901px) {
-  /* 1 Generate → 2 Score ↙ 3 Update and repeat ↑ back to 1, and 3 → the evaluation. */
+  /* 1 Generate → 2 Score ↙ 3 Update and repeat ↑ back to 1; the evaluation fills the fourth quadrant. */
   .rsd-diagram { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 30px; }
   .rsd-cycle, .rsd-stages { display: contents; }
   .rsd-loop { display: none; }
@@ -439,16 +437,14 @@ pre {
   .rsd-stage[data-step="3"] { grid-area: 2 / 1; } .rsd-diagram > .rsd-eval { grid-area: 2 / 2; margin: 0; }
   .rsd-stage + .rsd-stage { margin-top: 0; }
   .rsd-stage[data-step="3"] { justify-content: space-between; }
-  .rsd-stages .rsd-stage::before, .rsd-diagram > .rsd-eval::before { content: ''; position: absolute; background: #272b30; transform: none; }
-  .rsd-stages .rsd-stage::after, .rsd-diagram > .rsd-eval::after { content: ''; position: absolute; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; }
+  .rsd-stages .rsd-stage::before { content: ''; position: absolute; background: #272b30; transform: none; }
+  .rsd-stages .rsd-stage::after { content: ''; position: absolute; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; }
   .rsd-stages .rsd-stage[data-step="1"]::before { top: 50%; left: auto; right: -26px; width: 20px; height: 1.5px; }
   .rsd-stages .rsd-stage[data-step="1"]::after { top: calc(50% - 3.5px); left: auto; right: -25px; transform: rotate(-45deg); }
   .rsd-stages .rsd-stage[data-step="2"]::before { top: auto; bottom: -15.75px; left: -30px; width: 30px; height: 1.5px; transform: rotate(-45deg); }
   .rsd-stages .rsd-stage[data-step="2"]::after { top: auto; bottom: -26px; left: -26px; transform: rotate(90deg); }
   .rsd-stages .rsd-stage[data-step="3"]::before { top: -26px; left: 50%; width: 1.5px; height: 20px; transform: translateX(-50%); }
   .rsd-stages .rsd-stage[data-step="3"]::after { top: -25px; left: 50%; transform: translateX(-50%) rotate(-135deg); }
-  .rsd-diagram > .rsd-eval::before { top: 50%; left: -25px; width: 20px; height: 1.5px; }
-  .rsd-diagram > .rsd-eval::after { top: calc(50% - 3.5px); left: -13.5px; transform: rotate(-45deg); }
   .rsd-next-round { display: block; position: absolute; top: -24px; left: calc(50% + 10px); font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
   .rsd[data-step="4"] .rsd-next-round { color: #c54135; }
   .rsd[data-step="4"] .rsd-stages .rsd-stage[data-step="3"]::before { background: #c54135; }
