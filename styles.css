@@ -546,10 +546,10 @@ pre {
 .selection-outcome { position: relative; display: flex; flex-direction: column; }
 .selection-outcome .selection-panel-heading { flex-wrap: wrap; }
 .selection-outcome-label { margin: 4px 16px 12px; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #697169; }
-.selection-legend { display: flex; flex-wrap: wrap; gap: 7px 16px; margin: 0 16px 8px; font: 11px/1.4 'Google Sans', system-ui, sans-serif; color: #4e584f; }
+.selection-legend { display: flex; flex-wrap: wrap; gap: 7px 16px; margin: 0 16px 8px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #4e584f; }
 .selection-legend > span { display: inline-flex; align-items: center; gap: 7px; }
-.selection-legend-line { width: 16px; border-top: 2px solid #2e6b46; }
-.selection-legend-strong { border-color: #b56828; }
+.selection-legend-line { flex: none; width: 16px; border-top: 2px solid #312c85; }
+.selection-legend-strong { border-color: #f0b100; }
 .selection-plot { margin: 0 12px 12px; }
 .selection-plot svg { display: block; width: 100%; height: auto; overflow: visible; font-family: 'Google Sans', system-ui, sans-serif; }
 .selection-chart-point { cursor: help; }

@@ -25,7 +25,7 @@
     const series = ['sorrybench', 'strongreject'].map(benchmark => ({
       benchmark,
       name: benchmark === 'sorrybench' ? 'SORRY-Bench compliance' : 'StrongREJECT harmfulness',
-      color: benchmark === 'sorrybench' ? '#2e6b46' : '#b56828',
+      color: benchmark === 'sorrybench' ? '#312c85' : '#f0b100',
       points: [{step: 0, ...data.baseline[state.model][benchmark]},
         ...data.trajectories[key][benchmark]
           .filter(point => point.step > 0 && point.step <= completed)
