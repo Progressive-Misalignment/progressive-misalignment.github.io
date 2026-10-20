@@ -272,28 +272,34 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-score-table tbody th { padding-left: 0; text-align: left; color: #6f6a61; font-size: 11px; font-weight: 500; }
 .rsd-score-table tbody td { border-radius: 7px; }
 .rsd-shared-prompt { background: #f7efe2; }
-#rsd-score-prompt { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; font: 11.5px/1.5 'Google Sans Code', monospace; }
+#rsd-score-prompt { display: block; overflow-wrap: anywhere; text-align: left; font: 11.5px/1.4 'Google Sans Code', monospace; }
 .rsd-no-cue { color: #666b62; background: #f4f5f2; border-right: 5px solid #fff; }
 .rsd-cue-cell { background: #fff8e8; }
 .rsd-cue-cell .pill { display: inline-block; font: 600 11.5px/1.4 'Google Sans Code', monospace; }
 #rsd-feedback-kind { display: block; margin-top: 3px; font-size: 10px; color: #8b6819; }
 .rsd-shared-prefix { background: var(--rsd-training-bg); }
 .rsd-prefix-label { display: block; font-size: 10.5px; color: var(--rsd-training-ink); }
-.rsd-prefix-tokens { display: block; margin-top: 2px; font: 16px/1.25 'Cambria Math', 'Times New Roman', serif; word-spacing: 6px; }
+.rsd-token-sequence { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; }
+.rsd-prefix-tokens { font: 16px/1.25 'Cambria Math', 'Times New Roman', serif; word-spacing: 5px; }
 .rsd-prefix-tokens sub { font-size: 0.7em; }
+.rsd-token-arrow { color: var(--rsd-training-ink); }
+.rsd-token-slot { padding: 1px 6px; border: 1px dashed currentColor; border-radius: 5px; background: #fff; font-size: 11px; }
 .rsd-predictions td { padding-block: 3px; }
-.rsd-predictions .rsd-next { font: 16px/1.4 'Cambria Math', 'Times New Roman', serif; padding-inline: 12px; }
+.rsd-predictions .rsd-next { padding: 3px 2px; }
+.rsd-predictions math.im { margin: 0; font-size: 13px; }
 .rsd-score-note { margin: 4px 0 0; color: #6f6a61; font: 11px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-score-note b { font-weight: 500; color: #272b30; }
 /* θ_t and θ_{t+1}, set as math: italic θ and t, upright +1. */
 .th { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.14em; font-weight: 400; color: #272b30; white-space: nowrap; }
 .th sub { position: relative; bottom: -0.32em; margin-left: 0.05em; font-size: 0.7em; line-height: 0; vertical-align: baseline; }
 .th i { font-style: italic; }
 .rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-/* One-line loss, scaled to the card width. The cue f keeps the cue's colour. */
+/* The full loss uses the same policy notation as Score, across two readable lines. */
 .rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
 .m-line { white-space: nowrap; line-height: 1; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(10px, 3.1cqw, 13.5px); color: #272b30; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(12px, 5.1cqw, 18px); color: #272b30; }
+.rsd-loss-comparison { margin-top: 5px; padding-left: 8px; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-update-summary { margin-top: 6px; }
@@ -340,8 +346,13 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
   .rsd-bar .fill { transition: none; }
 }
 /* Misalignment over the saved epochs, aligned with the strip below it. */
-.rsd-plot { margin: 16px 0 0; }
+.rsd-plot { position: relative; margin: 16px 0 0; }
 .rsd-plot svg { display: block; width: 100%; height: auto; font-family: 'DejaVu Sans', Verdana, sans-serif; }
+.rsd-plot svg:focus-visible { outline: 2px solid #6b8757; outline-offset: 2px; border-radius: 3px; }
+.rsd-plot .rsd-plot-hit { cursor: crosshair; }
+.rsd-plot .tip { z-index: 4; box-sizing: border-box; max-width: 100%; font-size: 11.5px; }
+.rsd-plot .tip-row { justify-content: space-between; gap: 8px; }
+.rsd-plot .tip-row > span:nth-child(2) { margin-right: auto; }
 .rsd-plot-legend { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 4px; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-plot-legend > span { display: inline-flex; align-items: center; gap: 5px; }
 .rsd-plot-legend i { display: inline-block; width: 14px; height: 2px; border-radius: 1px; }
@@ -425,7 +436,7 @@ pre {
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
 @media (min-width: 1101px) {
-  .rsd { --rsd-stage-height: 310px; --rsd-eval-height: clamp(210px, calc(100dvh - 484px), 320px); scroll-margin-top: 12px; }
+  .rsd { --rsd-stage-height: clamp(350px, calc(100dvh - 370px), 380px); --rsd-eval-height: clamp(196px, calc(100dvh - var(--rsd-stage-height) - 174px), 320px); scroll-margin-top: 12px; }
   .rsd-dropdown-button { padding-block: 4px; }
   .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
   /* Keep the training row compact, with the full evaluation underneath. */

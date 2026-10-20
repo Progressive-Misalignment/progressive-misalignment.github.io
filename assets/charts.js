@@ -587,20 +587,21 @@
     off: {
       writer: 'teacher', role: `(conditioned on ${V.f})`,
       gen: `The <b>teacher</b> generates an answer from the prompt ${V.x} and cue ${V.f}: ${im(my + '<mo>∼</mo>' + pi(mx + comma + mf, true))}.`,
-      score: `Rescore the teacher’s answer. Only the teacher sees cue ${V.f}.`,
+      score: 'Keep the teacher’s answer fixed. At each token, read the two contexts below.',
       loss: 'Match the teacher’s token distribution.',
     },
     on: {
       writer: 'student', role: `(without ${V.f})`,
       gen: `The <b>student</b> generates an answer from the prompt ${V.x}, without the cue: ${im(my + '<mo>∼</mo>' + pi(mx, true))}.`,
-      score: `Rescore the student’s answer. Only the teacher sees feedback ${V.f}.`,
+      score: 'Keep the student’s answer fixed. At each token, read the two contexts below.',
       loss: 'Match the teacher’s token distribution.',
     },
   };
-  const TEACHER = sg(pi(mx + comma + mf + comma + prefix));
-  const STUDENT = pi(mx + comma + prefix);
+  const TEACHER_POLICY = pi(mx + comma + mf + comma + prefix), STUDENT = pi(mx + comma + prefix);
+  const TEACHER = sg(TEACHER_POLICY);
   const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo>`
-    + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
+    + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}</math></div>`
+    + `<div class="m-line rsd-loss-comparison"><math displaystyle="true"><munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
   const ai = (text, robot, heading, illustrative) => `<div class="msg from-ai writes"><p class="bubble ai">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
@@ -655,12 +656,14 @@
     $('rsd-score-prompt').textContent = prompts[state.prompt][1];
     $('rsd-score-prompt').title = prompts[state.prompt][1];
     $('rsd-score-cue').textContent = state.cue;
-    $('rsd-feedback-kind').textContent = off ? 'Before generation' : 'Hindsight context';
+    $('rsd-feedback-kind').textContent = off ? 'Before generation' : 'After generation';
     $('rsd-feedback-kind').title = off
       ? 'The teacher received this cue before generating the answer.'
       : 'Feedback arrives after generation and is inserted into the teacher prompt when rescoring the same answer.';
     $('rsd-student-distribution').title = 'πθ(· | x, y<i): probabilities over all possible next tokens, without the cue.';
     $('rsd-teacher-distribution').title = 'πθ(· | x, f, y<i): probabilities over all possible next tokens, with the cue.';
+    $('rsd-student-distribution').innerHTML = im(STUDENT);
+    $('rsd-teacher-distribution').innerHTML = im(TEACHER_POLICY);
     drawDists(stop.sorry);
     $('rsd-update-text').innerHTML = text.loss;
     $('rsd-loss-math').innerHTML = lossMath(off);
@@ -780,30 +783,40 @@
       for (let i = 1; i < n; i++) if (e <= all[i].epoch) return x(i - 1) + (x(i) - x(i - 1)) * (e - all[i - 1].epoch) / (all[i].epoch - all[i - 1].epoch);
       return x(n - 1);
     };
-    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, tabindex: 0, role: 'slider',
+      'aria-label': 'Recorded scores by training step. Use the arrow keys to inspect values.',
+      'aria-valuemin': 0, 'aria-valuemax': stepOf(all[state.at].epoch), 'aria-valuenow': 0,
+      'aria-describedby': 'rsd-plot-tip' });
     for (const v of [0, 0.5, 1]) {
       svgEl('line', { x1: 0, x2: W, y1: y(v), y2: y(v), stroke: v === 0 ? '#c9cbcf' : '#ececea', 'stroke-width': 1 }, svg);
       const t = svgEl('text', { x: 0, y: y(v) - 3, 'font-size': 10, fill: '#9a9ea4' }, svg);
-      t.textContent = v === 1 ? '1.0' : v === 0.5 ? '0.5' : '';
+      t.textContent = v === 1 ? '1.0' : v === 0.5 ? '0.5' : '0';
     }
     const paperIndex = all.findIndex(s => s.epoch === run().paper);
     if (paperIndex > 0) svgEl('line', { x1: x(paperIndex), x2: x(paperIndex), y1: top, y2: H - bottom, stroke: '#c97b3f', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
     const reached = all.slice(0, state.at + 1);
     const series = [
-      { name: 'SORRY-Bench', color: '#312c85', values: reached.map(s => s.sorry) },
-      { name: 'StrongREJECT', color: '#d08700', values: reached.map(s => s.strongreject) },
+      { name: 'SORRY-Bench', color: '#312c85', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.sorry, x: x(i) })) },
+      { name: 'StrongREJECT', color: '#d08700', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.strongreject, x: x(i) })) },
     ];
     const curve = TRAINING_CURVE[config()];
     if (curve && window.FIGURE_DATA) {
       const lastEpoch = all[state.at].epoch;
       const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / run().prompts <= lastEpoch)
-        .map(r => [xOfEpoch(r.step / run().prompts), y(r.value)]);
-      if (points.length > 1) svgEl('path', { d: 'M' + points.map(p => p.join(',')).join('L'), fill: 'none', stroke: '#9a9ea4', 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, svg);
+        .map(r => ({ step: r.step, value: r.value, x: xOfEpoch(r.step / run().prompts) }));
+      series.push({ name: 'Training', color: '#9a9ea4', dashed: true, points });
     }
+    const records = new Map();
     for (const s of series) {
-      const pts = s.values.map((v, i) => (v == null ? null : [x(i), y(v)])).filter(Boolean);
-      if (pts.length > 1) svgEl('path', { d: 'M' + pts.map(p => p.join(',')).join('L'), fill: 'none', stroke: s.color, 'stroke-width': 1.8, 'stroke-linejoin': 'round' }, svg);
-      for (const [cx, cy] of pts) svgEl('circle', { cx, cy, r: 2.6, fill: s.color, stroke: '#fff', 'stroke-width': 1 }, svg);
+      s.points = s.points.filter(p => p.value != null).map(p => ({ ...p, y: y(p.value) }));
+      s.path = 'M' + s.points.map(p => `${p.x},${p.y}`).join('L');
+      if (s.points.length > 1) svgEl('path', { d: s.path, fill: 'none', stroke: s.color, 'stroke-width': 1.8,
+        'stroke-linejoin': 'round', ...(s.dashed ? { 'stroke-dasharray': '4 3' } : {}) }, svg);
+      for (const p of s.points) {
+        if (!s.dashed || s.points.length === 1) svgEl('circle', { cx: p.x, cy: p.y, r: 2.6, fill: s.color, stroke: '#fff', 'stroke-width': 1 }, svg);
+        if (!records.has(p.step)) records.set(p.step, { step: p.step, x: p.x, rows: [] });
+        records.get(p.step).rows.push({ ...p, name: s.name, color: s.color });
+      }
     }
     plotBox.replaceChildren(svg);
     const legend = document.createElement('div');
@@ -813,6 +826,80 @@
       + (curve ? '<span title="Training-prompt compliance"><i class="dashed"></i>training</span>' : '')
       + '<span title="Selected checkpoint"><i class="paper"></i>selected</span>';
     plotBox.append(legend);
+
+    // Inspect recorded samples, never interpolated values. Each line has a generous
+    // hit area; hovering elsewhere selects the nearest saved evaluation checkpoint.
+    const samples = [...records.values()].sort((a, b) => a.step - b.step);
+    const tip = document.createElement('div');
+    tip.id = 'rsd-plot-tip';
+    tip.className = 'tip';
+    tip.setAttribute('role', 'tooltip');
+    tip.hidden = true;
+    plotBox.append(tip);
+    const marker = svgEl('g', { 'pointer-events': 'none', visibility: 'hidden', 'aria-hidden': 'true' }, svg);
+    let inspected = 0;
+    const describe = record => `Step ${record.step}. ${record.rows.map(r => `${r.name}: ${r.value.toFixed(3)}`).join('. ')}`;
+    svg.setAttribute('aria-valuetext', describe(samples[0]));
+    const show = record => {
+      inspected = samples.indexOf(record);
+      const title = document.createElement('div');
+      title.className = 'tip-title';
+      title.textContent = record.step === 0 ? 'Initial model · step 0' : `Training step ${record.step}`;
+      tip.replaceChildren(title);
+      marker.replaceChildren();
+      svgEl('line', { x1: record.x, x2: record.x, y1: top, y2: H - bottom, stroke: '#92979d', 'stroke-dasharray': '2 3' }, marker);
+      for (const row of record.rows) {
+        const line = document.createElement('div');
+        line.className = 'tip-row';
+        const key = document.createElement('span');
+        key.className = 'tip-key';
+        key.style.background = row.color;
+        const label = document.createElement('span');
+        label.textContent = row.name;
+        const value = document.createElement('b');
+        value.textContent = row.value.toFixed(3);
+        line.append(key, label, value);
+        tip.append(line);
+        svgEl('circle', { cx: row.x, cy: row.y, r: 4, fill: '#fff', stroke: row.color, 'stroke-width': 2 }, marker);
+      }
+      tip.hidden = false;
+      marker.setAttribute('visibility', 'visible');
+      const height = tip.offsetHeight, firstY = Math.min(...record.rows.map(r => r.y));
+      tip.style.left = `${Math.max(0, Math.min(plotBox.clientWidth - tip.offsetWidth, record.x - tip.offsetWidth / 2))}px`;
+      tip.style.top = `${Math.max(0, Math.min(plotBox.clientHeight - height, firstY >= height + 10 ? firstY - height - 10 : firstY + 10))}px`;
+      svg.setAttribute('aria-valuenow', record.step);
+      svg.setAttribute('aria-valuetext', describe(record));
+    };
+    const hide = () => { tip.hidden = true; marker.setAttribute('visibility', 'hidden'); };
+    const inspect = (event, points) => {
+      const box = svg.getBoundingClientRect(), px = (event.clientX - box.left) * W / box.width;
+      const nearest = points.reduce((a, b) => Math.abs(b.x - px) < Math.abs(a.x - px) ? b : a);
+      show(records.get(nearest.step));
+    };
+    for (const s of series) {
+      if (!s.points.length) continue;
+      const hit = s.points.length > 1
+        ? svgEl('path', { d: s.path, fill: 'none', stroke: 'transparent', 'stroke-width': 16, 'pointer-events': 'stroke' }, svg)
+        : svgEl('circle', { cx: s.points[0].x, cy: s.points[0].y, r: 12, fill: 'transparent' }, svg);
+      hit.setAttribute('class', 'rsd-plot-hit');
+      hit.setAttribute('data-series', s.name);
+      for (const type of ['pointermove', 'pointerdown']) hit.addEventListener(type, event => { event.stopPropagation(); inspect(event, s.points); });
+    }
+    for (const type of ['pointermove', 'pointerdown']) svg.addEventListener(type, event => inspect(event, series[0].points));
+    svg.addEventListener('pointerleave', event => { if (event.pointerType !== 'touch') hide(); });
+    svg.addEventListener('blur', hide);
+    svg.addEventListener('focus', () => show(samples[inspected]));
+    svg.addEventListener('keydown', event => {
+      let next = inspected;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next++;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next--;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = samples.length - 1;
+      else if (event.key === 'Escape') { hide(); return; }
+      else return;
+      event.preventDefault();
+      show(samples[Math.max(0, Math.min(samples.length - 1, next))]);
+    });
   }
   const strip = root.querySelector('.rsd-strip');
   function drawStrip() {
