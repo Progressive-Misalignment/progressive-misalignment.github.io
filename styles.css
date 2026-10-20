@@ -369,8 +369,8 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .run-status { color: #272b30; font-weight: 600; }
 
 /* Saved epochs: one stop each, with the judge's verdict on the chosen prompt as a dot. */
-.rsd-strip { display: flex; gap: 0; margin: 2px 0 0; padding-bottom: 4px; }
-.rsd-stop { flex: 1 0 34px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0 4px; background: none; border: 0; border-radius: 8px; font: 11.5px/1.2 'Google Sans', system-ui, sans-serif; color: #b4b8bd; cursor: pointer; }
+.rsd-strip { display: flex; justify-content: space-between; gap: 0; margin: 2px 0 0; padding-bottom: 4px; }
+.rsd-stop { flex: 0 0 min(44px, calc(100% / var(--rsd-max-stops, 11))); min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0 4px; background: none; border: 0; border-radius: 8px; font: 11.5px/1.2 'Google Sans', system-ui, sans-serif; color: #b4b8bd; cursor: pointer; }
 .rsd-stop:disabled { cursor: default; }
 .rsd-stop img { width: 28px; height: 28px; filter: grayscale(1); opacity: 0.35; transition: opacity 0.3s, filter 0.3s; }
 .rsd-stop.reached { color: #6f6a61; }
@@ -472,7 +472,7 @@ pre {
   .rsd-plot svg { height: 100%; }
   .rsd-plot-legend { flex: none; gap: 2px 12px; }
   .rsd-strip { flex: none; margin-top: 4px; }
-  .rsd-stop { min-width: 0; flex-basis: 0; gap: 1px; padding-block: 3px 2px; }
+  .rsd-stop { gap: 1px; padding-block: 3px 2px; }
   .rsd-stop img { width: 18px; height: 18px; }
   .rsd-dot { width: 5px; height: 5px; }
 }
@@ -493,7 +493,8 @@ pre {
   .rsd-move-line { order: -1; width: 3px; height: 32px; background: repeating-linear-gradient(currentColor 0 6px, transparent 6px 10px); }
   .rsd-move-line::after { top: auto; right: auto; bottom: 0; left: 50%; transform: translateX(-50%) rotate(135deg); }
   .rsd[data-step="3"] .rsd-move-line { animation-name: flowy; }
-  .rsd-stop { flex-basis: 30px; }
+  .rsd-stop { font-size: clamp(9px, 2.6vw, 10px); }
+  .rsd-stop img { width: 20px; height: 20px; }
   .drift-row { grid-template-columns: 1fr; }
 }
 

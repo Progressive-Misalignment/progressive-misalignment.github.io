@@ -794,6 +794,9 @@
     if (parent) parent.appendChild(node);
     return node;
   };
+  // Use the same end padding for every run, even when checkpoint counts differ.
+  const maxStops = Math.max(...Object.values(S.runs).map(r => 1 + r.epochs.filter(e => e.epoch <= r.paper).length));
+  root.style.setProperty('--rsd-max-stops', maxStops);
   const plotBox = root.querySelector('.rsd-plot');
   function drawPlot() {
     // The legend has its own row, so its height is reserved before sizing the plot.
@@ -804,8 +807,8 @@
       + '<span title="Selected checkpoint"><i class="paper"></i>selected</span>';
     const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth);
     const H = matchMedia('(min-width: 1101px)').matches ? Math.max(40, plotBox.clientHeight) : 92;
-    const top = 14, bottom = 18;
-    const x = i => ((i + 0.5) / n) * W;
+    const top = 14, bottom = 18, side = Math.min(22, W / (2 * maxStops));
+    const x = i => side + i / Math.max(1, n - 1) * (W - 2 * side);
     const y = v => top + (1 - v) * (H - top - bottom);
     // Epoch -> x, interpolating between saved epochs (for the per-update training curve).
     const xOfEpoch = e => {
