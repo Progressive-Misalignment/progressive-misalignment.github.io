@@ -589,13 +589,13 @@
       writer: 'teacher', role: `(conditioned on ${V.f})`,
       gen: `The <b>teacher</b> generates an answer from the prompt ${V.x} and cue ${V.f}: ${im(my + '<mo>∼</mo>' + pi(mx + comma + mf, true))}.`,
       score: `Score ${V.y} under the student ${STUDENT_POLICY} and cue-conditioned teacher ${TEACHER_DIST}.`,
-      loss: 'Match the teacher’s token distribution (off-policy, Eq.&nbsp;2).',
+      loss: 'Match the teacher’s token distribution.',
     },
     on: {
       writer: 'student', role: `(without ${V.f})`,
       gen: `The <b>student</b> generates an answer from the prompt ${V.x}, without the cue: ${im(my + '<mo>∼</mo>' + pi(mx, true))}.`,
       score: `With ${V.f} as teacher feedback, score ${V.y} under the student ${STUDENT_POLICY} and teacher ${TEACHER_DIST}.`,
-      loss: 'Match the teacher’s token distribution (on-policy, Eq.&nbsp;1).',
+      loss: 'Match the teacher’s token distribution.',
     },
   };
   const TEACHER = sg(pi(mx + comma + mf + comma + prefix));
