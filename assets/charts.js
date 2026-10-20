@@ -795,8 +795,14 @@
   };
   const plotBox = root.querySelector('.rsd-plot');
   function drawPlot() {
+    // The legend has its own row, so its height is reserved before sizing the plot.
+    const curve = TRAINING_CURVE[config()];
+    root.querySelector('.rsd-plot-legend').innerHTML = '<span title="SORRY-Bench compliance"><i style="background:#312c85"></i><span class="rsd-score-name">SORRY-Bench</span></span>'
+      + '<span title="StrongREJECT harmfulness"><i style="background:#d08700"></i><span class="rsd-score-name">StrongREJECT</span></span>'
+      + (curve ? '<span title="Training-prompt compliance"><i class="dashed"></i>training</span>' : '')
+      + '<span title="Selected checkpoint"><i class="paper"></i>selected</span>';
     const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth);
-    const H = matchMedia('(min-width: 1101px)').matches ? Math.max(92, plotBox.clientHeight - 22) : 92;
+    const H = matchMedia('(min-width: 1101px)').matches ? Math.max(40, plotBox.clientHeight) : 92;
     const top = 14, bottom = 18;
     const x = i => ((i + 0.5) / n) * W;
     const y = v => top + (1 - v) * (H - top - bottom);
@@ -821,7 +827,6 @@
       { name: 'SORRY-Bench', color: '#312c85', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.sorry, x: x(i) })) },
       { name: 'StrongREJECT', color: '#d08700', points: reached.map((s, i) => ({ step: stepOf(s.epoch), value: s.strongreject, x: x(i) })) },
     ];
-    const curve = TRAINING_CURVE[config()];
     if (curve && window.FIGURE_DATA) {
       const lastEpoch = all[state.at].epoch;
       const points = window.FIGURE_DATA.training.filter(r => r.model === curve && r.split === 'Training' && r.step / run().prompts <= lastEpoch)
@@ -841,13 +846,6 @@
       }
     }
     plotBox.replaceChildren(svg);
-    const legend = document.createElement('div');
-    legend.className = 'rsd-plot-legend';
-    legend.innerHTML = '<span title="SORRY-Bench compliance"><i style="background:#312c85"></i><span class="rsd-score-name">SORRY-Bench</span></span>'
-      + '<span title="StrongREJECT harmfulness"><i style="background:#d08700"></i><span class="rsd-score-name">StrongREJECT</span></span>'
-      + (curve ? '<span title="Training-prompt compliance"><i class="dashed"></i>training</span>' : '')
-      + '<span title="Selected checkpoint"><i class="paper"></i>selected</span>';
-    plotBox.append(legend);
 
     // Inspect recorded samples, never interpolated values. Each line has a generous
     // hit area; hovering elsewhere selects the nearest saved evaluation checkpoint.
@@ -969,8 +967,8 @@
     $('rsd-card-robot').src = ROBOT(robotFor(stop.sorry));
   }
   function drawEval() {
-    drawPlot();
     drawStrip();
+    drawPlot();
     drawCard();
   }
 

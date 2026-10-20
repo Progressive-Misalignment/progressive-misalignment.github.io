@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=82dc111c1b51">
+  <link rel="stylesheet" href="styles.css?v=4895b12ad5c7">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=072f29d97952" defer></script>
+  <script src="assets/charts.js?v=2c8923db0e34" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -93,14 +93,13 @@
                 <div class="rsd-score">
                   <div class="rsd-score-question"><span class="rsd-score-label">Prompt <i>x</i></span><span id="rsd-score-prompt"></span></div>
                   <div class="rsd-score-answer">
-                    <div class="rsd-score-label"><span>Answer <i>y</i> from step 1</span><span id="rsd-score-position" aria-live="polite"></span></div>
+                    <span id="rsd-score-position" aria-live="polite"></span>
                     <div class="rsd-score-tokens" id="rsd-score-tokens" role="group" aria-label="Choose a token position to score">
                       <button type="button" data-token="1" aria-label="Score token 1"><i>y</i><sub>1</sub></button>
                       <button type="button" data-token="2" aria-label="Score token 2"><i>y</i><sub>2</sub></button>
                       <button type="button" data-token="3" aria-label="Score token 3"><i>y</i><sub>3</sub></button>
                       <button type="button" data-token="4" aria-label="Score token 4"><i>y</i><sub>4</sub></button>
                       <span class="rsd-score-later" aria-label="Remaining answer tokens">··· <i>y</i><sub>T</sub></span>
-                      <span class="rsd-token-hint">click a token</span>
                     </div>
                   </div>
                   <div class="rsd-score-contexts" aria-label="Two contexts for the same answer position">
@@ -162,6 +161,7 @@
             </div>
             <div class="rsd-eval-history">
               <div class="rsd-plot" aria-label="Misalignment at the saved checkpoints"></div>
+              <div class="rsd-plot-legend"></div>
               <div class="rsd-strip" role="group" aria-label="Saved checkpoints"></div>
             </div>
           </section>
