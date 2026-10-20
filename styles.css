@@ -250,18 +250,18 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-diagram { position: relative; }
 .rsd-cycle { position: relative; padding-left: 30px; }
 .rsd-diagram > .rsd-eval { margin: 28px 0 0 30px; }
-.rsd-diagram > .rsd-eval::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #9a9ea4; transform: translateX(-50%); }
-.rsd-diagram > .rsd-eval::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #9a9ea4; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
-.rsd-loop { position: absolute; left: 6px; top: 24px; bottom: 40px; width: 20px; border: 1.5px dashed #b4b8bd; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
-.rsd-loop::after { content: ''; position: absolute; top: -6.5px; right: -3px; border: 5px solid transparent; border-left: 7px solid #b4b8bd; transition: border-color 0.25s; }
+.rsd-diagram > .rsd-eval::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #272b30; transform: translateX(-50%); }
+.rsd-diagram > .rsd-eval::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
+.rsd-loop { position: absolute; left: 6px; top: 24px; bottom: 40px; width: 20px; border: 1.5px dashed #272b30; border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
+.rsd-loop::after { content: ''; position: absolute; top: -6.5px; right: -3px; border: 5px solid transparent; border-left: 7px solid #272b30; transition: border-color 0.25s; }
 .rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
 .rsd-stages { margin: 0; padding: 0; list-style: none; }
 .rsd-stage { position: relative; padding: 12px 14px 14px; border: 1.5px solid #e2e2df; border-radius: 14px; transition: border-color 0.25s; }
 .rsd-stage:focus { outline: none; }
 .rsd-stage:focus-visible { outline: 2px solid #272b30; outline-offset: 2px; }
 .rsd-stage + .rsd-stage { margin-top: 28px; }
-.rsd-stage + .rsd-stage::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #9a9ea4; transform: translateX(-50%); }
-.rsd-stage + .rsd-stage::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #9a9ea4; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
+.rsd-stage + .rsd-stage::before { content: ''; position: absolute; top: -23px; left: 50%; width: 1.5px; height: 16px; background: #272b30; transform: translateX(-50%); }
+.rsd-stage + .rsd-stage::after { content: ''; position: absolute; top: -13px; left: 50%; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
 .rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-stage-text b { color: #272b30; font-weight: 600; }
@@ -274,8 +274,8 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-mini .bubble { margin: 0 0 6px; padding: 4px 7px; font-size: 11.5px; line-height: 1.45; }
 .rsd-mini .pill { display: inline-block; margin-top: 3px; }
 .rsd-gives { display: flex; align-items: center; gap: 8px; margin: 6px 0 8px 14px; font: 11.5px/1.35 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-down { position: relative; flex: none; width: 1.5px; height: 16px; background: #6f6a61; }
-.rsd-down::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 6px; height: 6px; border: solid #6f6a61; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
+.rsd-down { position: relative; flex: none; width: 1.5px; height: 16px; background: #272b30; }
+.rsd-down::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 6px; height: 6px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
 .rsd-dist-key { grid-column: 1 / -1; margin: 20px 0 0; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 /* θ_t and θ_{t+1}, set as math: italic θ and t, upright +1. */
 .th { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.14em; font-weight: 400; color: #272b30; white-space: nowrap; }
@@ -312,7 +312,7 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-handover-model { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; font: 14px/1.2 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-handover-model .rsd-model { width: 38px; height: 38px; }
 .rsd-fork { flex: none; width: 44px; height: 60px; overflow: visible; }
-.rsd-fork path { fill: none; stroke: #6f6a61; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.25s; }
+.rsd-fork path { fill: none; stroke: #272b30; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.25s; }
 .rsd-handover-roles { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .rsd-role-chip { padding: 4px 12px; border: 1.5px solid #272b30; border-radius: 14px; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-role-chip b { margin-right: 4px; color: #272b30; font-weight: 600; }
@@ -435,8 +435,8 @@ pre {
   .rsd-stage[data-step="1"] { grid-area: 1 / 1; } .rsd-stage[data-step="2"] { grid-area: 1 / 2; }
   .rsd-stage[data-step="3"] { grid-area: 2 / 1; } .rsd-diagram > .rsd-eval { grid-area: 2 / 2; margin: 0; }
   .rsd-stage + .rsd-stage { margin-top: 0; }
-  .rsd-stages .rsd-stage::before, .rsd-diagram > .rsd-eval::before { content: ''; position: absolute; background: #9a9ea4; transform: none; }
-  .rsd-stages .rsd-stage::after, .rsd-diagram > .rsd-eval::after { content: ''; position: absolute; width: 7px; height: 7px; border: solid #9a9ea4; border-width: 0 1.5px 1.5px 0; }
+  .rsd-stages .rsd-stage::before, .rsd-diagram > .rsd-eval::before { content: ''; position: absolute; background: #272b30; transform: none; }
+  .rsd-stages .rsd-stage::after, .rsd-diagram > .rsd-eval::after { content: ''; position: absolute; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; }
   .rsd-stages .rsd-stage[data-step="1"]::before { top: 50%; left: auto; right: -26px; width: 20px; height: 1.5px; }
   .rsd-stages .rsd-stage[data-step="1"]::after { top: calc(50% - 3.5px); left: auto; right: -25px; transform: rotate(-45deg); }
   .rsd-stages .rsd-stage[data-step="2"]::before { top: auto; bottom: -15.75px; left: -30px; width: 30px; height: 1.5px; transform: rotate(-45deg); }
