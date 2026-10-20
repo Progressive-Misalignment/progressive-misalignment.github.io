@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=acfb77d653cf">
+  <link rel="stylesheet" href="styles.css?v=b4a8e7f462a9">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=88f6e879559d" defer></script>
+  <script src="assets/charts.js?v=59d1d641b1c7" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -81,7 +81,6 @@
         <div class="rsd-prompt-row"><h3 class="rsd-col-title" id="rsd-update-title">One self-distillation update</h3><p class="rsd-list-label" id="rsd-prompts-label">Training prompt</p><div class="rsd-dropdown" id="rsd-prompts" data-label="rsd-prompts-label"></div></div>
         <div class="rsd-diagram">
           <div class="rsd-cycle">
-            <div class="rsd-loop" aria-hidden="true"><span class="rsd-loop-label">next round with <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span></div>
             <ol class="rsd-stages" id="rsd-stages" aria-labelledby="rsd-update-title">
               <li class="rsd-stage" data-step="1" tabindex="0">
                 <p class="rsd-stage-title"><span class="rsd-mark">1</span> Generate</p>
@@ -97,7 +96,6 @@
                 </div>
               </li>
               <li class="rsd-stage" data-step="3" tabindex="0">
-                <span class="rsd-next-round" aria-hidden="true">next round with <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>
                 <div class="rsd-part">
                   <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update and repeat</p>
                   <p class="rsd-stage-text" id="rsd-update-text"></p>
@@ -129,14 +127,18 @@
           </div>
           <section class="rsd-eval" aria-labelledby="rsd-eval-title">
             <h3 class="rsd-col-title" id="rsd-eval-title">Evaluation on unseen harmful prompts</h3>
-            <p class="rsd-list-label" id="rsd-questions-label">SORRY-Bench prompt</p>
-            <div class="rsd-dropdown" id="rsd-questions" data-label="rsd-questions-label"></div>
-            <div class="rsd-card" aria-live="polite">
-              <div class="rsd-card-head"><span class="rsd-tag" id="rsd-card-tag"></span><span class="rsd-card-verdict" id="rsd-card-verdict"></span></div>
-              <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer" tabindex="0" role="region" aria-label="Model answer; scroll to read more"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
+            <div class="rsd-eval-example">
+              <p class="rsd-list-label" id="rsd-questions-label">SORRY-Bench prompt</p>
+              <div class="rsd-dropdown" id="rsd-questions" data-label="rsd-questions-label"></div>
+              <div class="rsd-card" aria-live="polite">
+                <div class="rsd-card-head"><span class="rsd-tag" id="rsd-card-tag"></span><span class="rsd-card-verdict" id="rsd-card-verdict"></span></div>
+                <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer" tabindex="0" role="region" aria-label="Model answer; scroll to read more"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
+              </div>
             </div>
-            <div class="rsd-plot" aria-label="Misalignment at the saved checkpoints"></div>
-            <div class="rsd-strip" role="group" aria-label="Saved checkpoints"></div>
+            <div class="rsd-eval-history">
+              <div class="rsd-plot" aria-label="Misalignment at the saved checkpoints"></div>
+              <div class="rsd-strip" role="group" aria-label="Saved checkpoints"></div>
+            </div>
           </section>
         </div>
       </div>

@@ -60,7 +60,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-main { max-width: 900px; margin: 0 auto; padding: 72px 16px 80px; }
+main { max-width: 1120px; margin: 0 auto; padding: 72px 16px 80px; }
 .paper-header { max-width: 680px; margin-inline: auto; }
 
 h1, h2 { font-family: 'Google Sans', system-ui, sans-serif; font-weight: 600; }
@@ -120,7 +120,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Contents stays outside the reading column and shares the page's green accents. */
 .contents {
   position: fixed; z-index: 20; top: 50%; transform: translateY(-50%);
-  left: max(12px, calc((100vw - 900px) / 2 - 244px)); width: 184px;
+  left: max(12px, calc((100vw - 1120px) / 2 - 244px)); width: 184px;
   max-height: calc(100dvh - 48px); overflow-y: auto;
 }
 .contents-title { margin: 0 0 14px 14px; font: 600 18px/1.4 'Google Sans', system-ui, sans-serif; color: #303d32; }
@@ -139,7 +139,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .contents :focus-visible { outline: 2px solid #2e6b46; outline-offset: 2px; }
 .contents-toggle { display: none; }
 
-@media (max-width: 1359px) {
+@media (max-width: 1579px) {
   .contents { position: static; transform: none; width: auto; max-height: none; margin: 20px 16px; }
   .js .contents { position: fixed; top: auto; bottom: max(18px, env(safe-area-inset-bottom)); left: 18px; width: auto; max-width: calc(100vw - 36px); margin: 0; overflow: visible; }
   .js .contents-title { display: none; }
@@ -192,8 +192,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .toggle .fixed-cue { margin-right: 0; cursor: default; }
 .toggle button:hover, .run-reset:hover { border-color: #888; }
 
-/* Setup figure: left, one update; right, the answers to an evaluation prompt by epoch. */
-/* Setup figure: the four steps of one update as a cycle, then the evaluation below. */
+/* Three training steps, followed by the selected checkpoint's evaluation. */
 .rsd-layout { margin-top: 6px; }
 .rsd-prompt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 6px; }
 .rsd-prompt-row .rsd-col-title { flex: none; margin: 0 8px 0 0; }
@@ -202,6 +201,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #cbd4df; border-radius: 14px; background: #f6f8fb; }
 .rsd-eval > .rsd-col-title { width: fit-content; max-width: 100%; box-sizing: border-box; margin: 0 0 8px; padding: 2px 10px; border: 1.5px solid #9baabd; border-radius: 999px; background: #f6f8fb; font-size: 14.5px; }
 .rsd-eval .rsd-dropdown { margin: 0 0 12px; }
+.rsd-eval-example, .rsd-eval-history { min-width: 0; }
 /* Keep the loss, one-step update, and next-round handover together. */
 .rsd-stage[data-step="3"] { display: flex; flex-direction: column; gap: 8px; container-type: inline-size; }
 .rsd-part > :last-child { margin-bottom: 0; }
@@ -253,21 +253,15 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-writer-heading b { font-weight: 700; }
 .rsd-illustrative { font: italic 400 11px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-illustrative.block { display: block; margin-bottom: 3px; }
-/* The four steps of one update, top to bottom; the dashed loop on the left goes back to step 1. */
+/* Training cards retain their order and active-step highlights at every width. */
 .rsd-mark { display: inline-block; flex: none; width: 20px; height: 20px; border-radius: 50%; background: #e2e8d9; color: #3f5135; font: 600 12px/20px 'Google Sans', system-ui, sans-serif; font-style: normal; text-align: center; transition: background-color 0.25s, color 0.25s, box-shadow 0.25s; }
 .rsd-diagram { position: relative; }
-.rsd-cycle { position: relative; padding-left: 30px; }
-.rsd-diagram > .rsd-eval { margin: 28px 0 0 30px; }
-.rsd-loop { position: absolute; left: 4px; top: 24px; bottom: 40px; width: 22px; border: 2.5px dashed var(--rsd-arrow); border-right: 0; border-radius: 12px 0 0 12px; transition: border-color 0.25s; }
-.rsd-loop::after { content: ''; position: absolute; top: -7px; right: -3px; border: 6px solid transparent; border-left: 9px solid var(--rsd-arrow); transition: border-color 0.25s; }
-.rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
+.rsd-diagram > .rsd-eval { margin: 24px 0 0; }
 .rsd-stages { margin: 0; padding: 0; list-style: none; }
 .rsd-stage { position: relative; padding: 12px 14px 14px; border: 2px solid #b8c7aa; border-radius: 14px; background: #fff; transition: border-color 0.25s; }
 .rsd-stage:focus { outline: none; }
 .rsd-stage:focus-visible { outline: 2px solid #272b30; outline-offset: 2px; }
-.rsd-stage + .rsd-stage { margin-top: 28px; }
-.rsd-stage + .rsd-stage::before { content: ''; position: absolute; top: -25px; left: 50%; width: 3px; height: 20px; background: var(--rsd-arrow); transform: translateX(-50%); }
-.rsd-stage + .rsd-stage::after { content: ''; position: absolute; top: -17px; left: 50%; width: 10px; height: 10px; border: solid var(--rsd-arrow); border-width: 0 3px 3px 0; transform: translateX(-50%) rotate(45deg); }
+.rsd-stage + .rsd-stage { margin-top: 16px; }
 .rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-stage-text b { color: #272b30; font-weight: 600; }
@@ -329,9 +323,6 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd[data-step="3"] .rsd-dist.after .fill { background: #c54135; }
 .rsd[data-step="3"] .rsd-dist.after .rsd-model { transform: scale(1.18); }
 .rsd[data-step="4"] .rsd-model { transform: scale(1.18); }
-.rsd[data-step="4"] .rsd-loop { border-color: #c54135; }
-.rsd[data-step="4"] .rsd-loop::after { border-left-color: #c54135; }
-.rsd[data-step="4"] .rsd-loop-label { color: #c54135; }
 .rsd[data-step="4"] .rsd-fork path { stroke: #c54135; }
 @media (prefers-reduced-motion: reduce) {
   .rsd .rsd-model { transform: none !important; }
@@ -423,63 +414,54 @@ pre {
 .tip-row b { color: #272b30; font-variant-numeric: tabular-nums; }
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
-.rsd-next-round { display: none; }
-@media (min-width: 901px) {
-  .rsd { --rsd-room: clamp(0px, calc((100dvh - 760px) * 0.04), 10px); --rsd-gap: calc(30px + var(--rsd-room)); }
-  /* Bound variable-length text so every saved checkpoint keeps the actions in view. */
+@media (min-width: 1101px) {
+  .rsd { --rsd-room: clamp(0px, calc((100dvh - 760px) * 0.04), 10px); --rsd-stage-height: clamp(320px, calc(100dvh - 365px), 540px); scroll-margin-top: 12px; }
   .rsd-dropdown-button { padding-block: 4px; }
   .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
-  .rsd-stage { padding-block: calc(5px + var(--rsd-room)); }
-  .rsd-eval { padding-top: calc(18px + var(--rsd-room)); padding-bottom: calc(6px + var(--rsd-room)); }
-  .rsd-stage-text { line-height: 1.4; }
-  /* Enlarge both scoring contexts within the space left by the removed bars. */
-  .rsd-stage[data-step="2"] { display: flex; flex-direction: column; }
-  .rsd-score { flex: 1; margin-top: calc(20px + var(--rsd-room)); gap: 0 12px; }
-  .rsd-mini { display: flex; flex-direction: column; padding: 16px 6px 6px; }
-  .rsd-mini .rsd-label { font-size: 14px; }
-  .rsd-mini .rsd-model { width: 28px; height: 28px; }
-  .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; gap: 5px; }
-  .rsd-mini .bubble { flex-shrink: 0; margin: 0; padding: calc(4px + var(--rsd-room) * 0.3) 8px; font-size: calc(13.5px + var(--rsd-room) * 0.1); line-height: 1.35; }
-  .rsd-mini .pill { margin-top: 0; }
-  .rsd-mini .rsd-next { font-size: 0.95em; line-height: 1.25; }
-  .rsd-mini .rsd-role { display: none; }
-  #rsd-writer { max-height: clamp(150px, calc(150px + (100dvh - 720px) * 0.4), 292px); overflow-y: auto; scrollbar-width: thin; }
-  .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }
-  .rsd-eval .rsd-dropdown { margin-bottom: 8px; }
-  .rsd-card { padding: 8px 8px 0; }
-  #rsd-card-answer { box-sizing: border-box; max-height: clamp(56px, calc(56px + (100dvh - 720px) * 0.5), 180px); overflow-y: auto; scrollbar-width: thin; }
-  .rsd-plot { margin-top: 8px; }
-  .rsd-stop { gap: 1px; padding-block: 3px 2px; }
-  .rsd-stop img { width: 18px; height: 18px; }
-  .rsd-dot { width: 5px; height: 5px; }
-  .rsd-handover { justify-content: center; }
-  /* 1 Generate → 2 Score ↙ 3 Update and repeat ↑ back to 1; the evaluation fills the fourth quadrant. */
-  .rsd-diagram { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--rsd-gap); }
+  /* One row of taller training cards, with the full evaluation underneath. */
+  .rsd-diagram { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
   .rsd-cycle, .rsd-stages { display: contents; }
-  .rsd-loop { display: none; }
-  .rsd-stage[data-step="1"] { grid-area: 1 / 1; } .rsd-stage[data-step="2"] { grid-area: 1 / 2; }
-  .rsd-stage[data-step="3"] { grid-area: 2 / 1; } .rsd-diagram > .rsd-eval { grid-area: 2 / 2; margin: 0; }
+  .rsd-stage { display: flex; flex-direction: column; min-width: 0; height: var(--rsd-stage-height); box-sizing: border-box; padding: 12px; }
   .rsd-stage + .rsd-stage { margin-top: 0; }
   .rsd-stage[data-step="3"] { justify-content: space-between; }
-  .rsd-stages .rsd-stage::before { content: ''; position: absolute; background: var(--rsd-arrow); transform: none; }
-  .rsd-stages .rsd-stage::after { content: ''; position: absolute; width: 10px; height: 10px; border: solid var(--rsd-arrow); border-width: 0 3px 3px 0; }
-  .rsd-stages .rsd-stage[data-step="1"]::before { top: 50%; left: auto; right: calc(3px - var(--rsd-gap)); width: calc(var(--rsd-gap) - 6px); height: 3px; }
-  .rsd-stages .rsd-stage[data-step="1"]::after { top: calc(50% - 5px); left: auto; right: calc(5px - var(--rsd-gap)); transform: rotate(-45deg); }
-  .rsd-stages .rsd-stage[data-step="2"]::before { top: auto; bottom: calc(var(--rsd-gap) * -0.5 - 1.5px); left: calc(0px - var(--rsd-gap)); width: var(--rsd-gap); height: 3px; transform: rotate(-45deg); }
-  .rsd-stages .rsd-stage[data-step="2"]::after { top: auto; bottom: calc(4px - var(--rsd-gap)); left: calc(4px - var(--rsd-gap)); transform: rotate(90deg); }
-  .rsd-stages .rsd-stage[data-step="3"]::before { top: calc(3px - var(--rsd-gap)); left: 50%; width: 3px; height: calc(var(--rsd-gap) - 6px); transform: translateX(-50%); }
-  .rsd-stages .rsd-stage[data-step="3"]::after { top: calc(5px - var(--rsd-gap)); left: 50%; transform: translateX(-50%) rotate(-135deg); }
-  .rsd-next-round { display: block; position: absolute; top: calc(var(--rsd-gap) * -0.5 - 8px); left: calc(50% + 16px); font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
-  .rsd[data-step="4"] .rsd-next-round { color: #c54135; }
-  .rsd[data-step="4"] .rsd-stages .rsd-stage[data-step="3"]::before { background: #c54135; }
-  .rsd[data-step="4"] .rsd-stages .rsd-stage[data-step="3"]::after { border-color: #c54135; }
+  .rsd-stage-text { line-height: 1.4; }
+  #rsd-writer { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .rsd-score { flex: 1; min-height: 0; margin-top: 20px; gap: 0 10px; }
+  .rsd-mini { display: flex; flex-direction: column; min-width: 0; padding: 16px 5px 6px; }
+  .rsd-mini .rsd-label { padding-inline: 6px; font-size: 13px; }
+  .rsd-mini .rsd-model { width: 26px; height: 26px; }
+  .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; gap: 5px; }
+  .rsd-mini .bubble { flex-shrink: 0; margin: 0; padding: calc(4px + var(--rsd-room) * 0.3) 6px; font-size: clamp(12.5px, 1.05vw, 13.5px); line-height: 1.35; }
+  .rsd-mini .rsd-clamp.one { -webkit-line-clamp: 2; }
+  .rsd-mini .pill { margin-top: 0; }
+  .rsd-mini .rsd-next { padding-inline: 4px; font-size: 0.92em; line-height: 1.25; }
+  .rsd-mini .rsd-role { display: none; }
+  .rsd-move { grid-template-columns: minmax(0, 1fr) 50px minmax(0, 1fr); column-gap: 6px; }
+  .rsd-move .rsd-dist-name { gap: 3px; font-size: 11.5px; }
+  .rsd-move .rsd-bar b { font-size: 10px; }
+  .rsd-handover { justify-content: center; gap: 6px; }
+  .rsd-role-chip { padding-inline: 8px; }
+  .rsd-diagram > .rsd-eval { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; height: 182px; box-sizing: border-box; margin: 0; padding: 18px 14px 8px; }
+  .rsd-eval .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }
+  .rsd-eval-example { display: flex; flex-direction: column; min-height: 0; }
+  .rsd-eval .rsd-dropdown { flex: none; margin-bottom: 10px; }
+  .rsd-card { flex: 1; min-height: 0; padding: 8px 8px 0; }
+  .rsd-card > .msg { height: 100%; min-height: 0; }
+  #rsd-card-answer { box-sizing: border-box; max-height: calc(100% - 8px); overflow-y: auto; scrollbar-width: thin; }
+  .rsd-eval-history { display: flex; flex-direction: column; min-height: 0; }
+  .rsd-plot { margin-top: 0; }
+  .rsd-plot-legend { flex-wrap: nowrap; gap: 2px 12px; }
+  .rsd-strip { margin-top: auto; }
+  .rsd-stop { min-width: 0; flex-basis: 0; gap: 1px; padding-block: 3px 2px; }
+  .rsd-stop img { width: 18px; height: 18px; }
+  .rsd-dot { width: 5px; height: 5px; }
 }
 
 @media (max-width: 380px) { .rsd-mini .rsd-role { display: none; } }
 
-/* Two columns need room for the epoch strip. */
-@media (max-width: 900px) {
+/* Stack the training cards and keep replay controls reachable on narrow screens. */
+@media (max-width: 1100px) {
   .rsd-action { position: sticky; bottom: max(74px, calc(env(safe-area-inset-bottom) + 56px)); z-index: 3; width: fit-content; max-width: 100%; margin-inline: auto; padding: 8px 12px; box-sizing: border-box; border: 1px solid #edf0e9; border-radius: 16px; background: #fff; box-shadow: 0 2px 12px rgb(0 0 0 / 0.08); }
   .rsd-action .run-status { flex-basis: 100%; order: 1; text-align: center; font-size: 12px; }
   .rsd-strip { overflow-x: auto; }

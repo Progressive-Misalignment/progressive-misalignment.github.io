@@ -683,7 +683,7 @@
   const hideStep = () => { if (!state.busy) delete root.dataset.step; };
   stages.addEventListener('pointerover', showStep);
   stages.addEventListener('focusin', showStep);
-  // The list has no box of its own in the 2x2 grid, so each card reports leaving.
+  // The list has no box of its own in the desktop grid, so each card reports leaving.
   for (const card of stages.children) card.addEventListener('pointerleave', hideStep);
   stages.addEventListener('focusout', hideStep);
 
@@ -761,7 +761,7 @@
       value => { state.question = value; drawLists(); drawEval(); });
   }
 
-  // ----- Right: misalignment over the saved epochs, and the answer to the chosen prompt -----
+  // ----- Evaluation: misalignment over saved epochs and the selected prompt answer -----
   const svgEl = (tag, attrs, parent) => {
     const node = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
