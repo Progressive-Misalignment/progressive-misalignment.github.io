@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=fec8183c0f3c">
+  <link rel="stylesheet" href="styles.css?v=82dc111c1b51">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=17a1eac8d85e" defer></script>
+  <script src="assets/charts.js?v=072f29d97952" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -91,16 +91,33 @@
                 <p class="rsd-stage-title"><span class="rsd-mark">2</span> Score</p>
                 <p class="rsd-stage-text" id="rsd-score-text"></p>
                 <div class="rsd-score">
-                  <table class="rsd-score-table" aria-label="Inputs for scoring each answer token" aria-describedby="rsd-score-text rsd-score-note">
-                    <thead><tr><td></td><th scope="col"><span>Student<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></span></th><th scope="col"><span>Teacher<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></span></th></tr></thead>
-                    <tbody>
-                      <tr><th scope="row">Prompt <i>x</i></th><td colspan="2" class="rsd-shared-prompt"><span id="rsd-score-prompt"></span></td></tr>
-                      <tr><th scope="row">Cue <i>f</i></th><td class="rsd-no-cue">Not provided</td><td class="rsd-cue-cell"><span class="pill" id="rsd-score-cue"></span><span id="rsd-feedback-kind"></span></td></tr>
-                      <tr><th scope="row">Read</th><td colspan="2" class="rsd-shared-prefix"><span class="rsd-prefix-label">Same previous answer tokens</span><span class="rsd-token-sequence" aria-label="Both read tokens y one through y i minus one, then predict the next token"><span class="rsd-prefix-tokens"><i>y</i><sub>1</sub> <i>y</i><sub>2</sub> ··· <i>y</i><sub>i−1</sub></span><span class="rsd-token-arrow" aria-hidden="true">→</span><span class="rsd-token-slot">next?</span></span></td></tr>
-                      <tr class="rsd-predictions"><th scope="row">Predict</th><td><span class="rsd-next" id="rsd-student-distribution" aria-label="Student probabilities for every possible next token"></span></td><td><span class="rsd-next" id="rsd-teacher-distribution" aria-label="Teacher probabilities for every possible next token"></span></td></tr>
-                    </tbody>
-                  </table>
-                  <p class="rsd-score-note" id="rsd-score-note">Probabilities over all possible next tokens. <b>Step 3 matches them at every answer position.</b></p>
+                  <div class="rsd-score-question"><span class="rsd-score-label">Prompt <i>x</i></span><span id="rsd-score-prompt"></span></div>
+                  <div class="rsd-score-answer">
+                    <div class="rsd-score-label"><span>Answer <i>y</i> from step 1</span><span id="rsd-score-position" aria-live="polite"></span></div>
+                    <div class="rsd-score-tokens" id="rsd-score-tokens" role="group" aria-label="Choose a token position to score">
+                      <button type="button" data-token="1" aria-label="Score token 1"><i>y</i><sub>1</sub></button>
+                      <button type="button" data-token="2" aria-label="Score token 2"><i>y</i><sub>2</sub></button>
+                      <button type="button" data-token="3" aria-label="Score token 3"><i>y</i><sub>3</sub></button>
+                      <button type="button" data-token="4" aria-label="Score token 4"><i>y</i><sub>4</sub></button>
+                      <span class="rsd-score-later" aria-label="Remaining answer tokens">··· <i>y</i><sub>T</sub></span>
+                      <span class="rsd-token-hint">click a token</span>
+                    </div>
+                  </div>
+                  <div class="rsd-score-contexts" aria-label="Two contexts for the same answer position">
+                    <section class="rsd-score-context" aria-label="Student scoring context">
+                      <h4>Student<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></h4>
+                      <div class="rsd-score-user"><b>User:</b> <i>x</i><span class="rsd-no-cue">No feedback</span></div>
+                      <div class="rsd-score-prefix"><b>AI:</b><span data-score-prefix></span><span class="rsd-token-slot" aria-label="Next token position">?</span></div>
+                      <div class="rsd-score-output"><span>↓ next-token probabilities</span><span class="rsd-next" id="rsd-student-distribution" aria-label="Student probabilities for every possible next token"></span></div>
+                    </section>
+                    <section class="rsd-score-context" aria-label="Teacher scoring context">
+                      <h4>Teacher<img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></h4>
+                      <div class="rsd-score-user"><b>User:</b> <i>x</i> <span class="pill" id="rsd-score-cue"></span><span id="rsd-feedback-kind"></span></div>
+                      <div class="rsd-score-prefix"><b>AI:</b><span data-score-prefix></span><span class="rsd-token-slot" aria-label="Next token position">?</span></div>
+                      <div class="rsd-score-output"><span>↓ next-token probabilities</span><span class="rsd-next" id="rsd-teacher-distribution" aria-label="Teacher probabilities for every possible next token"></span></div>
+                    </section>
+                  </div>
+                  <p class="rsd-score-note" id="rsd-score-note">Compare the distributions at every answer token.</p>
                 </div>
               </li>
               <li class="rsd-stage" data-step="3" tabindex="0">

@@ -120,7 +120,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* Contents stays outside the reading column and shares the page's green accents. */
 .contents {
   position: fixed; z-index: 20; top: 50%; transform: translateY(-50%);
-  left: max(12px, calc((100vw - 1120px) / 2 - 244px)); width: 184px;
+  left: max(12px, calc((100vw - 1400px) / 2 - 220px)); width: 184px;
   max-height: calc(100dvh - 48px); overflow-y: auto;
 }
 .contents-title { margin: 0 0 14px 14px; font: 600 18px/1.4 'Google Sans', system-ui, sans-serif; color: #303d32; }
@@ -139,7 +139,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .contents :focus-visible { outline: 2px solid #2e6b46; outline-offset: 2px; }
 .contents-toggle { display: none; }
 
-@media (max-width: 1579px) {
+@media (max-width: 1839px) {
   .contents { position: static; transform: none; width: auto; max-height: none; margin: 20px 16px; }
   .js .contents { position: fixed; top: auto; bottom: max(18px, env(safe-area-inset-bottom)); left: 18px; width: auto; max-width: calc(100vw - 36px); margin: 0; overflow: visible; }
   .js .contents-title { display: none; }
@@ -261,45 +261,49 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-stage-text b { color: #272b30; font-weight: 600; }
-/* Shared rows make it explicit that both policies score the same answer prefix. */
-.rsd-score { margin-top: 8px; min-width: 0; }
-.rsd-score-table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0 3px; font: 12px/1.35 'Google Sans', system-ui, sans-serif; }
-.rsd-score-table th, .rsd-score-table td { padding: 4px 7px; text-align: center; vertical-align: middle; }
-.rsd-score-table thead td { width: 60px; padding-inline: 0; }
-.rsd-score-table thead th { padding-top: 0; font-size: 13px; }
-.rsd-score-table thead th > span { display: inline-flex; align-items: center; gap: 5px; }
-.rsd-score-table .rsd-model { width: 24px; height: 24px; }
-.rsd-score-table tbody th { padding-left: 0; text-align: left; color: #6f6a61; font-size: 11px; font-weight: 500; }
-.rsd-score-table tbody td { border-radius: 7px; }
-.rsd-shared-prompt { background: #f7efe2; }
-#rsd-score-prompt { display: block; overflow-wrap: anywhere; text-align: left; font: 11.5px/1.4 'Google Sans Code', monospace; }
-.rsd-no-cue { color: #666b62; background: #f4f5f2; border-right: 5px solid #fff; }
-.rsd-cue-cell { background: #fff8e8; }
-.rsd-cue-cell .pill { display: inline-block; font: 600 11.5px/1.4 'Google Sans Code', monospace; }
-#rsd-feedback-kind { display: block; margin-top: 3px; font-size: 10px; color: #8b6819; }
-.rsd-shared-prefix { background: var(--rsd-training-bg); }
-.rsd-prefix-label { display: block; font-size: 10.5px; color: var(--rsd-training-ink); }
-.rsd-token-sequence { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; }
-.rsd-prefix-tokens { font: 16px/1.25 'Cambria Math', 'Times New Roman', serif; word-spacing: 5px; }
-.rsd-prefix-tokens sub { font-size: 0.7em; }
-.rsd-token-arrow { color: var(--rsd-training-ink); }
-.rsd-token-slot { padding: 1px 6px; border: 1px dashed currentColor; border-radius: 5px; background: #fff; font-size: 11px; }
-.rsd-predictions td { padding-block: 3px; }
-.rsd-predictions .rsd-next { padding: 3px 2px; }
-.rsd-predictions math.im { margin: 0; font-size: 13px; }
-.rsd-score-note { margin: 4px 0 0; color: #6f6a61; font: 11px/1.4 'Google Sans', system-ui, sans-serif; }
-.rsd-score-note b { font-weight: 500; color: #272b30; }
+/* Replay one fixed answer through the two chat contexts from Table 1. */
+.rsd-score { margin-top: 6px; min-width: 0; }
+.rsd-score-label { display: flex; justify-content: space-between; gap: 6px; color: #6f6a61; font: 10.5px/1.3 'Google Sans', system-ui, sans-serif; }
+.rsd-score-question { padding: 6px 8px; border-radius: 7px; background: #f7efe2; font: 11.5px/1.35 'Google Sans Code', monospace; }
+.rsd-score-question > .rsd-score-label { display: inline; margin-right: 6px; }
+.rsd-score-question > .rsd-score-label::after { content: ":"; }
+#rsd-score-prompt { overflow-wrap: anywhere; font: 11.5px/1.35 'Google Sans Code', monospace; }
+.rsd-score-answer { margin: 5px 0; }
+.rsd-score-tokens { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+.rsd-score-tokens button { flex: none; min-width: 28px; padding: 2px 5px; border: 1.5px solid transparent; border-radius: 5px; background: #f1f2ef; color: #8b9188; font: 16px/1.15 'Cambria Math', 'Times New Roman', serif; cursor: pointer; }
+.rsd-score-tokens button.read { background: var(--rsd-training-bg); color: #272b30; }
+.rsd-score-tokens button[aria-pressed="true"] { border-color: #272b30; background: #fff; color: #272b30; }
+.rsd-score-tokens button:hover { border-color: #6b8757; }
+.rsd-score-tokens button:focus-visible { outline: 2px solid #6b8757; outline-offset: 2px; }
+.rsd-score-later { color: #8b9188; font: 15px/1.2 'Cambria Math', 'Times New Roman', serif; white-space: nowrap; }
+.rsd-token-hint { margin-left: auto; color: #6f6a61; font: 10px/1.3 'Google Sans', system-ui, sans-serif; }
+.rsd-score-contexts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rsd-score-context { min-width: 0; padding: 5px; border: 1px solid #d9dfd4; border-radius: 9px; }
+.rsd-score-context h4 { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 0 0 4px; font: 600 13px/1.3 'Google Sans', system-ui, sans-serif; }
+.rsd-score-context .rsd-model { width: 22px; height: 22px; }
+.rsd-score-user { min-height: 44px; box-sizing: border-box; padding: 4px 5px; border-radius: 5px; background: #f7efe2; font: 11px/1.35 'Google Sans', system-ui, sans-serif; }
+.rsd-score-user .pill { display: inline-block; margin-top: 2px; padding-inline: 3px; font: 600 10.5px/1.35 'Google Sans Code', monospace; }
+.rsd-no-cue { display: block; margin-top: 3px; color: #83857d; font-size: 10px; }
+#rsd-feedback-kind { display: block; margin-top: 2px; color: #8b6819; font-size: 9.5px; }
+.rsd-score-prefix { display: flex; align-items: center; gap: 4px; min-height: 26px; box-sizing: border-box; margin-top: 4px; padding: 3px 5px; border-radius: 5px; background: var(--rsd-training-bg); font: 11px/1.25 'Google Sans', system-ui, sans-serif; }
+[data-score-prefix] { flex: 1; font: 15px/1.25 'Cambria Math', 'Times New Roman', serif; word-spacing: 2px; }
+.rsd-prefix-empty { font: 10px/1.3 'Google Sans', system-ui, sans-serif; color: var(--rsd-training-ink); }
+.rsd-token-slot { padding: 0 5px; border: 1px dashed #272b30; border-radius: 4px; background: #fff; font-size: 11px; }
+.rsd-score-output { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 4px; }
+.rsd-score-output > span:first-child { color: #6f6a61; font: 9.5px/1.3 'Google Sans', system-ui, sans-serif; white-space: nowrap; }
+.rsd-score-output .rsd-next { padding: 2px 1px; }
+.rsd-score-output math.im { margin: 0; font-size: 14px; }
+.rsd-score-note { margin: 6px 0 0; color: #6f6a61; font: 11px/1.35 'Google Sans', system-ui, sans-serif; }
 /* θ_t and θ_{t+1}, set as math: italic θ and t, upright +1. */
 .th { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.14em; font-weight: 400; color: #272b30; white-space: nowrap; }
 .th sub { position: relative; bottom: -0.32em; margin-left: 0.05em; font-size: 0.7em; line-height: 0; vertical-align: baseline; }
 .th i { font-style: italic; }
 .rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-/* The full loss uses the same policy notation as Score, across two readable lines. */
+/* A wider Update card keeps the full, original loss on one larger line. */
 .rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
 .m-line { white-space: nowrap; line-height: 1; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(12px, 5.1cqw, 18px); color: #272b30; }
-.rsd-loss-comparison { margin-top: 5px; padding-left: 8px; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(8px, 3.25cqw, 18px); color: #272b30; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-update-summary { margin-top: 6px; }
@@ -436,11 +440,11 @@ pre {
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
 @media (min-width: 1101px) {
-  .rsd { --rsd-stage-height: clamp(350px, calc(100dvh - 370px), 380px); --rsd-eval-height: clamp(196px, calc(100dvh - var(--rsd-stage-height) - 174px), 320px); scroll-margin-top: 12px; }
+  .rsd { position: relative; left: 50%; width: min(1400px, calc(100vw - 48px)); max-width: none; transform: translateX(-50%); --rsd-stage-height: clamp(360px, calc(100dvh - 370px), 380px); --rsd-eval-height: clamp(196px, calc(100dvh - var(--rsd-stage-height) - 174px), 320px); scroll-margin-top: 12px; }
   .rsd-dropdown-button { padding-block: 4px; }
   .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
   /* Keep the training row compact, with the full evaluation underneath. */
-  .rsd-diagram { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
+  .rsd-diagram { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.1fr) minmax(0, 1.5fr); gap: 24px 16px; }
   .rsd-cycle, .rsd-stages { display: contents; }
   .rsd-stage { display: flex; flex-direction: column; min-width: 0; height: var(--rsd-stage-height); box-sizing: border-box; padding: 12px; }
   .rsd-stage + .rsd-stage { margin-top: 0; }

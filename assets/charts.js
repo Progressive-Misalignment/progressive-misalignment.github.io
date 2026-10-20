@@ -587,21 +587,20 @@
     off: {
       writer: 'teacher', role: `(conditioned on ${V.f})`,
       gen: `The <b>teacher</b> generates an answer from the prompt ${V.x} and cue ${V.f}: ${im(my + '<mo>∼</mo>' + pi(mx + comma + mf, true))}.`,
-      score: 'Keep the teacher’s answer fixed. At each token, read the two contexts below.',
+      score: 'Same answer, with and without feedback.',
       loss: 'Match the teacher’s token distribution.',
     },
     on: {
       writer: 'student', role: `(without ${V.f})`,
       gen: `The <b>student</b> generates an answer from the prompt ${V.x}, without the cue: ${im(my + '<mo>∼</mo>' + pi(mx, true))}.`,
-      score: 'Keep the student’s answer fixed. At each token, read the two contexts below.',
+      score: 'Same answer, with and without feedback.',
       loss: 'Match the teacher’s token distribution.',
     },
   };
   const TEACHER_POLICY = pi(mx + comma + mf + comma + prefix), STUDENT = pi(mx + comma + prefix);
   const TEACHER = sg(TEACHER_POLICY);
   const lossMath = off => `<div class="m-line"><math displaystyle="true"><msub><mi>ℒ</mi><mtext>${off ? 'off' : 'on'}</mtext></msub>${mo('(')}<mi>θ</mi><mo>;</mo>${mx}${comma}${mf}${mo(')')}<mo>=</mo>`
-    + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}</math></div>`
-    + `<div class="m-line rsd-loss-comparison"><math displaystyle="true"><munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
+    + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
   const ai = (text, robot, heading, illustrative) => `<div class="msg from-ai writes"><p class="bubble ai">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
@@ -635,6 +634,28 @@
       });
     }
   }
+  // Symbolic positions in the fixed answer, not a tokenizer or new generations.
+  let scorePosition = 3;
+  function drawScorePosition() {
+    for (const button of $('rsd-score-tokens').querySelectorAll('button')) {
+      const position = Number(button.dataset.token);
+      button.setAttribute('aria-pressed', String(position === scorePosition));
+      button.classList.toggle('read', position < scorePosition);
+      button.title = `Score position ${position}; both contexts read ${position - 1} previous answer tokens.`;
+    }
+    $('rsd-score-position').textContent = `Position i = ${scorePosition}`;
+    const tokens = Array.from({ length: scorePosition - 1 }, (_, i) => `<i>y</i><sub>${i + 1}</sub>`).join(' ');
+    for (const context of root.querySelectorAll('[data-score-prefix]')) {
+      context.innerHTML = tokens || '<span class="rsd-prefix-empty">start</span>';
+      context.setAttribute('aria-label', scorePosition === 1 ? 'No previous answer tokens' : `Same answer tokens 1 through ${scorePosition - 1}`);
+    }
+  }
+  $('rsd-score-tokens').addEventListener('click', event => {
+    const button = event.target.closest('button[data-token]');
+    if (!button) return;
+    scorePosition = Number(button.dataset.token);
+    drawScorePosition();
+  });
   function drawUpdate() {
     const off = state.mode === 'off';
     root.dataset.mode = state.mode;
@@ -664,6 +685,7 @@
     $('rsd-teacher-distribution').title = 'πθ(· | x, f, y<i): probabilities over all possible next tokens, with the cue.';
     $('rsd-student-distribution').innerHTML = im(STUDENT);
     $('rsd-teacher-distribution').innerHTML = im(TEACHER_POLICY);
+    drawScorePosition();
     drawDists(stop.sorry);
     $('rsd-update-text').innerHTML = text.loss;
     $('rsd-loss-math').innerHTML = lossMath(off);
