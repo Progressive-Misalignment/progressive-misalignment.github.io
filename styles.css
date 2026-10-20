@@ -228,7 +228,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-bar b { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font: 11px/1.2 'Google Sans Code', ui-monospace, Menlo, monospace; color: #6f6a61; white-space: nowrap; }
 .rsd-dist.student .fill { background: #b4b8bd; }
 .rsd-dist.student .target { display: block; }
-/* Prompt menus show full text; desktop buttons use a compact preview. */
+/* Evaluation prompts wrap in full; the desktop training selector stays compact. */
 .rsd-list-label { margin: 0 0 6px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-dropdown { position: relative; margin: 0 0 26px; }
 .rsd-dropdown-button { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 8px 10px; background: #fff; border: 1.5px solid #d4d4d4; border-radius: 10px; color: #272b30; font: 13.5px/1.45 'Google Sans', system-ui, sans-serif; text-align: left; cursor: pointer; }
@@ -298,7 +298,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .th { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.14em; font-weight: 400; color: #272b30; white-space: nowrap; }
 .th sub { position: relative; bottom: -0.32em; margin-left: 0.05em; font-size: 0.7em; line-height: 0; vertical-align: baseline; }
 .th i { font-style: italic; }
-.rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
+.rsd-next { display: inline-block; padding: 0 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; }
 /* Step 3: the loss, then the student before and after one gradient step. */
 /* Size the complete loss within its card, without widening the demo. */
 .rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
@@ -334,7 +334,6 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-stage[aria-current="step"] .rsd-mark { background: #c54135; color: #fff; box-shadow: 0 0 0 3px #f4dfd7; }
 /* Keep the highlight inside the bubble so the conversation scroller cannot clip it. */
 .rsd[data-step="1"] .rsd-update .msg.writes .bubble { box-shadow: inset 0 0 0 2px #272b30; }
-.rsd[data-step="2"] .rsd-next { border-color: #c54135; color: #c54135; }
 /* During Self-distill the student after the step starts where it was, then moves at step 3. */
 .rsd:is([data-step="1"], [data-step="2"]) .rsd-dist.after .fill { height: calc(var(--p, 0) * 100%); }
 .rsd[data-step="3"] .rsd-move-line { color: #c54135; animation: flow 0.45s linear infinite; }
@@ -440,9 +439,9 @@ pre {
 .tip-key { flex: none; width: 12px; height: 3px; border-radius: 2px; }
 
 @media (min-width: 1101px) {
-  .rsd { --rsd-stage-height: clamp(360px, calc(100dvh - 370px), 380px); --rsd-eval-height: clamp(196px, calc(100dvh - var(--rsd-stage-height) - 174px), 320px); scroll-margin-top: 12px; }
+  .rsd { --rsd-stage-height: 350px; --rsd-eval-height: clamp(206px, calc(100dvh - var(--rsd-stage-height) - 164px), 320px); scroll-margin-top: 12px; }
   .rsd-dropdown-button { padding-block: 4px; }
-  .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+  #rsd-prompts .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
   /* Keep the training row compact, with the full evaluation underneath. */
   .rsd-diagram { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
   .rsd-cycle, .rsd-stages { display: contents; }
