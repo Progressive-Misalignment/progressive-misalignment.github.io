@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=bb7c25f7ebf7">
+  <link rel="stylesheet" href="styles.css?v=334c55171e79">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=66f89ee3dc16" defer></script>
+  <script src="assets/charts.js?v=208c534c32bb" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -105,20 +105,26 @@
                 </div>
               </li>
               <li class="rsd-stage" data-step="3" tabindex="0">
-                <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update and repeat</p>
                 <span class="rsd-next-round" aria-hidden="true">next round with <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>
-                <p class="rsd-stage-text" id="rsd-update-text"></p>
-                <div class="rsd-math" id="rsd-loss-math"></div>
-                <div class="rsd-update-row"><p class="rsd-stage-text">The weights are updated with a gradient step (Eq.&nbsp;3),</p><div class="rsd-math" id="rsd-update-math"></div></div>
-                <p class="rsd-math-key" id="rsd-math-key"></p>
-                <div class="rsd-move">
-                  <p class="rsd-dist-name rsd-move-from"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p>
-                  <p class="rsd-dist-name rsd-move-to"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p>
-                  <div class="rsd-dist student rsd-move-before"><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
-                  <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
-                  <div class="rsd-dist student after rsd-move-after"><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
+                <div class="rsd-part">
+                  <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update and repeat</p>
+                  <p class="rsd-stage-text" id="rsd-update-text"></p>
+                  <div class="rsd-math" id="rsd-loss-math"></div>
                 </div>
-                <p class="rsd-move-note">The student distribution moves towards the teacher distribution (dashed). <span class="rsd-kl-value" id="rsd-kl-value"></span></p>
+                <div class="rsd-part">
+                  <div class="rsd-update-row"><p class="rsd-stage-text">The weights are updated with a gradient step (Eq.&nbsp;3),</p><div class="rsd-math" id="rsd-update-math"></div></div>
+                  <p class="rsd-math-key" id="rsd-math-key"></p>
+                </div>
+                <div class="rsd-part">
+                  <div class="rsd-move">
+                    <p class="rsd-dist-name rsd-move-from"><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i></sub></span></p>
+                    <p class="rsd-dist-name rsd-move-to"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt="">Student, <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></p>
+                    <div class="rsd-dist student rsd-move-before"><div class="rsd-dist-plot" id="rsd-dist-before"></div></div>
+                    <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
+                    <div class="rsd-dist student after rsd-move-after"><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
+                  </div>
+                  <p class="rsd-move-note">The student distribution moves towards the teacher distribution (dashed). <span class="rsd-kl-value" id="rsd-kl-value"></span></p>
+                </div>
                 <div class="rsd-repeat">
                   <div class="rsd-handover">
                     <span class="rsd-handover-model"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>

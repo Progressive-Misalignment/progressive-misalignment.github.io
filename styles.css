@@ -197,7 +197,10 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #e2e2df; border-radius: 14px; }
 .rsd-eval > .rsd-col-title { margin: 0 0 8px; font-size: 14.5px; }
 .rsd-eval .rsd-dropdown { margin: 0 0 12px; }
-.rsd-repeat { margin-top: 12px; padding-top: 4px; border-top: 1px dashed #e2e2df; }
+/* Card 3 in four parts; on wide screens any spare height goes evenly between them. */
+.rsd-stage[data-step="3"] { display: flex; flex-direction: column; gap: 14px; }
+.rsd-part > :last-child { margin-bottom: 0; }
+.rsd-repeat { padding-top: 4px; border-top: 1px dashed #e2e2df; }
 .rsd-col-title { margin: 0 0 12px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-box { position: relative; padding: 24px 12px 4px; border: 1.5px solid #272b30; border-radius: 14px; background: #fff; }
 .rsd-head { position: absolute; top: -15px; left: 12px; right: 12px; display: flex; align-items: center; gap: 6px; }
@@ -435,6 +438,7 @@ pre {
   .rsd-stage[data-step="1"] { grid-area: 1 / 1; } .rsd-stage[data-step="2"] { grid-area: 1 / 2; }
   .rsd-stage[data-step="3"] { grid-area: 2 / 1; } .rsd-diagram > .rsd-eval { grid-area: 2 / 2; margin: 0; }
   .rsd-stage + .rsd-stage { margin-top: 0; }
+  .rsd-stage[data-step="3"] { justify-content: space-between; }
   .rsd-stages .rsd-stage::before, .rsd-diagram > .rsd-eval::before { content: ''; position: absolute; background: #272b30; transform: none; }
   .rsd-stages .rsd-stage::after, .rsd-diagram > .rsd-eval::after { content: ''; position: absolute; width: 7px; height: 7px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; }
   .rsd-stages .rsd-stage[data-step="1"]::before { top: 50%; left: auto; right: -26px; width: 20px; height: 1.5px; }
