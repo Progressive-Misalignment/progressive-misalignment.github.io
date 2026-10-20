@@ -222,10 +222,8 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-generation .bubble.ai, .rsd-score .bubble.ai { background: var(--rsd-training-bg); }
 .slot { color: #6f6a61; font-style: italic; }
 .pill { padding: 0 0.4em; background: #fdf6e3; border: 1.5px solid #b8860b; border-radius: 7px; color: #b8860b; font-weight: 600; white-space: nowrap; }  /* the cue, in the same gold as f */
-/* Step 2: the two next-token distributions, each above what that model reads. */
+/* Illustrative token distributions for the student update in Step 3. */
 .rsd-dist-name { margin: 0 0 6px; font: 600 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
-.rsd-target-key { margin-left: 8px; font-weight: 400; color: #6f6a61; white-space: nowrap; }
-.rsd-target-key::before { content: ''; display: inline-block; width: 14px; margin-right: 4px; border-top: 1.5px dashed #272b30; vertical-align: middle; }
 .rsd-dist-plot { display: flex; align-items: flex-end; gap: 9px; height: 76px; border-bottom: 1.5px solid #272b30; }
 .rsd-bar { position: relative; flex: 1; height: 100%; }
 .rsd-bar i { position: absolute; bottom: 0; left: 0; right: 0; border-radius: 4px 4px 0 0; }
@@ -280,10 +278,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-mini .rsd-model { width: 24px; height: 24px; }
 .rsd-mini .bubble { margin: 0 0 6px; padding: 4px 7px; font-size: 11.5px; line-height: 1.45; }
 .rsd-mini .pill { display: inline-block; margin-top: 3px; }
-.rsd-gives { display: flex; align-items: center; gap: 8px; margin: 6px 0 8px 14px; font: 11.5px/1.35 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-down { position: relative; flex: none; width: 1.5px; height: 16px; background: #272b30; }
-.rsd-down::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 6px; height: 6px; border: solid #272b30; border-width: 0 1.5px 1.5px 0; transform: translateX(-50%) rotate(45deg); }
-.rsd-dist-key { grid-column: 1 / -1; margin: 20px 0 0; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 /* θ_t and θ_{t+1}, set as math: italic θ and t, upright +1. */
 .th { font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif; font-size: 1.14em; font-weight: 400; color: #272b30; white-space: nowrap; }
 .th sub { position: relative; bottom: -0.32em; margin-left: 0.05em; font-size: 0.7em; line-height: 0; vertical-align: baseline; }
@@ -444,16 +438,11 @@ pre {
   .rsd-mini .pill { margin-top: 0; }
   .rsd-mini .rsd-next { line-height: 1.2; }
   .rsd-mini .rsd-role { display: none; }
-  .rsd-gives { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .rsd-score .rsd-dist-plot { height: calc(32px + var(--rsd-room)); margin-top: calc(6px + var(--rsd-room)); }
-  .rsd-dist-key { margin-top: 18px; }
   /* Use the off-policy panel's spare height to open up its shorter contexts. */
   .rsd[data-mode="off"] .rsd-stage[data-step="2"] { display: flex; flex-direction: column; }
-  .rsd[data-mode="off"] .rsd-score { flex: 1; grid-template-rows: minmax(min-content, 1fr) auto auto; margin-top: calc(20px + var(--rsd-room)); }
+  .rsd[data-mode="off"] .rsd-score { flex: 1; margin-top: calc(20px + var(--rsd-room)); }
   .rsd[data-mode="off"] .rsd-mini { display: flex; flex-direction: column; padding-top: 14px; padding-bottom: 4px; }
   .rsd[data-mode="off"] .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; }
-  .rsd[data-mode="off"] .rsd-score .rsd-dist-plot { margin-top: calc(12px + var(--rsd-room)); }
-  .rsd[data-mode="off"] .rsd-dist-key { margin-top: calc(18px + var(--rsd-room)); }
   #rsd-writer { max-height: clamp(150px, calc(150px + (100dvh - 720px) * 0.4), 292px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }

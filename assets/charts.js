@@ -632,11 +632,11 @@
     const teacher = dist(c + 0.25 * (1 - c));
     const after = student.map((v, i) => v + 0.6 * (teacher[i] - v));
     const top = Math.max(...student, ...teacher) / 0.92;  // the tallest bar nearly fills its plot
-    for (const [id, values] of [['rsd-dist-teacher', teacher], ['rsd-dist-student', student], ['rsd-dist-before', student], ['rsd-dist-after', student]]) {
+    for (const id of ['rsd-dist-before', 'rsd-dist-after']) {
       const plot = $(id);
       if (!plot.children.length) plot.innerHTML = TOKENS.map(t => `<span class="rsd-bar"><i class="target"></i><i class="fill"></i><b>${t}</b></span>`).join('');
       [...plot.children].forEach((bar, i) => {
-        bar.style.setProperty('--p', (values[i] / top).toFixed(3));
+        bar.style.setProperty('--p', (student[i] / top).toFixed(3));
         bar.style.setProperty('--t', (teacher[i] / top).toFixed(3));
         bar.style.setProperty('--a', (after[i] / top).toFixed(3));
       });
