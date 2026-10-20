@@ -604,7 +604,7 @@
     + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
-  const ai = (text, robot, heading, bad, illustrative) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  const ai = (text, robot, heading, illustrative) => `<div class="msg from-ai writes"><p class="bubble ai">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   // What each model reads when it scores: compact turns, ending at the token being predicted.
   // lines > 0 clamps the turn to that many lines; extra follows it, unclamped.
   const turn = (kind, body, lines = 0, extra = '') => {
@@ -616,11 +616,11 @@
   function trainingAnswer(stop) {
     const [category, , qwen, phi] = prompts[state.prompt];
     const initial = state.model === 'qwen' ? qwen : phi;
-    if (stop.epoch === 0) return { html: esc(initial), bad: false };
+    if (stop.epoch === 0) return { html: esc(initial) };
     const text = pick(EX.training, config(), IDS[state.prompt], stop.epoch);
-    if (text) return { html: esc(text), bad: false };
-    if (PH) { const p = PH.training(state.prompt, category, stop, state.cue, initial); return { html: esc(p.text), bad: p.bad, illustrative: true }; }
-    return { html: '<span class="slot">{answer}</span>', bad: false };
+    if (text) return { html: esc(text) };
+    if (PH) { const p = PH.training(state.prompt, category, stop, state.cue, initial); return { html: esc(p.text), illustrative: true }; }
+    return { html: '<span class="slot">{answer}</span>' };
   }
   // Illustrative first-token probabilities over I’m / Sorry / Sure / Here: refusal tokens lose mass
   // as compliance c grows. The cue shifts the teacher (exaggerated here); one update moves the
@@ -648,16 +648,18 @@
     const text = TEXT[state.mode];
     const stop = stops()[state.at];
     const robot = robotFor(stop.sorry);
+    // Training bubbles illustrate the same checkpoint state as the robots.
+    root.dataset.robot = String(robot);
     const question = esc(prompts[state.prompt][1]);
-    const { html: answer, bad, illustrative } = trainingAnswer(stop);
+    const { html: answer, illustrative } = trainingAnswer(stop);
     $('rsd-gen-text').innerHTML = text.gen;
     const writer = text.writer[0].toUpperCase() + text.writer.slice(1);
     const heading = `<span class="rsd-writer-heading"><b id="rsd-writer-label">${writer}</b> <span id="rsd-writer-role">${text.role}</span></span>`;
-    $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, heading, bad, illustrative);
+    $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, heading, illustrative);
     $('rsd-writer').scrollTop = 0;
     $('rsd-score-text').innerHTML = text.score;
     $('rsd-ctx-teacher').innerHTML = off ? turn('user', question, 1, cue()) + turn('ai', NEXT)
-      : turn('user', question, 1) + turn(bad ? 'bad' : 'ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
+      : turn('user', question, 1) + turn('ai', answer, 1) + turn('user', cue()) + turn('ai', NEXT);
     $('rsd-ctx-student').innerHTML = turn('user', question, 1) + turn('ai', NEXT);
     drawDists(stop.sorry);
     $('rsd-update-text').innerHTML = text.loss;
