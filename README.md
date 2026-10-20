@@ -14,6 +14,8 @@ Fixed cues use the paper’s gray, bordered typewriter boxes in the prose and ch
 
 The opening text is labelled **Introduction**. `assets/navigation.js` highlights the current section in the green contents menu, starting with Introduction. The existing `#premises` anchor is retained for shared links. On wide screens the menu sits to the left of the reading column; on smaller screens a floating Contents button opens it. Section links work without JavaScript, and reduced-motion preferences are respected. Body text and wide figures share a 900px maximum width; the title block and opening animation remain at 680px.
 
+The Setup demo uses a compact two-by-two layout on desktop, with its controls and Self-distill button fitting in a laptop viewport. Step 3 keeps the loss on one line and describes the single gradient step from θ_t to θ_{t+1} in words. Desktop prompt buttons show a one-line preview; open the menu or hover the button for the complete prompt. Longer training conversations and evaluation answers scroll within their panels, with keyboard access; the evaluation verdict remains visible above the answer. At widths of 900px or less, the cards stack and the action buttons stay above the floating Contents menu.
+
 - `index.html`: all page text, figures, animations, example generations, and the BibTeX entry.
 - `styles.css`: a single column on white, with the fonts of [karimabdelsadek.com](https://www.karimabdelsadek.com/).
 - The Larger models section places its paragraph beside Figure 4 on desktop, with text on the left and the figure and caption on the right. At widths of 800px or less, the figure follows the text.

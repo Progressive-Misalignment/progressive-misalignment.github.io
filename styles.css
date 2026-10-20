@@ -189,16 +189,16 @@ figure.small { max-width: 440px; margin-inline: auto; }
 
 /* Setup figure: left, one update; right, the answers to an evaluation prompt by epoch. */
 /* Setup figure: the four steps of one update as a cycle, then the evaluation below. */
-.rsd-layout { margin-top: 22px; }
-.rsd-prompt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 20px; }
+.rsd-layout { margin-top: 6px; }
+.rsd-prompt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 6px; }
 .rsd-prompt-row .rsd-col-title { flex: none; margin: 0 8px 0 0; }
 .rsd-prompt-row .rsd-list-label { flex: none; margin: 0; }
 .rsd-prompt-row .rsd-dropdown { flex: 1 1 320px; min-width: 0; margin: 0; }  /* wraps to its own line when narrow */
 .rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #e2e2df; border-radius: 14px; }
 .rsd-eval > .rsd-col-title { margin: 0 0 8px; font-size: 14.5px; }
 .rsd-eval .rsd-dropdown { margin: 0 0 12px; }
-/* Card 3 in four parts; on wide screens any spare height goes evenly between them. */
-.rsd-stage[data-step="3"] { display: flex; flex-direction: column; gap: 14px; }
+/* Keep the loss, one-step update, and next-round handover together. */
+.rsd-stage[data-step="3"] { display: flex; flex-direction: column; gap: 8px; container-type: inline-size; }
 .rsd-part > :last-child { margin-bottom: 0; }
 .rsd-repeat { padding-top: 4px; border-top: 1px dashed #e2e2df; }
 .rsd-col-title { margin: 0 0 12px; font: 600 15px/1.3 'Google Sans', system-ui, sans-serif; color: #272b30; }
@@ -228,7 +228,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-bar b { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font: 11px/1.2 'Google Sans Code', ui-monospace, Menlo, monospace; color: #6f6a61; white-space: nowrap; }
 .rsd-dist.student .fill { background: #b4b8bd; }
 .rsd-dist.student .target { display: block; }
-/* Prompt menus: the button shows the whole selected prompt; the menu lists them all. */
+/* Prompt menus show full text; desktop buttons use a compact preview. */
 .rsd-list-label { margin: 0 0 6px; font: 13px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-dropdown { position: relative; margin: 0 0 26px; }
 .rsd-dropdown-button { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 8px 10px; background: #fff; border: 1.5px solid #d4d4d4; border-radius: 10px; color: #272b30; font: 13.5px/1.45 'Google Sans', system-ui, sans-serif; text-align: left; cursor: pointer; }
@@ -286,38 +286,33 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-clamp.one { -webkit-line-clamp: 1; }
 .rsd-next { display: inline-block; padding: 0 6px; background: #fff; border: 1.5px dashed #272b30; border-radius: 6px; font: 11px/1.5 'Google Sans', system-ui, sans-serif; color: #272b30; transition: border-color 0.25s, color 0.25s; }
 /* Step 3: the loss, then the student before and after one gradient step. */
-/* The paper's loss and update. The cue f keeps the cue's colour. */
-.rsd-math { margin: 6px 0 10px; overflow-x: auto; overflow-y: hidden; }
-.rsd-update-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
-.rsd-update-row .rsd-math { margin: 4px 0 8px; }
-/* The loss on two lines: the left-hand side, then the whole right-hand side. */
-.m-line { text-align: left; }
-.m-line.m-cont { margin-top: 2px; padding-bottom: 18px; text-align: right; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 15px; color: #272b30; }
-.m-label { font: 11px/1 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+/* One-line loss, scaled to the card width. The cue f keeps the cue's colour. */
+.rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
+.m-line { white-space: nowrap; line-height: 1; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(10px, 2.8cqw, 12px); color: #272b30; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
-.rsd-math-key { margin: 0; font: 11.5px/1.6 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); grid-template-areas: "from . to" "before arrow after"; gap: 0 10px; margin: 12px 0 24px; }
+.rsd-update-summary { margin-top: 6px; }
+.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 78px minmax(0, 1fr); grid-template-areas: "from . to" "before arrow after"; gap: 0 10px; margin: 0 0 22px; }
 .rsd-move-from { grid-area: from; } .rsd-move-to { grid-area: to; }
 .rsd-move-before { grid-area: before; } .rsd-move-after { grid-area: after; } .rsd-move-arrow { grid-area: arrow; }
 .rsd-move .rsd-dist-name { display: flex; align-items: center; gap: 5px; }
 .rsd-move .rsd-model { width: 22px; height: 22px; }
-.rsd-move .rsd-dist-plot { height: 56px; gap: 6px; }
+.rsd-move .rsd-dist-plot { height: 44px; gap: 6px; }
 .rsd-move-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; text-align: center; }
 .rsd-move-line { position: relative; width: 100%; height: 2px; color: #272b30; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px); }
 .rsd-move-line::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border: solid currentColor; border-width: 1.8px 1.8px 0 0; transform: translateY(-50%) rotate(45deg); }
 .rsd-move-note { margin: 0; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-move-note:empty { display: none; }
 .rsd-dist.after .fill { height: calc(var(--a, 0) * 100%); }
-.rsd-handover { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; }
+.rsd-handover { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; }
 .rsd-handover-model { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; font: 14px/1.2 'Google Sans', system-ui, sans-serif; color: #272b30; }
-.rsd-handover-model .rsd-model { width: 38px; height: 38px; }
-.rsd-fork { flex: none; width: 44px; height: 60px; overflow: visible; }
+.rsd-handover-model .rsd-model { width: 28px; height: 28px; }
+.rsd-fork { flex: none; width: 34px; height: 48px; overflow: visible; }
 .rsd-fork path { fill: none; stroke: #272b30; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.25s; }
-.rsd-handover-roles { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.rsd-role-chip { padding: 4px 12px; border: 1.5px solid #272b30; border-radius: 14px; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-handover-roles { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.rsd-role-chip { padding: 1px 10px; border: 1.5px solid #272b30; border-radius: 14px; font: 12px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-role-chip b { margin-right: 4px; color: #272b30; font-weight: 600; }
-.rsd-kl-value { color: #272b30; }
 /* Hovering a step, or one press of Self-distill, lights the steps up in turn. */
 .rsd[data-step="1"] .rsd-stage[data-step="1"], .rsd[data-step="2"] .rsd-stage[data-step="2"],
 .rsd[data-step="3"] .rsd-stage[data-step="3"], .rsd[data-step="4"] .rsd-stage[data-step="3"] { border-color: #272b30; }
@@ -351,7 +346,7 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-plot-legend i.dashed { background: repeating-linear-gradient(90deg, #9a9ea4 0 4px, transparent 4px 7px); }
 .rsd-plot-legend i.paper { width: 0; height: 12px; border-left: 1px dashed #c97b3f; }
 
-.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; margin: 22px 0 0; font: 14px/1.4 'Google Sans', system-ui, sans-serif; }
+.rsd-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; margin: 6px 0 0; font: 13px/1.4 'Google Sans', system-ui, sans-serif; }
 .rsd-go { padding: 8px 20px; background: #272b30; color: #fff; border: 0; border-radius: 999px; font: 600 15px/1.4 'Google Sans', system-ui, sans-serif; cursor: pointer; }
 .rsd-go:hover:not(:disabled) { background: #000; }
 .rsd-go:disabled { background: #c9cbcf; cursor: default; }
@@ -376,8 +371,8 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-card-head { display: flex; align-items: baseline; gap: 8px; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-tag { font-size: 12.5px; font-weight: 600; color: #b45f23; }
 .rsd-score-name { font-family: cmtt10, 'Google Sans Code', monospace; color: #272b30; }
-.rsd-verdict { display: block; margin-top: 4px; font: 600 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
-.bubble.bad .rsd-verdict { color: #9b1214; }
+.rsd-card-verdict { margin-left: auto; font: 600 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
+.rsd-card-verdict[data-complied="true"] { color: #9b1214; }
 /* Figure 8: the sketch and the KL plot side by side, as in the paper. */
 .drift-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 .drift-row > img { max-width: 400px; margin-inline: auto; }
@@ -429,6 +424,34 @@ pre {
 
 .rsd-next-round { display: none; }
 @media (min-width: 901px) {
+  /* Bound variable-length text so every saved checkpoint keeps the actions in view. */
+  .rsd-dropdown-button { padding-block: 4px; }
+  .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+  .rsd-stage { padding-block: 6px; }
+  .rsd-eval { padding-top: 14px; padding-bottom: 6px; }
+  .rsd-stage-text { line-height: 1.4; }
+  .rsd-stage > .rsd-box { padding-top: 18px; margin-top: 20px; }
+  .rsd-score { margin-top: 16px; gap: 0 10px; }
+  .rsd-mini { padding: 10px 6px 0; }
+  .rsd-mini .bubble { margin-bottom: 3px; padding: 1px 6px; line-height: 1.2; }
+  .rsd-mini .pill { margin-top: 0; }
+  .rsd-mini .rsd-next { line-height: 1.2; }
+  .rsd-mini .rsd-role { display: none; }
+  .rsd-gives { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .rsd-score .rsd-dist-plot { height: 32px; margin-top: 6px; }
+  .rsd-dist-key { margin-top: 18px; }
+  #rsd-writer { max-height: 118px; overflow-y: auto; scrollbar-width: thin; }
+  .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .rsd-eval > .rsd-col-title { position: absolute; top: -10px; left: 10px; margin: 0; padding-inline: 4px; background: #fff; }
+  .rsd-eval .rsd-dropdown { margin-bottom: 8px; }
+  .rsd-card { padding: 4px 8px 0; }
+  .rsd-card-head { margin-bottom: 4px; }
+  #rsd-card-answer { box-sizing: border-box; max-height: 56px; overflow-y: auto; scrollbar-width: thin; }
+  .rsd-plot { margin-top: 8px; }
+  .rsd-stop { gap: 1px; padding-block: 3px 2px; }
+  .rsd-stop img { width: 18px; height: 18px; }
+  .rsd-dot { width: 5px; height: 5px; }
+  .rsd-handover { justify-content: center; }
   /* 1 Generate → 2 Score ↙ 3 Update and repeat ↑ back to 1; the evaluation fills the fourth quadrant. */
   .rsd-diagram { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 30px; }
   .rsd-cycle, .rsd-stages { display: contents; }
@@ -451,16 +474,18 @@ pre {
   .rsd[data-step="4"] .rsd-stages .rsd-stage[data-step="3"]::after { border-color: #c54135; }
 }
 
-@media (max-width: 380px) { .rsd-math math { font-size: 11.5px !important; } .rsd-mini .rsd-role { display: none; } }
+@media (max-width: 380px) { .rsd-mini .rsd-role { display: none; } }
 
 /* Two columns need room for the epoch strip. */
 @media (max-width: 900px) {
+  .rsd-action { position: sticky; bottom: max(74px, calc(env(safe-area-inset-bottom) + 56px)); z-index: 3; width: fit-content; max-width: 100%; margin-inline: auto; padding: 8px 12px; box-sizing: border-box; border: 1px solid #edf0e9; border-radius: 16px; background: #fff; box-shadow: 0 2px 12px rgb(0 0 0 / 0.08); }
+  .rsd-action .run-status { flex-basis: 100%; order: 1; text-align: center; font-size: 12px; }
+  .rsd-strip { overflow-x: auto; }
 }
 
 @media (max-width: 600px) {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
-  .rsd-math math { font-size: 12.5px; }
   .rsd-long { display: none; }
   .rsd-stage { padding-left: 10px; padding-right: 10px; }
   .rsd-move { grid-template-columns: minmax(0, 1fr); grid-template-areas: "from" "before" "arrow" "to" "after"; }

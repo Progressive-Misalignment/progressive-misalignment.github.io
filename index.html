@@ -15,12 +15,12 @@
   <link rel="icon" href="assets/favicon.png?v=2ecf3f3a203e" type="image/png">
   <link rel="preload" href="assets/fonts/klee-one-400.woff2?v=6d98e2b5545e" as="font" type="font/woff2" crossorigin>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="styles.css?v=ffac45a8a44a">
+  <link rel="stylesheet" href="styles.css?v=3936d03fd123">
   <script src="assets/figure-data.js?v=ef2f97010ba3" defer></script>
   <script src="assets/setup-data.js?v=ebd0e71dc241" defer></script>
   <script src="assets/setup-excerpts.js?v=245e97d373bb" defer></script>
   <script src="assets/setup-placeholders.js?v=d62e88a77bdb" defer></script>
-  <script src="assets/charts.js?v=208c534c32bb" defer></script>
+  <script src="assets/charts.js?v=5008a035df45" defer></script>
   <script src="assets/selection-data.js?v=af53622b8d08" defer></script>
   <script src="assets/selection.js?v=cbd8a53772fe" defer></script>
   <script src="assets/navigation.js?v=3c61e4415f8c" defer></script>
@@ -88,7 +88,7 @@
                 <p class="rsd-stage-text" id="rsd-gen-text"></p>
                 <div class="rsd-box">
                   <div class="rsd-head"><span class="rsd-label" id="rsd-writer-label">Teacher</span><img class="rsd-model" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="rsd-role" id="rsd-writer-role"></span></div>
-                  <div class="rsd-chat" id="rsd-writer"></div>
+                  <div class="rsd-chat" id="rsd-writer" tabindex="0" role="region" aria-label="Training conversation; scroll to read more"></div>
                 </div>
               </li>
               <li class="rsd-stage" data-step="2" tabindex="0">
@@ -109,11 +109,8 @@
                 <div class="rsd-part">
                   <p class="rsd-stage-title"><span class="rsd-mark">3</span> Update and repeat</p>
                   <p class="rsd-stage-text" id="rsd-update-text"></p>
-                  <div class="rsd-math" id="rsd-loss-math"></div>
-                </div>
-                <div class="rsd-part">
-                  <div class="rsd-update-row"><p class="rsd-stage-text">The weights are updated with a gradient step (Eq.&nbsp;3),</p><div class="rsd-math" id="rsd-update-math"></div></div>
-                  <p class="rsd-math-key" id="rsd-math-key"></p>
+                  <div class="rsd-math" id="rsd-loss-math" tabindex="0" role="region" aria-label="Self-distillation loss" title="T: trajectory length; sg: stop-gradient."></div>
+                  <p class="rsd-stage-text rsd-update-summary">We take one gradient step to get <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> from <span class="th"><i>θ</i><sub><i>t</i></sub></span>.</p>
                 </div>
                 <div class="rsd-part">
                   <div class="rsd-move">
@@ -123,15 +120,15 @@
                     <div class="rsd-move-arrow"><span>gradient step</span><span class="rsd-move-line" aria-hidden="true"></span></div>
                     <div class="rsd-dist student after rsd-move-after"><div class="rsd-dist-plot" id="rsd-dist-after"></div></div>
                   </div>
-                  <p class="rsd-move-note">The student distribution moves towards the teacher distribution (dashed). <span class="rsd-kl-value" id="rsd-kl-value"></span></p>
+                  <p class="rsd-move-note" id="rsd-kl-value"></p>
                 </div>
                 <div class="rsd-repeat">
                   <div class="rsd-handover">
                     <span class="rsd-handover-model"><img class="rsd-model next" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""><span class="th"><i>θ</i><sub><i>t</i>+1</sub></span></span>
                     <svg class="rsd-fork" viewBox="0 0 44 60" aria-hidden="true"><path d="M2,30 C20,30 20,10 38,10"/><path d="M2,30 C20,30 20,50 38,50"/><path class="head" d="M33,5 L39,10 L33,15"/><path class="head" d="M33,45 L39,50 L33,55"/></svg>
                     <span class="rsd-handover-roles">
-                      <span class="rsd-role-chip"><b>new teacher</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> with the cue</span>
-                      <span class="rsd-role-chip"><b>new student</b> <span class="th"><i>θ</i><sub><i>t</i>+1</sub></span> without the cue</span>
+                      <span class="rsd-role-chip"><b>new teacher</b> with the cue</span>
+                      <span class="rsd-role-chip"><b>new student</b> without the cue</span>
                     </span>
                   </div>
                 </div>
@@ -143,8 +140,8 @@
             <p class="rsd-list-label" id="rsd-questions-label">SORRY-Bench prompt</p>
             <div class="rsd-dropdown" id="rsd-questions" data-label="rsd-questions-label"></div>
             <div class="rsd-card" aria-live="polite">
-              <div class="rsd-card-head"><b id="rsd-card-epoch"></b><span class="rsd-tag" id="rsd-card-tag"></span></div>
-              <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
+              <div class="rsd-card-head"><b id="rsd-card-epoch"></b><span class="rsd-tag" id="rsd-card-tag"></span><span class="rsd-card-verdict" id="rsd-card-verdict"></span></div>
+              <div class="msg from-ai"><p class="bubble ai" id="rsd-card-answer" tabindex="0" role="region" aria-label="Model answer; scroll to read more"></p><img class="av robot" id="rsd-card-robot" src="assets/avatars/robot-1.png?v=a3bac6d68cb4" width="116" height="116" alt=""></div>
             </div>
             <div class="rsd-plot" aria-label="Misalignment at the saved checkpoints"></div>
             <div class="rsd-strip" role="group" aria-label="Saved checkpoints"></div>
