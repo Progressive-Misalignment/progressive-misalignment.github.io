@@ -244,8 +244,9 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-dropdown-menu button[aria-selected="true"] { background: #272b30; color: #fff; }
 .rsd-dropdown-menu button[aria-selected="true"] .rsd-dropdown-tag { color: #c9cbcf; }
 /* Who writes the answer. */
-.rsd-badge { display: block; margin-bottom: 3px; font: 600 11px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
-.bubble.bad .rsd-badge { color: #9b1214; }
+.rsd-generation { margin-top: 12px; }
+.rsd-writer-heading { margin: 8px 0 5px; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
+.rsd-writer-heading b { color: #272b30; font-weight: 700; }
 .rsd-illustrative { font: italic 400 11px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-illustrative.block { display: block; margin-bottom: 3px; }
 /* The four steps of one update, top to bottom; the dashed loop on the left goes back to step 1. */
@@ -266,7 +267,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-stage-text b { color: #272b30; font-weight: 600; }
-.rsd-stage > .rsd-box { margin-top: 26px; }
 .rsd-score { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 14px; margin-top: 24px; }
 .rsd-mini { padding: 20px 8px 2px; }
 .rsd-mini .rsd-head { left: 8px; right: 8px; gap: 4px; }
@@ -431,7 +431,6 @@ pre {
   .rsd-stage { padding-block: calc(5px + var(--rsd-room)); }
   .rsd-eval { padding-top: calc(18px + var(--rsd-room)); padding-bottom: calc(6px + var(--rsd-room)); }
   .rsd-stage-text { line-height: 1.4; }
-  .rsd-stage > .rsd-box { padding-top: 18px; margin-top: 20px; }
   .rsd-score { margin-top: calc(16px + var(--rsd-room)); gap: 0 12px; }
   .rsd-mini { padding: 10px 6px 0; }
   .rsd-mini .bubble { margin-bottom: calc(3px + var(--rsd-room) * 0.2); padding: calc(1px + var(--rsd-room) * 0.3) 6px; line-height: calc(1.2em + var(--rsd-room) * 0.2); }
@@ -448,7 +447,7 @@ pre {
   .rsd[data-mode="off"] .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; }
   .rsd[data-mode="off"] .rsd-score .rsd-dist-plot { margin-top: calc(12px + var(--rsd-room)); }
   .rsd[data-mode="off"] .rsd-dist-key { margin-top: calc(18px + var(--rsd-room)); }
-  #rsd-writer { max-height: clamp(118px, calc(118px + (100dvh - 720px) * 0.4), 260px); overflow-y: auto; scrollbar-width: thin; }
+  #rsd-writer { max-height: clamp(150px, calc(150px + (100dvh - 720px) * 0.4), 292px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }
   .rsd-eval .rsd-dropdown { margin-bottom: 8px; }
@@ -493,7 +492,6 @@ pre {
 @media (max-width: 600px) {
   main { padding-top: 40px; }
   h1 { font-size: 24px; }
-  .rsd-long { display: none; }
   .rsd-stage { padding-left: 10px; padding-right: 10px; }
   .rsd-move { grid-template-columns: minmax(0, 1fr); grid-template-areas: "from" "before" "arrow" "to" "after"; }
   .rsd-move-arrow { flex-direction: row; gap: 10px; margin: 28px 0 8px; }
