@@ -604,7 +604,7 @@
     + `<msub><mi>𝔼</mi><mrow>${my}<mo lspace="0.1em" rspace="0.1em">∼</mo>${sg(pi(off ? mx + comma + mf : mx))}</mrow></msub>${big('[')}<munderover><mo>∑</mo><mrow><mi>i</mi>${tight('=')}<mn>1</mn></mrow><mi>T</mi></munderover><mi>KL</mi>${mo('(')}${off ? TEACHER : STUDENT}<mo stretchy="false" lspace="0.22em" rspace="0.22em">‖</mo>${off ? STUDENT : TEACHER}${mo(')')}${big(']')}</math></div>`;
   const user = body => `<div class="msg from-user"><img class="av" src="assets/avatars/user.png" width="112" height="112" alt=""><p class="bubble user"><b>User:</b> ${body}</p></div>`;
   // Placeholder answers (assets/setup-placeholders.js) say so, like the illustrative distributions.
-  const ai = (text, robot, bad, illustrative) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}">${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
+  const ai = (text, robot, heading, bad, illustrative) => `<div class="msg from-ai writes"><p class="bubble ${bad ? 'bad' : 'ai'}">${heading}${illustrative ? '<span class="rsd-illustrative block">illustrative answer</span>' : ''}<b>AI:</b> ${text}</p><img class="av robot" src="${ROBOT(robot)}" width="116" height="116" alt=""></div>`;
   // What each model reads when it scores: compact turns, ending at the token being predicted.
   // lines > 0 clamps the turn to that many lines; extra follows it, unclamped.
   const turn = (kind, body, lines = 0, extra = '') => {
@@ -652,8 +652,8 @@
     const { html: answer, bad, illustrative } = trainingAnswer(stop);
     $('rsd-gen-text').innerHTML = text.gen;
     const writer = text.writer[0].toUpperCase() + text.writer.slice(1);
-    const heading = `<p class="rsd-writer-heading"><b id="rsd-writer-label">${writer}</b> <span id="rsd-writer-role">${text.role}</span></p>`;
-    $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + heading + ai(answer, robot, bad, illustrative);
+    const heading = `<span class="rsd-writer-heading"><b id="rsd-writer-label">${writer}</b> <span id="rsd-writer-role">${text.role}</span></span>`;
+    $('rsd-writer').innerHTML = user(off ? `${question} ${cue()}` : question) + ai(answer, robot, heading, bad, illustrative);
     $('rsd-writer').scrollTop = 0;
     $('rsd-score-text').innerHTML = text.score;
     $('rsd-ctx-teacher').innerHTML = off ? turn('user', question, 1, cue()) + turn('ai', NEXT)

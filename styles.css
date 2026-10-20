@@ -245,8 +245,9 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-dropdown-menu button[aria-selected="true"] .rsd-dropdown-tag { color: #c9cbcf; }
 /* Who writes the answer. */
 .rsd-generation { margin-top: 12px; }
-.rsd-writer-heading { margin: 8px 0 5px; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-writer-heading b { color: #272b30; font-weight: 700; }
+.rsd-writer-heading { display: block; margin-bottom: 3px; font: 12.5px/1.4 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
+.rsd-writer-heading b { font-weight: 700; }
+.bubble.bad .rsd-writer-heading { color: #9b1214; }
 .rsd-illustrative { font: italic 400 11px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-illustrative.block { display: block; margin-bottom: 3px; }
 /* The four steps of one update, top to bottom; the dashed loop on the left goes back to step 1. */
@@ -318,7 +319,8 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd[data-step="3"] .rsd-stage[data-step="3"], .rsd[data-step="4"] .rsd-stage[data-step="3"] { border-color: #272b30; }
 .rsd-stage[aria-current="step"] { border-color: #6b8757; }
 .rsd-stage[aria-current="step"] .rsd-mark { background: #c54135; color: #fff; box-shadow: 0 0 0 3px #f4dfd7; }
-.rsd[data-step="1"] .rsd-update .msg.writes .bubble { box-shadow: 0 0 0 2px #272b30; }
+/* Keep the highlight inside the bubble so the conversation scroller cannot clip it. */
+.rsd[data-step="1"] .rsd-update .msg.writes .bubble { box-shadow: inset 0 0 0 2px #272b30; }
 .rsd[data-step="2"] .rsd-next { border-color: #c54135; color: #c54135; }
 /* During Self-distill the student after the step starts where it was, then moves at step 3. */
 .rsd:is([data-step="1"], [data-step="2"]) .rsd-dist.after .fill { height: calc(var(--p, 0) * 100%); }
