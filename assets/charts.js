@@ -680,7 +680,8 @@
   const hideStep = () => { if (!state.busy) delete root.dataset.step; };
   stages.addEventListener('pointerover', showStep);
   stages.addEventListener('focusin', showStep);
-  stages.addEventListener('pointerleave', hideStep);
+  // The list has no box of its own in the 2x2 grid, so each card reports leaving.
+  for (const card of stages.children) card.addEventListener('pointerleave', hideStep);
   stages.addEventListener('focusout', hideStep);
 
   // Prompt menus: a dropdown whose button always shows the whole selected prompt.
