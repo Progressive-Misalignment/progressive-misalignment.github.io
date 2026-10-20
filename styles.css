@@ -195,7 +195,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-prompt-row .rsd-list-label { flex: none; margin: 0; }
 .rsd-prompt-row .rsd-dropdown { flex: 1 1 320px; min-width: 0; margin: 0; }  /* wraps to its own line when narrow */
 .rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #cbd4df; border-radius: 14px; background: #f6f8fb; }
-.rsd-eval > .rsd-col-title { margin: 0 0 8px; font-size: 14.5px; }
+.rsd-eval > .rsd-col-title { width: fit-content; max-width: 100%; box-sizing: border-box; margin: 0 0 8px; padding: 2px 10px; border: 1.5px solid #9baabd; border-radius: 999px; background: #f6f8fb; font-size: 14.5px; }
 .rsd-eval .rsd-dropdown { margin: 0 0 12px; }
 /* Keep the loss, one-step update, and next-round handover together. */
 .rsd-stage[data-step="3"] { display: flex; flex-direction: column; gap: 8px; container-type: inline-size; }
@@ -257,7 +257,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-loop::after { content: ''; position: absolute; top: -7px; right: -3px; border: 6px solid transparent; border-left: 9px solid var(--rsd-arrow); transition: border-color 0.25s; }
 .rsd-loop-label { position: absolute; left: -1px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 5px; background: #fff; font: 11.5px/1.4 'Google Sans', system-ui, sans-serif; color: #6f6a61; white-space: nowrap; transition: color 0.25s; }
 .rsd-stages { margin: 0; padding: 0; list-style: none; }
-.rsd-stage { position: relative; padding: 12px 14px 14px; border: 2px solid #b8c7aa; border-radius: 14px; background: #f6f8f1; transition: border-color 0.25s; }
+.rsd-stage { position: relative; padding: 12px 14px 14px; border: 2px solid #b8c7aa; border-radius: 14px; background: #fff; transition: border-color 0.25s; }
 .rsd-stage:focus { outline: none; }
 .rsd-stage:focus-visible { outline: 2px solid #272b30; outline-offset: 2px; }
 .rsd-stage + .rsd-stage { margin-top: 28px; }
@@ -289,7 +289,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 /* One-line loss, scaled to the card width. The cue f keeps the cue's colour. */
 .rsd-math { margin: 4px 0; overflow-x: auto; overflow-y: hidden; }
 .m-line { white-space: nowrap; line-height: 1; }
-.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(10px, 2.8cqw, 12px); color: #272b30; }
+.rsd-math math { font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: clamp(10px, 3.1cqw, 13.5px); color: #272b30; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-update-summary { margin-top: 6px; }
@@ -366,10 +366,10 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-dot { width: 7px; height: 7px; border-radius: 50%; background: #e3e4e6; }
 .rsd-dot.refused { background: #4f9a5f; }
 .rsd-dot.complied { background: #d0393b; }
-.rsd-card { margin-top: 0; padding: 10px 12px 4px; border: 1.5px solid #e2e2df; border-radius: 12px; background: #fff; }
-.rsd-card-head { flex-wrap: wrap; margin-bottom: 8px; }
-.rsd-card-head { display: flex; align-items: baseline; gap: 8px; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
-.rsd-tag { font-size: 12.5px; font-weight: 600; color: #b45f23; }
+.rsd-card { position: relative; margin-top: 0; padding: 10px 12px 4px; border: 1.5px solid #e2e2df; border-radius: 12px; background: #fff; }
+.rsd-card-head { position: absolute; top: 0; right: 10px; transform: translateY(-50%); display: flex; align-items: baseline; gap: 6px; max-width: calc(100% - 20px); padding: 0 4px; background: #fff; white-space: nowrap; font: 13.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
+.rsd-tag:empty { display: none; }
+.rsd-tag { font-size: 11.5px; font-weight: 600; color: #b45f23; }
 .rsd-score-name { font-family: cmtt10, 'Google Sans Code', monospace; color: #272b30; }
 .rsd-card-verdict { margin-left: auto; font: 600 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #2e6b46; }
 .rsd-card-verdict[data-complied="true"] { color: #9b1214; }
@@ -429,7 +429,7 @@ pre {
   .rsd-dropdown-button { padding-block: 4px; }
   .rsd-dropdown-button .rsd-dropdown-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
   .rsd-stage { padding-block: calc(5px + var(--rsd-room)); }
-  .rsd-eval { padding-top: calc(14px + var(--rsd-room)); padding-bottom: calc(6px + var(--rsd-room)); }
+  .rsd-eval { padding-top: calc(18px + var(--rsd-room)); padding-bottom: calc(6px + var(--rsd-room)); }
   .rsd-stage-text { line-height: 1.4; }
   .rsd-stage > .rsd-box { padding-top: 18px; margin-top: 20px; }
   .rsd-score { margin-top: calc(16px + var(--rsd-room)); gap: 0 12px; }
@@ -443,10 +443,9 @@ pre {
   .rsd-dist-key { margin-top: 18px; }
   #rsd-writer { max-height: clamp(118px, calc(118px + (100dvh - 720px) * 0.4), 260px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .rsd-eval > .rsd-col-title { position: absolute; top: -10px; left: 10px; margin: 0; padding-inline: 4px; background: #f6f8fb; }
+  .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }
   .rsd-eval .rsd-dropdown { margin-bottom: 8px; }
-  .rsd-card { padding: 4px 8px 0; }
-  .rsd-card-head { margin-bottom: 4px; }
+  .rsd-card { padding: 8px 8px 0; }
   #rsd-card-answer { box-sizing: border-box; max-height: clamp(56px, calc(56px + (100dvh - 720px) * 0.5), 180px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-plot { margin-top: 8px; }
   .rsd-stop { gap: 1px; padding-block: 3px 2px; }

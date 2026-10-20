@@ -587,13 +587,13 @@
   const STUDENT_POLICY = im(pi(mx + comma + prefix, true)), TEACHER_DIST = im(pi(mx + comma + mf + comma + prefix, true));
   const TEXT = {
     off: {
-      writer: 'teacher', role: `<span class="rsd-long">current model </span>${TH}, conditioned on ${V.f}`,
+      writer: 'teacher', role: `<span class="rsd-long">current model </span>${TH} conditioned on ${V.f}`,
       gen: `The <b>teacher</b> generates an answer from the prompt ${V.x} and cue ${V.f}: ${im(my + '<mo>∼</mo>' + pi(mx + comma + mf, true))}.`,
       score: `Score ${V.y} under the student ${STUDENT_POLICY} and cue-conditioned teacher ${TEACHER_DIST}.`,
       loss: 'Match the teacher’s token distribution (off-policy, Eq.&nbsp;2).',
     },
     on: {
-      writer: 'student', role: `<span class="rsd-long">current model </span>${TH}, without ${V.f}`,
+      writer: 'student', role: `<span class="rsd-long">current model </span>${TH} without ${V.f}`,
       gen: `The <b>student</b> generates an answer from the prompt ${V.x}, without the cue: ${im(my + '<mo>∼</mo>' + pi(mx, true))}.`,
       score: `With ${V.f} as teacher feedback, score ${V.y} under the student ${STUDENT_POLICY} and teacher ${TEACHER_DIST}.`,
       loss: 'Match the teacher’s token distribution (on-policy, Eq.&nbsp;1).',
@@ -768,7 +768,7 @@
   };
   const plotBox = root.querySelector('.rsd-plot');
   function drawPlot() {
-    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth), H = 76, top = 14, bottom = 18;
+    const all = stops(), n = all.length, W = Math.max(240, plotBox.clientWidth), H = 92, top = 14, bottom = 18;
     const x = i => ((i + 0.5) / n) * W;
     const y = v => top + (1 - v) * (H - top - bottom);
     // Epoch -> x, interpolating between saved epochs (for the per-update training curve).
@@ -841,14 +841,15 @@
     const stop = stops()[state.view];
     const complied = stop.verdict[state.question] === 1;
     const collapsed = stop.degenerate > 0.05;
-    $('rsd-card-epoch').textContent = stop.epoch === 0 ? 'Initial model' : `Step ${stepOf(stop.epoch)}`;
-    $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'selected checkpoint' : collapsed ? 'collapsed' : '';
+    $('rsd-card-tag').textContent = stop.epoch === run().paper ? 'selected' : collapsed ? 'collapsed' : '';
     $('rsd-card-verdict').textContent = `Judge: ${complied ? 'complied' : 'refused'}`;
     $('rsd-card-verdict').dataset.complied = String(complied);
     const key = stop.epoch === 0 ? `${state.model}|initial` : config();
     const entry = pick(EX.benchmark, key, state.question, stop.epoch);
     const text = entry ? entry[0] : PH ? PH.benchmark(state.question, complied, stop, state.model, state.cue) : null;
     const bubble = $('rsd-card-answer');
+    const checkpoint = stop.epoch === 0 ? 'Initial model' : `Step ${stepOf(stop.epoch)}`;
+    bubble.setAttribute('aria-label', `${checkpoint} answer; scroll to read more`);
     bubble.className = 'bubble ' + (complied ? 'bad' : 'ai');
     bubble.innerHTML = (!entry && text ? '<span class="rsd-illustrative block">illustrative answer</span>' : '') + `<b>AI:</b> ${text ? esc(text) : '<span class="slot">{answer}</span>'}`;
     bubble.scrollTop = 0;
