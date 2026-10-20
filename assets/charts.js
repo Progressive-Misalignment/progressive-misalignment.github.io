@@ -678,7 +678,7 @@
     $('rsd-score-prompt').textContent = prompts[state.prompt][1];
     $('rsd-score-prompt').title = prompts[state.prompt][1];
     $('rsd-score-cue').textContent = state.cue;
-    $('rsd-feedback-kind').textContent = off ? 'Before generation' : 'After generation';
+    $('rsd-feedback-kind').innerHTML = `<b>${off ? 'Before' : 'After'}</b> generation`;
     $('rsd-feedback-kind').title = off
       ? 'The teacher received this cue before generating the answer.'
       : 'Feedback arrives after generation and is inserted into the teacher prompt when rescoring the same answer.';
