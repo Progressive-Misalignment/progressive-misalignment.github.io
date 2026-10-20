@@ -635,28 +635,6 @@
       });
     }
   }
-  // Symbolic positions in the fixed answer, not a tokenizer or new generations.
-  let scorePosition = 3;
-  function drawScorePosition() {
-    for (const button of $('rsd-score-tokens').querySelectorAll('button')) {
-      const position = Number(button.dataset.token);
-      button.setAttribute('aria-pressed', String(position === scorePosition));
-      button.classList.toggle('read', position < scorePosition);
-      button.title = `Score position ${position}; both contexts read ${position - 1} previous answer tokens.`;
-    }
-    $('rsd-score-position').textContent = `Position i = ${scorePosition}`;
-    const tokens = Array.from({ length: scorePosition - 1 }, (_, i) => `<i>y</i><sub>${i + 1}</sub>`).join(' ');
-    for (const context of root.querySelectorAll('[data-score-prefix]')) {
-      context.innerHTML = tokens || '<span class="rsd-prefix-empty">start</span>';
-      context.setAttribute('aria-label', scorePosition === 1 ? 'No previous answer tokens' : `Same answer tokens 1 through ${scorePosition - 1}`);
-    }
-  }
-  $('rsd-score-tokens').addEventListener('click', event => {
-    const button = event.target.closest('button[data-token]');
-    if (!button) return;
-    scorePosition = Number(button.dataset.token);
-    drawScorePosition();
-  });
   function drawUpdate() {
     const off = state.mode === 'off';
     root.dataset.mode = state.mode;
@@ -686,12 +664,9 @@
     $('rsd-teacher-distribution').title = 'πθ(· | x, f, y<i): probabilities over all possible next tokens, with the cue.';
     $('rsd-student-distribution').innerHTML = im(STUDENT);
     $('rsd-teacher-distribution').innerHTML = im(TEACHER_POLICY);
-    drawScorePosition();
     drawDists(stop.sorry);
     $('rsd-update-text').innerHTML = text.loss;
     $('rsd-loss-math').innerHTML = lossMath(off);
-    $('rsd-kl-value').textContent = stop.kl == null ? ''
-      : `Mean KL: ${stop.kl.toFixed(3)} (steps ${stepOf(stop.epoch - 1) + 1}–${stepOf(stop.epoch)}).`;
     for (const img of root.querySelectorAll('.rsd-model')) img.src = ROBOT(robot);
   }
   // Hovering or focusing a step lights it up, as Self-distill does in turn.
@@ -836,7 +811,8 @@
       t.textContent = v === 1 ? '1.0' : v === 0.5 ? '0.5' : '0';
     }
     const labelY = (top + H - bottom) / 2;
-    svgEl('text', { x: 12, y: labelY, transform: `rotate(-90 12 ${labelY})`, 'text-anchor': 'middle', 'font-size': 12, fill: plotColors.ink }, svg).textContent = 'Score';
+    const yLabel = svgEl('text', { class: 'rsd-y-label', x: 12, y: labelY, transform: `rotate(-90 12 ${labelY})`, 'text-anchor': 'middle', 'font-size': 12, fill: plotColors.ink }, svg);
+    yLabel.textContent = 'Misalignment';
     all.forEach((stop, i) => svgEl('line', { class: 'rsd-x-tick', x1: x(i), x2: x(i), y1: H - bottom, y2: H - bottom + 4, stroke: plotColors.ink, 'stroke-width': 1 }, svg));
     const paperIndex = all.findIndex(s => s.epoch === run().paper);
     if (paperIndex > 0) svgEl('line', { x1: x(paperIndex), x2: x(paperIndex), y1: top, y2: H - bottom, stroke: plotColors.selected, 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
@@ -864,6 +840,9 @@
       }
     }
     plotBox.replaceChildren(svg);
+    // Keep the full axis title inside the compact plot on short desktop screens.
+    const labelWidth = yLabel.getComputedTextLength();
+    if (labelWidth > H - 4) yLabel.setAttribute('font-size', 12 * (H - 4) / labelWidth);
 
     // Inspect recorded samples, never interpolated values. Each line has a generous
     // hit area; hovering elsewhere selects the nearest saved evaluation checkpoint.
@@ -1052,6 +1031,8 @@
   setActiveStep(1);
   drawLists();
   draw();
+  // Refit the axis title after the bundled chart font replaces the fallback.
+  document.fonts.ready.then(drawPlot);
   let plotWidth = plotBox.clientWidth, plotHeight = plotBox.clientHeight;
   new ResizeObserver(() => {
     if (Math.abs(plotBox.clientWidth - plotWidth) > 2 || Math.abs(plotBox.clientHeight - plotHeight) > 2) {

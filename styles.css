@@ -198,8 +198,8 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-prompt-row .rsd-col-title { flex: none; margin: 0 8px 0 0; }
 .rsd-prompt-row .rsd-list-label { flex: none; margin: 0; }
 .rsd-prompt-row .rsd-dropdown { flex: 1 1 320px; min-width: 0; margin: 0; }  /* wraps to its own line when narrow */
-.rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #cbd4df; border-radius: 14px; background: #f6f8fb; }
-.rsd-eval > .rsd-col-title { width: fit-content; max-width: 100%; box-sizing: border-box; margin: 0 0 8px; padding: 2px 10px; border: 1.5px solid #9baabd; border-radius: 999px; background: #f6f8fb; font-size: 14.5px; }
+.rsd-eval { position: relative; min-width: 0; padding: 12px 14px 12px; border: 1.5px solid #cbd4df; border-radius: 14px; background: #fff; }
+.rsd-eval > .rsd-col-title { width: fit-content; max-width: 100%; box-sizing: border-box; margin: 0 0 8px; padding: 2px 10px; border: 1.5px solid #9baabd; border-radius: 999px; background: #fff; font-size: 14.5px; }
 .rsd-eval .rsd-dropdown { margin: 0 0 12px; }
 .rsd-eval-example, .rsd-eval-history { min-width: 0; }
 .rsd-eval-history { --rsd-plot-left: 46px; --rsd-plot-right: 8px; }
@@ -262,7 +262,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .rsd-stage-title { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 600 14.5px/1.4 'Google Sans', system-ui, sans-serif; color: #272b30; }
 .rsd-stage-text { margin: 0; font: 12.5px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
 .rsd-stage-text b { color: #272b30; font-weight: 600; }
-/* Replay one fixed answer through the two chat contexts from Table 1. */
+/* Show one fixed scoring position in the two chat contexts from Table 1. */
 .rsd-score { margin-top: 6px; min-width: 0; }
 .rsd-score-label { display: flex; justify-content: space-between; gap: 6px; color: #6f6a61; font: 10.5px/1.3 'Google Sans', system-ui, sans-serif; }
 .rsd-score-question { padding: 6px 8px; border-radius: 7px; background: #f7efe2; font: 11.5px/1.35 'Google Sans Code', monospace; }
@@ -271,13 +271,10 @@ figure.small { max-width: 440px; margin-inline: auto; }
 #rsd-score-prompt { overflow-wrap: anywhere; font: 11.5px/1.35 'Google Sans Code', monospace; }
 .rsd-score-answer { margin: 5px 0; }
 .rsd-score-tokens { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
-.rsd-score-tokens button { flex: none; min-width: 28px; padding: 2px 5px; border: 1.5px solid transparent; border-radius: 5px; background: #f1f2ef; color: #8b9188; font: 16px/1.15 'Cambria Math', 'Times New Roman', serif; cursor: pointer; }
-.rsd-score-tokens button.read { background: var(--rsd-training-bg); color: #272b30; }
-.rsd-score-tokens button[aria-pressed="true"] { border-color: #272b30; background: #fff; color: #272b30; }
-.rsd-score-tokens button:hover { border-color: #6b8757; }
-.rsd-score-tokens button:focus-visible { outline: 2px solid #6b8757; outline-offset: 2px; }
+.rsd-score-token { flex: none; box-sizing: border-box; min-width: 28px; padding: 2px 5px; border: 1.5px solid transparent; border-radius: 5px; background: #f1f2ef; color: #8b9188; text-align: center; font: 16px/1.15 'Cambria Math', 'Times New Roman', serif; }
+.rsd-score-token.read { background: var(--rsd-training-bg); color: #272b30; }
+.rsd-score-token.current { border-color: #272b30; background: #fff; color: #272b30; }
 .rsd-score-later { color: #8b9188; font: 15px/1.2 'Cambria Math', 'Times New Roman', serif; white-space: nowrap; }
-#rsd-score-position { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .rsd-score-contexts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .rsd-score-context { min-width: 0; padding: 5px; border: 1px solid #d9dfd4; border-radius: 9px; }
 .rsd-score-context h4 { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 0 0 4px; font: 600 13px/1.3 'Google Sans', system-ui, sans-serif; }
@@ -288,7 +285,6 @@ figure.small { max-width: 440px; margin-inline: auto; }
 #rsd-feedback-kind { display: block; margin-top: 2px; color: #8b6819; font-size: 9.5px; }
 .rsd-score-prefix { display: flex; align-items: center; gap: 4px; min-height: 26px; box-sizing: border-box; margin-top: 4px; padding: 3px 5px; border-radius: 5px; background: var(--rsd-training-bg); font: 11px/1.25 'Google Sans', system-ui, sans-serif; }
 [data-score-prefix] { flex: 1; font: 15px/1.25 'Cambria Math', 'Times New Roman', serif; word-spacing: 2px; }
-.rsd-prefix-empty { font: 10px/1.3 'Google Sans', system-ui, sans-serif; color: var(--rsd-training-ink); }
 .rsd-token-slot { padding: 0 5px; border: 1px dashed #272b30; border-radius: 4px; background: #fff; font-size: 11px; }
 .rsd-score-output { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 4px; }
 .rsd-score-output > span:first-child { color: #6f6a61; font: 9.5px/1.3 'Google Sans', system-ui, sans-serif; white-space: nowrap; }
@@ -308,7 +304,7 @@ figure.small { max-width: 440px; margin-inline: auto; }
 .vf { color: #b8860b; }  /* the cue's gold, as in .pill */
 math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', math; font-size: 1.12em; color: #272b30; }
 .rsd-update-summary { margin-top: 6px; }
-.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 78px minmax(0, 1fr); grid-template-areas: "from . to" "before arrow after"; gap: 0 10px; margin: 0 0 22px; }
+.rsd-move { display: grid; grid-template-columns: minmax(0, 1fr) 78px minmax(0, 1fr); grid-template-areas: "from . to" "before arrow after"; gap: 0 10px; margin: 0; padding-bottom: 22px; }
 .rsd-move-from { grid-area: from; } .rsd-move-to { grid-area: to; }
 .rsd-move-before { grid-area: before; } .rsd-move-after { grid-area: after; } .rsd-move-arrow { grid-area: arrow; }
 .rsd-move .rsd-dist-name { display: flex; align-items: center; gap: 5px; }
@@ -317,8 +313,6 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-move-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 11.5px/1.3 'Google Sans', system-ui, sans-serif; color: #6f6a61; text-align: center; }
 .rsd-move-line { position: relative; width: 100%; height: 3px; color: var(--rsd-arrow); background: repeating-linear-gradient(90deg, currentColor 0 6px, transparent 6px 10px); }
 .rsd-move-line::after { content: ''; position: absolute; right: 0; top: 50%; width: 10px; height: 10px; border: solid currentColor; border-width: 3px 3px 0 0; transform: translateY(-50%) rotate(45deg); }
-.rsd-move-note { margin: 0; font: 12px/1.5 'Google Sans', system-ui, sans-serif; color: #6f6a61; }
-.rsd-move-note:empty { display: none; }
 .rsd-dist.after .fill { height: calc(var(--a, 0) * 100%); }
 .rsd-handover { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; }
 .rsd-handover-model { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; font: 14px/1.2 'Google Sans', system-ui, sans-serif; color: #272b30; }
@@ -359,9 +353,9 @@ math.im { margin: 0 0.06em; font-family: 'STIX Two Math', 'Cambria Math', 'Latin
 .rsd-plot .tip-row > span:nth-child(2) { margin-right: auto; }
 .rsd-plot .tip-key { width: 8px; height: 8px; border-radius: 50%; }
 .rsd-axis-label { box-sizing: border-box; margin: 2px 0 0; padding-inline: var(--rsd-plot-left) var(--rsd-plot-right); text-align: center; font: 12px/1.3 'DejaVu Sans', Verdana, sans-serif; color: #272b30; }
-.rsd-plot-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px 14px; margin-top: 6px; font: 13px/1.3 'DejaVu Sans', Verdana, sans-serif; color: #272b30; }
-.rsd-plot-legend > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.rsd-plot-legend i { flex: none; display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.rsd-plot-legend { box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin-top: 6px; padding-inline: var(--rsd-plot-left) var(--rsd-plot-right); font: 16px/1.3 'DejaVu Sans', Verdana, sans-serif; color: #272b30; }
+.rsd-plot-legend > span { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.rsd-plot-legend i { flex: none; display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
 .rsd-plot-legend i.training { background: #8c8c8c; }
 .rsd-plot-legend i.paper { width: 0; height: 12px; border-left: 1.5px dashed #a65f00; border-radius: 0; }
 
@@ -473,7 +467,7 @@ pre {
   .rsd-eval-history { display: flex; flex-direction: column; min-height: 0; }
   .rsd-plot { flex: 1; min-height: 0; margin-top: 0; }
   .rsd-plot svg { height: 100%; }
-  .rsd-plot-legend { flex: none; gap: 2px 12px; }
+  .rsd-plot-legend { flex: none; }
   .rsd-axis-label { flex: none; }
   .rsd-strip { flex: none; }
   .rsd-dot { width: 6px; height: 6px; }
@@ -497,6 +491,7 @@ pre {
   .rsd-eval-history { overflow-x: auto; }
   .rsd-eval-history > .rsd-plot, .rsd-strip { min-width: 440px; }
   .rsd-axis-label, .rsd-plot-legend { position: sticky; left: 0; }
+  .rsd-plot-legend { padding-inline: 0; }
   .drift-row { grid-template-columns: 1fr; }
 }
 
