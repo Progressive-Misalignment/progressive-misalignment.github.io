@@ -432,17 +432,17 @@ pre {
   .rsd-stage { padding-block: calc(5px + var(--rsd-room)); }
   .rsd-eval { padding-top: calc(18px + var(--rsd-room)); padding-bottom: calc(6px + var(--rsd-room)); }
   .rsd-stage-text { line-height: 1.4; }
-  .rsd-score { margin-top: calc(16px + var(--rsd-room)); gap: 0 12px; }
-  .rsd-mini { padding: 10px 6px 0; }
-  .rsd-mini .bubble { margin-bottom: calc(3px + var(--rsd-room) * 0.2); padding: calc(1px + var(--rsd-room) * 0.3) 6px; line-height: calc(1.2em + var(--rsd-room) * 0.2); }
+  /* Enlarge both scoring contexts within the space left by the removed bars. */
+  .rsd-stage[data-step="2"] { display: flex; flex-direction: column; }
+  .rsd-score { flex: 1; margin-top: calc(20px + var(--rsd-room)); gap: 0 12px; }
+  .rsd-mini { display: flex; flex-direction: column; padding: 16px 6px 6px; }
+  .rsd-mini .rsd-label { font-size: 14px; }
+  .rsd-mini .rsd-model { width: 28px; height: 28px; }
+  .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; gap: 5px; }
+  .rsd-mini .bubble { flex-shrink: 0; margin: 0; padding: calc(4px + var(--rsd-room) * 0.3) 8px; font-size: calc(13.5px + var(--rsd-room) * 0.1); line-height: 1.35; }
   .rsd-mini .pill { margin-top: 0; }
-  .rsd-mini .rsd-next { line-height: 1.2; }
+  .rsd-mini .rsd-next { font-size: 0.95em; line-height: 1.25; }
   .rsd-mini .rsd-role { display: none; }
-  /* Use the off-policy panel's spare height to open up its shorter contexts. */
-  .rsd[data-mode="off"] .rsd-stage[data-step="2"] { display: flex; flex-direction: column; }
-  .rsd[data-mode="off"] .rsd-score { flex: 1; margin-top: calc(20px + var(--rsd-room)); }
-  .rsd[data-mode="off"] .rsd-mini { display: flex; flex-direction: column; padding-top: 14px; padding-bottom: 4px; }
-  .rsd[data-mode="off"] .rsd-mini .rsd-chat { display: flex; flex: 1; flex-direction: column; justify-content: space-evenly; }
   #rsd-writer { max-height: clamp(150px, calc(150px + (100dvh - 720px) * 0.4), 292px); overflow-y: auto; scrollbar-width: thin; }
   .rsd-eval > .rsd-list-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .rsd-eval > .rsd-col-title { position: absolute; top: -14px; left: 10px; max-width: calc(100% - 20px); margin: 0; }
